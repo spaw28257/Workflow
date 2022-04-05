@@ -1,0 +1,106 @@
+﻿.alinear-centro {
+    text-align: center;
+    font-family: Arial;
+    font-size: 12px;
+}
+
+.alinear-derecha {
+    text-align: right;
+    font-family: Arial;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.alinear-derecha2 {
+    text-align: right;
+}
+
+.alinear-izquierda {
+    text-align: left;
+    font-family: Arial;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.alinear-izquierda2 {
+    text-align: left;
+    font-family: Arial;
+    font-size: 12px;
+}
+
+.justificar-parrafo {
+    text-align: justify;
+    font-family: Arial;
+    font-size: 12px;
+}
+
+.cabecera-tabla {
+    background-color: #82293E;
+    text-align: center;
+    font-family: Arial;
+    font-size: 12px;
+    font-weight: bold;
+    color:#FFFFFF;
+}
+
+.celdas-texto-izquierda-tablas {
+    text-align: left;
+    font-family: Arial;
+    font-size: 12px;
+    vertical-align: middle;
+}
+
+.celdas-numeros-derecha-tablas {
+    text-align: right;
+    font-family: Arial;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: #FEF5E7;
+}
+
+.celdas-titulo-totalglobal {
+    text-align: right;
+    font-weight: bold;
+    background-color: #EAEDED;
+    font-family: Arial;
+    font-size: 13px;
+}
+
+.celda-numero-totalglobal {
+    text-align: right;
+    font-weight: bold;
+    background-color: #FEF5E7;
+    vertical-align: middle;
+    font-family: Arial;
+    font-size: 13px;
+}
+
+.campo-text {
+    background-color: oldlace;
+    font-family: Arial;
+    font-size: 12px;
+}
+
+.campo-seleccion {
+    font-family: Arial;
+    font-size: 12px;
+    background-color: oldlace;
+}
+
+.boton-selecciona-chequera {
+    font-family: Arial;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.color-mentex {
+    background-color: #82293E;
+    font-family: Arial;
+    font-size: 12px;
+    font-weight: bold;
+    color: #FFFFFF;
+}
+
+.color-link {
+    color:black;
+}

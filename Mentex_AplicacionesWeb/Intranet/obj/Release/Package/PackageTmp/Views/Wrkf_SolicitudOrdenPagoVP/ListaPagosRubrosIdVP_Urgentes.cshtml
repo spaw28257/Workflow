@@ -1,0 +1,945 @@
+﻿@using System.Web
+@using Intranet.Models
+@{
+    List<Wrkf_ListaPagosPorRubroId> lstlistapagosporrubroid = ViewBag.listarpagos;
+    var totalelementos = lstlistapagosporrubroid.Count;
+}
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MENTEX C.A.</title>
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
+    <!-- Font Awesome -->
+    <link href="~/Adminlte/plugins/fontawesome-free/css/all.min.css" rel="stylesheet" />
+    <!-- DataTables -->
+    <link href="~/Adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/Adminlte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/Adminlte/plugins/datatables-buttons/css/buttons.bootstrap4.min.css" rel="stylesheet" />
+    <!-- Theme style -->
+    <link href="~/Adminlte/css/adminlte.min.css" rel="stylesheet" />
+    <link href="~/Adminlte/css/mentex.css" rel="stylesheet" />
+
+    <!---mensajes sweetalert-->
+    <script src="~/Adminlte/plugins/sweetalert2/sweetalert.min.js"></script>
+
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+
+        <!-- Preloader -->
+        <div class="preloader flex-column justify-content-center align-items-center">
+            <img src="~/Adminlte/img/Iphone-spinner-2.gif" class="animation__shake brand-image img-rounded elevation-3" alt="Mentex C.A." height="40" width="40" />
+        </div>
+
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <!-- Left navbar links -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="@Url.Action("Index", "Home")" class="nav-link"><i class="fas fa-home"></i>&nbsp;Inicio</a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="#" onclick="ImprimirPagosPendientesArea()" class="nav-link"><i class="fas fa-th-list"></i>&nbsp;Reporte</a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="@Url.Action("CerrarSesion", "Wrkf_Login")" class="nav-link"><i class="fas fa-lock"></i>&nbsp;Cerrar Sesión</a>
+                </li>
+            </ul>
+        </nav>
+        <!-- /.navbar -->
+        <!-- Main Sidebar Container -->
+        <aside class="main-sidebar sidebar-dark-light elevation-4">
+            <!-- Brand Logo -->
+            <a href="#" class="brand-link">
+                <img src="~/Adminlte/img/LogoWorkflow.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+                <span class="brand-text font-weight-light">MENTEX C.A.</span>
+            </a>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Sidebar user panel (optional) -->
+                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                    <div class="image">
+                        <img src="~/Adminlte/img/user_undefine160x160.png" class="img-circle elevation-2" alt="User Image" />
+                    </div>
+                    <div class="info">
+                        <a href="#" class="d-block">@Session["susuario"]</a>
+                    </div>
+                </div>
+
+                <!-- Sidebar Menu -->
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false" id="ulOpcionesMenu">
+
+                        @foreach (var listadomenu in ViewBag.listaropcionesmenu)
+                        {
+                            <li class="nav - item">
+                                <p>
+                                    <a href="@Url.Action(@listadomenu.Accionx, @listadomenu.Controladorx)"><i class="@listadomenu.Imagenx"></i>&nbsp;@listadomenu.Menux</a>
+                                </p>
+                            </li>
+                        }
+
+                    </ul>
+                </nav>
+                <!-- /.sidebar-menu -->
+            </div>
+            <!-- /.sidebar -->
+        </aside>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <br />
+            <!-- Main content -->
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header" style="background-color:#82293E;">
+                                    <h3 class="card-title" style="color:#FFFFFF;">Solicitudes de Pagos Pendientes por Revisar VP Finanza Rubro: @lstlistapagosporrubroid[0].DescripcionRubrox</h3>
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body">
+                                    @if (lstlistapagosporrubroid[0].Solicitudordenpagodetalle_Idx == -1)
+                                    {
+                                        <script>
+                                            swal("No existen solicitudes de pagos pendientes por aprobación", "Solicitud Orden de Pago", "info");
+                                        </script>
+                                    }
+                                    <table id="example2" class="table table-bordered table-hover" style="width:100%;">
+                                        <thead>
+                                            <tr class="cabecera-tabla">
+                                                <th style="text-align:center; font-weight:bold;">Sol. N°</th>
+                                                <th style="text-align:center; font-weight:bold;">Aprobar</th>
+                                                <th style="text-align:center; font-weight:bold;">Proveedor</th>
+                                                <th style="text-align:center; font-weight:bold;">Total a Pagar</th>
+                                                <th style="text-align:center; font-weight:bold;">Tipo Documento</th>
+                                                <th style="text-align:center; font-weight:bold;">Descripción</th>
+                                                <th style="text-align:center; font-weight:bold;">N° Documento</th>
+                                                <th style="text-align:center; font-weight:bold;">Forma de Pago</th>
+                                                <th style="text-align:center; font-weight:bold;">Chequera</th>
+                                                <th style="text-align:center; font-weight:bold;">Fecha Documento</th>
+                                                <th style="text-align:center; font-weight:bold;">Fecha Pago</th>
+                                                <th style="text-align:center; font-weight:bold;">Observaciones</th>
+                                                <th style="text-align:center; font-weight:bold;">Doc. Recibido</th>
+                                                <th style="text-align:center; font-weight:bold;">Rechazar</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (lstlistapagosporrubroid[0].Solicitudordenpagodetalle_Idx > 0)
+                                            {
+                                                foreach (var listadopagos in lstlistapagosporrubroid)
+                                                {
+                                                    <tr id="@listadopagos.Solicitudordenpagodetalle_Idx">
+                                                        <td style="text-align:center;">
+                                                            @listadopagos.Solicitudordenpago_Idx
+                                                        </td>
+                                                        <td class="alinear-centro">
+                                                            <input type="checkbox" name="chkaprobar"
+                                                                   id="chkaprobar_@listadopagos.Solicitudordenpagodetalle_Idx"
+                                                                   value="@listadopagos.Solicitudordenpagodetalle_Idx" class="form-check-input" />
+                                                        </td>
+                                                        <td class="celdas-texto-izquierda-tablas">
+                                                            @listadopagos.Proveedorx <br /> <b>Total: @listadopagos.Totalx &nbsp; @listadopagos.Curncyidx</b>
+                                                        </td>
+                                                        <td class="celdas-numeros-derecha-tablas">@listadopagos.Totalx &nbsp; @listadopagos.Curncyidx</td>
+                                                        <td class="celdas-texto-izquierda-tablas">
+                                                            @listadopagos.Documentox
+                                                        </td>
+                                                        <td class="celdas-texto-izquierda-tablas">@listadopagos.Descripcionx</td>
+                                                        <td class="alinear-centro">
+                                                            @listadopagos.Numerodocumentox
+                                                            <img src="~/Adminlte/img/buscar_16x16.png" style="cursor:pointer;"
+                                                                 data-toggle="modal" data-target="#modal-xl2"
+                                                                 onclick="ObtieneDetalleCompletoSolicitud('@listadopagos.Solicitudordenpagodetalle_Idx', '@listadopagos.Solicitudordenpago_Idx')" />
+                                                        </td>
+                                                        <td class="celdas-texto-izquierda-tablas">
+                                                            @listadopagos.formadepagox
+                                                        </td>
+                                                        <td class="alinear-centro" id="tdchequera_@listadopagos.Solicitudordenpagodetalle_Idx">
+                                                            @listadopagos.Chequerax
+                                                        </td>
+                                                        <td class="celdas-texto-izquierda-tablas">@listadopagos.FechaDocumentox</td>
+                                                        <td class="celdas-texto-izquierda-tablas">@listadopagos.FechaPagox</td>
+
+                                                        <td class="alinear-centro" data-toggle="modal" data-target="#modal-xl1"
+                                                            onclick="ObtieneObservacionesSolicitud('@listadopagos.Solicitudordenpagodetalle_Idx', '@listadopagos.Solicitudordenpago_Idx')">
+                                                            @listadopagos.Observacionesx
+                                                        </td>
+                                                        <td class="alinear-centro">
+                                                            @{
+                                                                if (listadopagos.DocumentoRecibidox == true)
+                                                                {
+                                                                    <input type="checkbox" name="chkdocrecibido" id="chkdocrecibido" checked disabled class="form-check-input" />
+                                                                }
+                                                            }
+                                                            <a href="#" onclick="Descargarsoporte('@Url.Action("DescargarSoporte", "Wrk_SolicitudOrdenPagoSoporte", new { Solicitudordenpago_Id = @listadopagos.Solicitudordenpago_Idx, Solicitudordenpagodetalle_Id = @listadopagos.Solicitudordenpagodetalle_Idx }, null)')">
+                                                                &nbsp;@listadopagos.TotalDocumentosx
+                                                            </a>
+                                                        </td>
+                                                        <td style="text-align:center;">
+                                                            <input type="checkbox" name="chkrechazar"
+                                                                   id="chkrechazar_@listadopagos.Solicitudordenpagodetalle_Idx"
+                                                                   value="@listadopagos.Solicitudordenpagodetalle_Idx" class="form-check-input" />
+
+                                                            <a href="#" style="font-size:11px;"
+                                                               data-toggle="modal" data-target="#modal-xl3"
+                                                               onclick="SolicitudPagoRevisionVP('@listadopagos.Solicitudordenpagodetalle_Idx', '@listadopagos.Solicitudordenpago_Idx')">
+                                                                Motivo del Rechazo
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th colspan="10">&nbsp;</th>
+                                                <th>
+                                                    &nbsp;
+                                                </th>
+                                                <th colspan="3">&nbsp;</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                    <div class="row">
+                                        <div class="col-md-12" style="text-align:center">
+                                            @if (lstlistapagosporrubroid[0].Solicitudordenpago_Idx == -1)
+                                            {
+                                                <button class="btn btn-success" type="button" disabled>
+                                                    <i class="fas fa-check-circle"></i>&nbsp;Procesar Solicitudes de Pagos
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button class="btn btn-success" type="button" onclick=" AprobarRechazarSolicitudesVP()">
+                                                    <i class="fas fa-check-circle"></i>&nbsp;Procesar Solicitudes de Pagos
+                                                </button>
+                                            }
+                                            &nbsp;&nbsp;&nbsp;
+                                            <button class="btn btn-default" data-toggle="modal" data-target="#modal-xl4">
+                                                <i class="fas fa-search"></i>&nbsp;Buscar Por Fecha Pago
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    @* Asigna los id de las solicitudes de pago que desean colocar la chequera *@
+                    <form>
+                        <input type="hidden" name="txtSolicitudordenpagodetalle_Idx" id="txtSolicitudordenpagodetalle_Idx" value="" />
+                        <input type="hidden" name="txtSolicitudordenpago_Idx" id="txtSolicitudordenpago_Idx" value="" />
+                    </form>
+                </div><!-- /.container-fluid -->
+            </section>
+            <!-- /.content -->
+        </div>
+
+        <!-- /.modal -->
+        <!--Mostar las observaciones de la solicitud del pago-->
+        <div class="modal fade" id="modal-xl1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Observaciones de la Solicitud de Pago</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header cabecera-tabla">
+                                            <h3 class="card-title" id="txtnumobssolicitud">&nbsp;</h3>
+                                        </div>
+                                        <!-- /.card-header -->
+                                        <div class="card-body">
+                                            <p class="justificar-parrafo" id="txtobservacionessoli"></p>
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                    <!-- /.card -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        <!-- /.modal -->
+        <!--Ver el detalle de la solicitud del pago que esta aprobando o rechazando-->
+        <div class="modal fade" id="modal-xl2">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Detalle de la Solicitud de Pago</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header cabecera-tabla">
+                                            <h3 class="card-title">Datos de la Solicitud</h3>
+                                        </div>
+                                        <!-- /.card-header -->
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label>Tipo de Documento:</label>
+                                                    <input type="text" name="txttipodocumento" id="txttipodocumento" class="form-control" readonly />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>Moneda:</label>
+                                                    <input type="text" name="txtmoneda" id="txtmoneda" class="form-control" readonly />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>Porcentaje de Retención:</label>
+                                                    <input type="text" name="txtporcentajeretencion" id="txtporcentajeretencion" class="form-control" style="text-align:right;" readonly />
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label>Grupo del rubro:</label>
+                                                    <input type="text" name="txtgruporubro" id="txtgruporubro" class="form-control" readonly style="text-align:left;" />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>Rubro:</label>
+                                                    <input type="text" name="txtrubro" id="txtrubro" class="form-control" readonly style="text-align:left;" />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>Fecha Creación:</label>
+                                                    <input type="text" name="txtfechacreacion" id="txtfechacreacion" class="form-control" style="text-align:left;" readonly />
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label>Fecha Pago:</label>
+                                                    <input type="text" name="txtfechapago" id="txtfechapago" class="form-control" readonly style="text-align:left;" />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>R.I.F:</label>
+                                                    <input type="text" name="txtrif" id="txtrif" class="form-control" readonly style="text-align:left;" />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>Proveedor:</label>
+                                                    <input type="text" name="txtproveedor" id="txtproveedor" class="form-control" style="text-align:left;" readonly />
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label>Descripción:</label>
+                                                    <input type="text" name="txtdescripcion" id="txtdescripcion" class="form-control" readonly style="text-align:left;" />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>Número Documento / Factura / NC:</label>
+                                                    <input type="text" name="txtnumdocumento" id="txtnumdocumento" class="form-control" readonly style="text-align:left;" />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>Forma de Pago:</label>
+                                                    <input type="text" name="txtformapago" id="txtformapago" class="form-control" style="text-align:left;" readonly />
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label>Monto a Pagar:</label>
+                                                    <input type="text" name="txtmontoapagar" id="txtmontoapagar" class="form-control" readonly style="text-align:right;" />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>Anticipos:</label>
+                                                    <input type="text" name="txtanticipo" id="txtanticipo" class="form-control" readonly style="text-align: right;" />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>Porcentaje I.V.A:</label>
+                                                    <input type="text" name="txtporcentajeiva" id="txtporcentajeiva" class="form-control" style="text-align: right;" readonly />
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label>Total I.V.A:</label>
+                                                    <input type="text" name="txttotaliva" id="txttotaliva" class="form-control" readonly style="text-align: right;" />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>Total Retenido:</label>
+                                                    <input type="text" name="txttotalretenido" id="txttotalretenido" class="form-control" style="text-align: right;" readonly />
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>SubTotal A Pagar:</label>
+                                                    <input type="text" name="txtsubtotalpagar" id="txtsubtotalpagar" class="form-control" style="text-align: right;" readonly />
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label>Total A Pagar:</label>
+                                                    <input type="text" name="txttotalapagar" id="txttotalapagar" class="form-control alinear-derecha" readonly />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                    <!-- /.card -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+        <!-- /.modal -->
+        <!--Mostar las observaciones de la solicitud del pago-->
+        <div class="modal fade" id="modal-xl3">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Observaciones</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header cabecera-tabla">
+                                            <h3 class="card-title" id="txtrechazosolicitudnum">Motivo del Rechazo de la Solicitud N°</h3>
+                                        </div>
+                                        <!-- /.card-header -->
+                                        <div class="card-body">
+                                            <textarea class="form-control" id="txtmotivorechazo" rows="4" cols="80"></textarea>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12" style="text-align:right">
+                                                <button type="button" class="btn btn-success" onclick="MotivoRechazo()">
+                                                    <i class="fas fa-save"></i>&nbsp;Agregar Observación
+                                                </button>
+                                                @*<input type="button" class="btn btn-success" value="Agregar Observación" onclick="MotivoRechazo()" />*@
+                                            </div>
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                    <!-- /.card -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        <!-- /.modal -->
+        <!--Filtrar por rango de fecha pago-->
+        <div class="modal fade" id="modal-xl4">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Filtrar Por Fecha de Pago</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header cabecera-tabla">
+                                            <h3 class="card-title" id="txtnumobssolicitud">Seleccione el rango de fecha</h3>
+                                        </div>
+                                        <!-- /.card-header -->
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <form name="frmpagosvp" id="frmpagosvp" method="post"
+                                                          action="@Url.Action("ListaPagosPorRubroPost_Urgente", "Wrkf_SolicitudOrdenPagoVP")">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="txtfechadesde">Fecha de Pago Desde</label>
+                                                                    <input type="hidden" name="gruporubro_id" id="gruporubro_id" value="@ViewBag.gruporubro_id" />
+                                                                    <input type="hidden" name="rubro_id" id="rubro_id" value="@ViewBag.rubro_id" />
+                                                                    <input type="date" class="form-control" name="txtfechadesde"
+                                                                           id="txtfechadesde" style="background-color: oldlace;" value="@ViewBag.fechadesde" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="txtfechahasta">Fecha de Pago Hasta</label>
+                                                                    <input type="date" class="form-control" name="txtfechahasta"
+                                                                           id="txtfechahasta" style="background-color: oldlace;" value="@ViewBag.fechahasta" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12 alinear-centro">
+                                                                <button type="submit" name="btnvolveramostrar" id="btnvolveramostrar" class="btn btn-default">
+                                                                    <i class="fas fa-search"></i>&nbsp;Buscar Pagos
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                    <!-- /.card -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+
+        <footer class="main-footer">
+            @*<strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>All rights reserved.*@
+            <div class="float-right d-none d-sm-inline-block">
+                <b>WorkFlow Cuentas Por Pagar Version</b> 1.0
+            </div>
+        </footer>
+
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+    </div>
+    <!-- ./wrapper -->
+    <!-- jQuery -->
+    <script src="~/Adminlte/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/Adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables  & Plugins -->
+    <script src="~/Adminlte/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="~/Adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+
+    <!-- AdminLTE App -->
+    <script src="~/Adminlte/js/adminlte.min.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="~/Adminlte/js/demo.js"></script>
+
+    <!-- Page specific script -->
+    <script>
+        $(function () {
+            $("#example1").DataTable({
+                "responsive": true, "lengthChange": true, "autoWidth": true,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": true,
+                "responsive": true,
+            })
+        });
+
+        ///obtiene los id de la solicitud de pago para registra el motivo del rechazo
+        function SolicitudPagoRevisionVP(pSolicitudordenpagodetalle_Id, pSolicitudordenpago_Id) {
+            $("#txtSolicitudordenpagodetalle_Idx").val(pSolicitudordenpagodetalle_Id);
+            $("#txtSolicitudordenpago_Idx").val(pSolicitudordenpago_Id);
+
+            $("#txtrechazosolicitudnum").html('');
+            $("#txtrechazosolicitudnum").html('Motivo del Rechazo de la Solicitud N° ' + pSolicitudordenpago_Id);
+
+            $("#chkrechazar_" + pSolicitudordenpagodetalle_Id).prop("checked", true);
+
+            SeleccionarMotivoRechazo();
+        }
+
+
+        //obtener las observaciones de la solicitud de pago
+        function ObtieneObservacionesSolicitud(pSolicitudordenpagodetalle_Id, pSolicitudordenpago_Id) {
+            var parametros = {
+                "Solicitudordenpagodetalle_Id": pSolicitudordenpagodetalle_Id,
+                "Solicitudordenpago_Id": pSolicitudordenpago_Id
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ObtieneObservacionesSolicitud", "Wrkf_SolicitudOrdenPagoCxP")',
+                content: "application/json; charset=utf-8",
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+
+                    if (data.Codigox.length == 0) {
+                        $("#txtnumobssolicitud").html("");
+                        $("#txtnumobssolicitud").html("Solicitud de Pago Número:" + pSolicitudordenpago_Id);
+                        $("#txtobservacionessoli").html("");
+                        $("#txtobservacionessoli").html(data.Observacionesx);
+                    } else {
+                        swal(data.Codigox + ' ' + data.Mensajex, data.Titulox, data.Tipox);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                        swal(msg, 'Error', 'error');
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                        swal(msg, 'Error', 'error');
+                    }
+                }
+            });
+        }
+
+        //obtine el detalle de la solicitud
+        function ObtieneDetalleCompletoSolicitud(pSolicitudordenpagodetalle_Id, pSolicitudordenpago_Id) {
+            var parametros = {
+                "Solicitudordenpagodetalle_Id": pSolicitudordenpagodetalle_Id,
+                "Solicitudordenpago_Id": pSolicitudordenpago_Id
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("DetalleCompletoSolicitudPagoCxP", "Wrkf_SolicitudOrdenPagoCxP")',
+                content: "application/json; charset=utf-8",
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+                    $("#txttipodocumento").val(data[0].DescripTipoDocumentox);
+                    $("#txtmoneda").val(data[0].Curncyid);
+                    $("#txtporcentajeretencion").val(data[0].Porcentajeretencionx);
+
+                    $("#txtgruporubro").val(data[0].DescripGrupoRubrox);
+                    $("#txtrubro").val(data[0].DescripRubrox);
+                    $("#txtfechacreacion").val(data[0].Fecharegistrox);
+
+                    $("#txtfechapago").val(data[0].Fechapagox);
+                    $("#txtrif").val(data[0].Rifx);
+                    $("#txtproveedor").val(data[0].Proveedorx);
+
+                    $("#txtdescripcion").val(data[0].Descripcionx);
+                    $("#txtnumdocumento").val(data[0].Numerodocumentox);
+                    $("#txtformapago").val(data[0].DescripFormaPagox);
+
+                    $("#txtmontoapagar").val(data[0].Preciounitariox);
+                    $("#txtanticipo").val(data[0].Anticipox);
+                    $("#txtporcentajeiva").val(data[0].Porcentajeivax);
+
+                    $("#txttotaliva").val(data[0].MontoIvax);
+                    $("#txttotalretenido").val(data[0].Totalretenidox);
+                    $("#txtsubtotalpagar").val(data[0].Subtotalx);
+                    $("#txttotalapagar").val(data[0].Totalx);
+
+                },
+                error: function (jqXHR, exception) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                        swal(msg, 'Error', 'error');
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                        swal(msg, 'Error', 'error');
+                    }
+                }
+            });
+        }
+
+        //Aprobar o Rechazar todas las solicitudes de pago por parte de VP Finanza que esten seleccionadas
+        function AprobarRechazarSolicitudesVP() {
+            var listadoaprobacion = "";
+            var listadorechazo = "";
+            var contadoraprobadas = 0;
+            var contadorrechazadas = 0;
+            var chkaprobado = document.getElementsByName("chkaprobar");
+            var chkrechazado = document.getElementsByName("chkrechazar");
+
+            //verificar que no exista el checkbox de aprobacion y rechazo activo para lamisma solicitud
+            for (x = 0; x < chkaprobado.length; x++) {
+                if ((chkaprobado[x].checked) && (chkrechazado[x].checked)) {
+                    swal("Una solicitud no puede ser aprobada y rechazada al mismo tiempo seleccione la casilla de aprobación o rechazo", "Aprobación o Rechazo Por VP de Finanza", "error");
+                    chkaprobado[x].checked = false;
+                    chkrechazado[x].checked = false;
+                    return false;
+                }
+            }
+
+            //verifica las solicitudes que fueron aprobadas para enviar a contraloria
+            for (x = 0; x < chkaprobado.length; x++) {
+                if (chkaprobado[x].checked) {
+                    listadoaprobacion += chkaprobado[x].value + ";";
+                    //contar el total de solicitudes aprobadas
+                    contadoraprobadas = parseInt(contadoraprobadas) + 1;
+                }
+            }
+
+            //verifica las solicitudes que fueron marcadas para ser rechazadas por subcontraloria
+            for (x = 0; x < chkrechazado.length; x++) {
+                if (chkrechazado[x].checked) {
+                    listadorechazo += chkrechazado[x].value + ";";
+                    contadorrechazadas = parseInt(contadorrechazadas) + 1;
+                }
+            }
+
+            //verificar que existan solicitudes para procesar
+            if ((contadoraprobadas > 0) || (contadorrechazadas > 0)) {
+
+                var totalsolicitudes = parseInt(contadoraprobadas) + parseInt(contadorrechazadas);
+                var mensaje = "La cantidad de solicitudes que desea procesar es: ";
+                mensaje = mensaje + totalsolicitudes + " de las cuales fueron aprobada (s) " + contadoraprobadas + "  y Rechazada (s) " + contadorrechazadas;
+                mensaje = mensaje + " ¿Desea continuar realizando el proceso de la (s) solicitud (es)?";
+
+                swal({
+                    title: "Aprobación Y Rechazo de Solicitudes Por VP de Finanza",
+                    text: mensaje,
+                    icon: "warning",
+                    buttons: true,
+                    successMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        var parametros = { "listapagosaprobados": listadoaprobacion, "listapagosrechazados": listadorechazo };
+                        $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("AprobarRechazarSolicitudVP", "Wrkf_SolicitudOrdenPagoVP")',
+                            content: "application/json; charset=utf-8",
+                            dataType: 'json',
+                            data: parametros,
+                            success: function (data) {
+                                if (data.Codigox.length > 0) {
+                                    swal(data.Codigox + " " + data.Mensajex, data.Titulox, data.Tipox);
+                                } else {
+                                    swal("La solicitud de pago fueron procesadas con éxito", "Información", "info");
+                                    document.getElementById('frmpagosvp').submit();
+                                }
+                            },
+                            error: function (jqXHR, exception) {
+                                var msg = '';
+                                if (jqXHR.status === 0) {
+                                    msg = 'Not connect.\n Verify Network.';
+                                    swal(msg, 'Error', 'error');
+                                } else if (jqXHR.status == 404) {
+                                    msg = 'Requested page not found. [404]';
+                                    swal(msg, 'Error', 'error');
+                                } else if (jqXHR.status == 500) {
+                                    msg = 'Internal Server Error [500].';
+                                    swal(msg, 'Error', 'error');
+                                } else if (exception === 'parsererror') {
+                                    msg = 'Requested JSON parse failed.';
+                                    swal(msg, 'Error', 'error');
+                                } else if (exception === 'timeout') {
+                                    msg = 'Time out error.';
+                                    swal(msg, 'Error', 'error');
+                                } else if (exception === 'abort') {
+                                    msg = 'Ajax request aborted.';
+                                    swal(msg, 'Error', 'error');
+                                } else {
+                                    msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                                    swal(msg, 'Error', 'error');
+                                }
+                            }
+                        });
+                    }
+                })
+            }
+            else {
+                swal("Debe seleccionar las solicitudes de pago que desea Aprobar o Rechazar", "Aprobación o Rechazo Por SubContraloria", "error");
+            }
+        }
+
+        //Obtiene el motivo del rechazo del pago.
+        function SeleccionarMotivoRechazo() {
+            var parametros = {
+                "Solicitudordenpagodetalle_Id": $("#txtSolicitudordenpagodetalle_Idx").val(),
+                "Solicitudordenpago_Id": $("#txtSolicitudordenpago_Idx").val(),
+                "motivorechazo": $("#txtmotivorechazo").val()
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SeleccionarMotivoRechazo", "Wrkf_SolicitudOrdenPagoVP")',
+                content: "application/json; charset=utf-8",
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+                    if (data.Codigox.length > 0) {
+                        swal(data.Codigox + " " + data.Mensajex, data.Titulox, data.Tipox);
+                    } else {
+                        $("#txtmotivorechazo").val(data.Observacionesx);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                        swal(msg, 'Error', 'error');
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                        swal(msg, 'Error', 'error');
+                    }
+                }
+            });
+        }
+
+        //Registra el motivo por el cualfue rechazado el pago
+        function MotivoRechazo() {
+
+            var parametros = {
+                "Solicitudordenpagodetalle_Id": $("#txtSolicitudordenpagodetalle_Idx").val(),
+                "Solicitudordenpago_Id": $("#txtSolicitudordenpago_Idx").val(),
+                "motivorechazo": $("#txtmotivorechazo").val()
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("RegistrarMotivoRechazo", "Wrkf_SolicitudOrdenPagoVP")',
+                content: "application/json; charset=utf-8",
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+                    if (data.Codigox.length > 0) {
+                        swal(data.Codigox + " " + data.Mensajex, data.Titulox, data.Tipox);
+                    } else {
+                        swal("El motivo del rechazo de la solicitud del pago fue registrado", "Información", "info");
+                        $("#txtSolicitudordenpagodetalle_Idx").val("");
+                        $("#txtSolicitudordenpago_Idx").val("");
+                        $("#txtmotivorechazo").val("");
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                        swal(msg, 'Error', 'error');
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                        swal(msg, 'Error', 'error');
+                    }
+                }
+            });
+        }
+
+        //descargar soporte de la solicitud
+        function Descargarsoporte(url) {
+            window.open(url, "_blank", "directories=no,location=no,menubar=no,status=no,titlebar=no,toolbar=no,scrollbars=yes,resizable=no,top=500,left=500,width=500,height=500");
+        }
+
+        //imprime un reporte de solicitudes pendientes por área
+        function ImprimirPagosPendientesArea() {
+
+            var screenWidth = screen.width;
+            var screenHeight = screen.height;
+
+            var url = '@Url.Action("GenerarReportePagosPendientes", "Wrkf_Reporte")';
+
+            window.open(url, '_blank', 'toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=' + screenWidth + ',height=' + screenHeight);
+        }
+    </script>
+</body>
+</html>

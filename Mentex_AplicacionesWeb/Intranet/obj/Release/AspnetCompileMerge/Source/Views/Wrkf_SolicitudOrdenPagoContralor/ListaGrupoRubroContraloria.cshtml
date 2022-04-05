@@ -1,0 +1,294 @@
+﻿<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MENTEX C.A.</title>
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
+    <!-- Font Awesome -->
+    <link href="~/Adminlte/plugins/fontawesome-free/css/all.min.css" rel="stylesheet" />
+
+    <!-- Theme style -->
+    <link href="~/Adminlte/css/adminlte.min.css" rel="stylesheet" />
+
+    <!-- overlayScrollbars -->
+    <link href="~/Adminlte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css" rel="stylesheet" />
+
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+
+        <!-- Preloader -->
+        <div class="preloader flex-column justify-content-center align-items-center">
+            <img src="~/Adminlte/img/Iphone-spinner-2.gif" class="animation__shake brand-image img-rounded elevation-3" alt="Mentex C.A." height="40" width="40" />
+        </div>
+
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <!-- Left navbar links -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="@Url.Action("Index", "Home")" class="nav-link"><i class="fas fa-home"></i>&nbsp;Inicio</a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="@Url.Action("CerrarSesion", "Wrkf_Login")" class="nav-link"><i class="fas fa-lock"></i>&nbsp;Cerrar Sesión</a>
+                </li>
+            </ul>
+        </nav>
+        <!-- /.navbar -->
+        <!-- Main Sidebar Container -->
+        <aside class="main-sidebar sidebar-dark-light elevation-4">
+            <!-- Brand Logo -->
+            <a href="#" class="brand-link">
+                <img src="~/Adminlte/img/LogoWorkflow.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+                <span class="brand-text font-weight-light">MENTEX C.A.</span>
+            </a>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Sidebar user panel (optional) -->
+                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                    <div class="image">
+                        <img src="~/Adminlte/img/user_undefine160x160.png" class="img-circle elevation-2" alt="User Image" />
+                    </div>
+                    <div class="info">
+                        <a href="#" class="d-block">@Session["susuario"]</a>
+                    </div>
+                </div>
+
+                <!-- Sidebar Menu -->
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false" id="ulOpcionesMenu">
+                        @foreach (var listadomenu in ViewBag.listaropcionesmenu)
+                        {
+                            <li class="nav - item">
+                                <p>
+                                    <a href="@Url.Action(@listadomenu.Accionx, @listadomenu.Controladorx)"><i class="@listadomenu.Imagenx"></i>&nbsp;@listadomenu.Menux</a>
+                                </p>
+                            </li>
+                        }
+
+                    </ul>
+                </nav>
+                <!-- /.sidebar-menu -->
+            </div>
+            <!-- /.sidebar -->
+        </aside>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-12">
+                            <h1 class="m-0">Grupo de rubros con pagos pendientes por aprobar (Contraloría)</h1>
+                        </div><!-- /.col -->
+                    </div><!-- /.row -->
+                </div><!-- /.container-fluid -->
+            </div>
+            <!-- /.content-header -->
+            <!-- Main content -->
+            <section class="content">
+                <div class="container-fluid">
+                    <!-- Small boxes (Stat box) -->
+                    <div class="row">
+
+                        @if (ViewBag.lstgruporubrourgentes[0].Codigox == "")
+                        {
+                            foreach (var gruporubrourgentes in ViewBag.lstgruporubrourgentes)
+                            {
+                                <div class="col-lg-3 col-6">
+                                    <!-- small box -->
+                                    <div class="small-box" style="background-color:#DC3545;">
+                                        <div class="inner">
+                                            <h5 style="color:#FFFFFF;">Grupo Rubro: @gruporubrourgentes.Departamentox &nbsp; (Pago Urgente)</h5>
+
+                                            <p style="color:#FFFFFF;">Total Pagos Por Revisar: @gruporubrourgentes.TotalRubrosx</p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="ion ion-bag"></i>
+                                        </div>
+                                        @if (gruporubrourgentes.TotalRubrosx > 0)
+                                        {
+                                            <a href="@Url.Action("ListaRubroContraloria", "Wrkf_SolicitudOrdenPagoContralor", new { grid = gruporubrourgentes.DepartamentoEncript_Idx })"
+                                               class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
+                                        }
+                                        else
+                                        {
+                                            <a href="#" onclick="Mensaje()" class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="col-lg-3 col-6">
+                                <!-- small box -->
+                                <div class="small-box" style="background-color: #DC3545;">
+                                    <div class="inner">
+                                        <h5 style="color:#FFFFFF;">Grupo Rubro: </h5>
+
+                                        <p style="color:#FFFFFF;">Total Pagos Por Revisar: 0</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="ion ion-bag"></i>
+                                    </div>
+                                    <a href="#" onclick="Mensaje()" class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+
+                    <div class="row">
+
+                        @if (ViewBag.listagruporubrospagos[0].Codigox == "")
+                        {
+                            foreach (var gruporubrosconpagos in ViewBag.listagruporubrospagos)
+                            {
+                                <div class="col-lg-3 col-6">
+                                    <!-- small box -->
+                                    <div class="small-box" style="background-color:#82293E;">
+                                        <div class="inner">
+                                            <h5 style="color:#FFFFFF;">Grupo Rubro: @gruporubrosconpagos.Departamentox</h5>
+
+                                            <p style="color:#FFFFFF;">Total Pagos Por Revisar: @gruporubrosconpagos.TotalRubrosx</p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="ion ion-bag"></i>
+                                        </div>
+                                        @if (gruporubrosconpagos.TotalRubrosx > 0)
+                                        {
+                                            <a href="@Url.Action("ListaRubroContraloria", "Wrkf_SolicitudOrdenPagoContralor", new { grid = gruporubrosconpagos.DepartamentoEncript_Idx })"
+                                               class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
+                                        }
+                                        else
+                                        {
+                                            <a href="#" onclick="Mensaje()" class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="col-lg-3 col-6">
+                                <!-- small box -->
+                                <div class="small-box" style="background-color:#82293E;">
+                                    <div class="inner">
+                                        <h5 style="color:#FFFFFF;">Grupo Rubro: </h5>
+
+                                        <p style="color:#FFFFFF;">Total Pagos Por Revisar: 0</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="ion ion-bag"></i>
+                                    </div>
+                                    <a href="#" onclick="Mensaje()" class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+
+                    <div class="row">
+                        @if (ViewBag.lstgruporubronotacreditoscontralor[0].Codigox == "")
+                        {
+                            foreach (var gruporubronotacreditocontraloria in ViewBag.lstgruporubronotacreditoscontralor)
+                            {
+                                <div class="col-lg-3 col-6">
+                                    <div class="small-box" style="background-color: #5DADE2; ">
+                                        <div class="inner">
+                                            <h5 style="color:#FFFFFF;">Notas de Créditos</h5>
+                                            <h5 style="color:#FFFFFF;">Grupo Rubro: @gruporubronotacreditocontraloria.Departamentox</h5>
+
+                                            <p style="color:#FFFFFF;">Total Pagos Por Revisar: @gruporubronotacreditocontraloria.TotalRubrosx</p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="ion ion-bag"></i>
+                                        </div>
+                                        @if (gruporubronotacreditocontraloria.TotalRubrosx > 0)
+                                        {
+                                            <a href="@Url.Action("ListaRubroContraloria", "Wrkf_SolicitudOrdenPagoContralor", new { grid = gruporubronotacreditocontraloria.DepartamentoEncript_Idx })"
+                                               class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
+                                        }
+                                        else
+                                        {
+                                            <a href="#" onclick="Mensaje()" class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="col-lg-3 col-6">
+                                <div class="small-box" style="background-color: #5DADE2; ">
+                                    <div class="inner">
+                                        <h5 style="color:#FFFFFF;">Notas de Créditos</h5>
+                                        <h5 style="color:#FFFFFF;">Grupo Rubro: </h5>
+
+                                        <p style="color:#FFFFFF;">Total Pagos Por Revisar: 0</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="ion ion-bag"></i>
+                                    </div>
+                                    <a href="#" onclick="Mensaje()" class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <!-- /.row -->
+                </div><!-- /.container-fluid -->
+            </section>
+            <!-- /.content -->
+        </div>
+
+        <footer class="main-footer">
+            @*<strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>All rights reserved.*@
+            <div class="float-right d-none d-sm-inline-block">
+                <b>WorkFlow Cuentas Por Pagar Version</b> 1.0
+            </div>
+        </footer>
+
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+    </div>
+    <!-- ./wrapper -->
+    <!-- jQuery -->
+    <script src="~/Adminlte/plugins/jquery/jquery.min.js"></script>
+    <!-- jQuery UI 1.11.4 -->
+    <script src="~/Adminlte/plugins/jquery-ui/jquery-ui.min.js"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+        $.widget.bridge('uibutton', $.ui.button)
+    </script>
+    <!-- Bootstrap 4 -->
+    <script src="~/Adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AdminLTE App -->
+    <script src="~/Adminlte/js/adminlte.js"></script>
+
+    <!-- AdminLTE for demo purposes -->
+    <script src="~/Adminlte/js/demo.js"></script>
+
+    <script src="~/Adminlte/plugins/sweetalert2/sweetalert.min.js"></script>
+
+    <script>
+        function Mensaje() {
+            swal("No existen Pagos para su aprobación", "Solicitud de Aprobación de Pagos", "info");
+        }
+    </script>
+
+</body>
+</html>

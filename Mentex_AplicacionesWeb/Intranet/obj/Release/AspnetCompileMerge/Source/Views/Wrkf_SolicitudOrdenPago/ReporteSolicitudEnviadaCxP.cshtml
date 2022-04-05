@@ -1,0 +1,166 @@
+﻿@{ 
+    var noaplica = "N/A";
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Reporte de Solicitud Enviada a CxP</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
+    <!-- Font Awesome -->
+    <link href="~/Adminlte/plugins/fontawesome-free/css/all.min.css" rel="stylesheet" />
+    <!-- DataTables -->
+    <link href="~/Adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/Adminlte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/Adminlte/plugins/datatables-buttons/css/buttons.bootstrap4.min.css" rel="stylesheet" />
+    <!-- Theme style -->
+    <link href="~/Adminlte/css/adminlte.min.css" rel="stylesheet" />
+    <link href="~/Adminlte/css/mentex.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div class="row">
+        <div class="col-md-2 text-left">
+            <br />
+            &nbsp;<img src="~/Adminlte/img/logo_mentex81x56.png" />
+        </div>
+        <div class="col-md-10 text-left">
+            <br />
+            &nbsp;<h2>Detalle de la Solicitud de Orden de Pago Enviada a CxP Número: @ViewBag.listapagosrubroid[0].Solicitudordenpago_Idx</h2>
+        </div>
+    </div>
+
+    <br />
+
+    <div class="row">
+        <div class="col-md-3">
+            &nbsp;&nbsp;<b>N° Solicitud Orden de Pago: &nbsp; @ViewBag.listapagosrubroid[0].Solicitudordenpago_Idx</b>
+        </div>
+
+        <div class="col-md-3">
+            &nbsp;&nbsp;<b>Código de la Solicitud: &nbsp; @ViewBag.listapagosrubroid[0].CodigoSopx</b>
+        </div>
+
+        <div class="col-md-3">
+            &nbsp;&nbsp;<b>Código Plantilla:</b> &nbsp;
+            @if (ViewBag.listapagosrubroid[0].Codigoplantillax != "")
+            {
+                @ViewBag.listapagosrubroid[0].Codigoplantillax;
+            }
+            else
+            {
+                @noaplica;
+            }
+        </div>
+        <div class="col-md-3">
+            &nbsp;&nbsp;<b>Nombre Plantilla:</b> &nbsp;
+            @if (ViewBag.listapagosrubroid[0].Nombreplantillax != "")
+            {
+                @ViewBag.listapagosrubroid[0].Nombreplantillax;
+            }
+            else
+            {
+                @noaplica;
+            }
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            &nbsp;&nbsp;<b>Fecha de Registro:</b> &nbsp;
+            @ViewBag.listapagosrubroid[0].FechaRegistrox
+        </div>
+        <div class="col-md-3">
+            &nbsp;&nbsp;<b>Usuario de Registro:</b> &nbsp;
+            @ViewBag.listapagosrubroid[0].Usuarioregistrox
+        </div>
+        <div class="col-md-3">
+            &nbsp;&nbsp;<b>Código de la Moneda:</b> &nbsp;
+            @ViewBag.listapagosrubroid[0].Curncyidx
+        </div>
+        <div class="col-md-3">
+            &nbsp;&nbsp;<b>
+                Total a Pagar: &nbsp;
+                @ViewBag.listapagosrubroid[0].TotalGlobalAPagarx
+            </b>
+        </div>
+    </div>
+
+    <br />
+
+    <table id="table-solicitud-orden-pago" class="table table-bordered table-hover" style="width:100%;">
+        <thead>
+            <tr class="cabecera-tabla">
+                <th style="text-align:center; font-weight:bold;">R.I.F</th>
+                <th style="text-align:center; font-weight:bold;">Proveedor</th>
+                <th style="text-align:center; font-weight:bold;">Descripción</th>
+                <th style="text-align:center; font-weight:bold;">N° Documento</th>
+                <th style="text-align:center; font-weight:bold;">Monto Documento</th>
+                <th style="text-align:center; font-weight:bold;">Anticipo</th>
+                <th style="text-align:center; font-weight:bold;">Subtotal</th>
+                <th style="text-align:center; font-weight:bold;">Fecha de Pago</th>
+                <th style="text-align:center; font-weight:bold;">Porcentaje I.V.A</th>
+                <th style="text-align:center; font-weight:bold;">Monto I.V.A</th>
+                <th style="text-align:center; font-weight:bold;">Porcentaje Retención</th>
+                <th style="text-align:center; font-weight:bold;">Monto Retención</th>
+                <th style="text-align:center; font-weight:bold;">Tipo Documento</th>
+                <th style="text-align:center; font-weight:bold;">Fecha Documento</th>
+                <th style="text-align:center; font-weight:bold;">Observaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var listadopagos in ViewBag.listapagosrubroid)
+            {
+                <tr>
+                    <td>@listadopagos.Rifx</td>
+                    <td>@listadopagos.Proveedorx</td>
+                    <td>@listadopagos.Descripcionx</td>
+                    <td>@listadopagos.Numerodocumentox</td>
+                    <td class="text-right">@listadopagos.Totalx</td>
+                    <td class="text-right">@listadopagos.Anticipox</td>
+                    <td class="text-right">@listadopagos.Subtotalx</td>
+                    <td>@listadopagos.FechaPagox</td>
+                    <td class="text-right">@listadopagos.Porcentajeivax</td>
+                    <td class="text-right">@listadopagos.Montoivax</td>
+                    <td class="text-right">@listadopagos.Porcentajeretencionx</td>
+                    <td class="text-right">@listadopagos.Totalretenidox</td>
+                    <td>@listadopagos.Documentox</td>
+                    <td>@listadopagos.FechaDocumentox</td>
+                    <td>@listadopagos.Observacionesx</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- jQuery -->
+    <script src="~/Adminlte/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/Adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables  & Plugins -->
+    <script src="~/Adminlte/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="~/Adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+    <script src="~/Adminlte/plugins/sweetalert2/sweetalert.min.js"></script>
+    <script src="~/Adminlte/plugins/maskMoney/jquery.maskMoney.min.js"></script>
+
+    <!-- AdminLTE App -->
+    <script src="~/Adminlte/js/adminlte.min.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="~/Adminlte/js/demo.js"></script>
+
+    <script>
+
+        //imprimir el documento
+        function Imprimir() {
+            window.print();
+        }
+    </script>
+</body>
+</html>

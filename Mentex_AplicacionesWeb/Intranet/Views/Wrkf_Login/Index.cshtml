@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Workflow Cuenta Por Pagar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="~/Adminlte/plugins/fontawesome-free/css/all.min.css" rel="stylesheet" />
+    <!-- icheck bootstrap -->
+    <link href="~/Adminlte/plugins/icheck-bootstrap/icheck-bootstrap.min.css" rel="stylesheet" />
+    <!-- Theme style -->
+    <link href="~/Adminlte/css/adminlte.min.css" rel="stylesheet" />
+
+</head>
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <!-- /.login-logo -->
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <img src="~/Adminlte/img/LogoWorkflow.png" class="img-circle img-thumbnail" />
+            </div>
+            <div class="card-body">
+                <p class="login-box-msg"><b>Ingresa tus datos para iniciar sesión</b></p>
+
+                <form>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Usuario" id="txtUsuario">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-user"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="password" class="form-control" placeholder="Contraseña" id="txtclave">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- /.col -->
+                        <div class="col-12">
+                            <input type="button" class="btn btn-primary btn-block" id="btnAceptar" value="Aceptar" />
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                </form>
+                <!--
+                    <div class="social-auth-links text-center mt-2 mb-3">
+                        <a href="#" class="btn btn-block btn-primary">
+                            <i class="fab fa-facebook mr-2"></i> Sign in using Facebook
+                        </a>
+                        <a href="#" class="btn btn-block btn-danger">
+                            <i class="fab fa-google-plus mr-2"></i> Sign in using Google+
+                        </a>
+                    </div>
+                -->
+                <!-- /.social-auth-links -->
+
+                <p class="mb-1">
+                    <a href="#">Olvide mi contraseña</a>
+                </p>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+    <!-- /.login-box -->
+    <!-- jQuery -->
+    <script src="~/Adminlte/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/Adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="~/Adminlte/js/adminlte.min.js"></script>
+
+    <!-- Permite mostrar los mensajes emergentes de notificación, advertencia y error -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <script>
+        $("#btnAceptar").click(function () {
+            var vErrorMensaje = "";
+            var vErrorTitle = "Autenticación de Usuario";
+            var vErrorType = "error";
+
+            if ($("#txtUsuario").val() == "") {
+                vErrorMensaje = "El usuario es requerido";
+            }
+
+            if (vErrorMensaje.length == 0) {
+                if ($("#txtclave").val() == "") {
+                    vErrorMensaje = "La Contraseña es requerida";
+                }
+            }
+
+            //si existe algun campo vacio muestra el mensaje, de lo contrario valida el usuario en la base de datos.
+            if (vErrorMensaje.length > 0) {
+                swal({
+                    title: vErrorTitle,
+                    text: vErrorMensaje,
+                    icon: vErrorType,
+                    dangerMode: true
+                });
+            } else {
+
+                var parametros = {
+                    "pUSERID": $("#txtUsuario").val(),
+                    "pClaveAcceso": $("#txtclave").val()
+                };
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("ValidarUsuario", "Wrkf_Login")',
+                    data: parametros,
+                    dataType: "json",
+                    success: function (data) {
+                        var ArrUsuario = [];
+                        ArrUsuario = data.Usuario;
+
+                        //captura los mensajes de error que se generan en la ejecución
+                        //mensaje[0] => código error; mensaje[1] => mensaje de error; mensaje[2] => tipo de error; mensaje[3] => titulo del error
+
+                        //si existe al error lo muestra por pantalla
+                        if ((ArrUsuario.Codigox.length > 0) || (ArrUsuario.Mensajex.length > 0)) {
+                            swal(ArrUsuario.Codigox + " " + ArrUsuario.Mensajex, ArrUsuario.Titulox, ArrUsuario.Tipox);
+                        } else {
+                            location.href = '@Url.Action("Index", "Home")';
+                        }
+                    },
+                    error: function (ex) { }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

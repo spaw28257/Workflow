@@ -1,0 +1,1861 @@
+﻿<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MENTEX C.A.</title>
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
+    <!-- Font Awesome -->
+    <link href="~/Adminlte/plugins/fontawesome-free/css/all.min.css" rel="stylesheet" />
+
+    <!-- Theme style -->
+    <link href="~/Adminlte/css/adminlte.min.css" rel="stylesheet" />
+    <!-- overlayScrollbars -->
+    <link href="~/Adminlte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css" rel="stylesheet" />
+    <!-- summernote -->
+    <link href="~/Adminlte/plugins/summernote/summernote-bs4.min.css" rel="stylesheet" />
+
+    <link href="~/Adminlte/css/mentex.css" rel="stylesheet" />
+
+</head>
+<body class="hold-transition sidebar-mini layout-fixed" onload="LoadPrincipal();">
+
+    <div class="wrapper">
+        <!-- Preloader -->
+        <div class="preloader flex-column justify-content-center align-items-center">
+            <img src="~/Adminlte/img/Iphone-spinner-2.gif" class="animation__shake brand-image img-rounded elevation-3" alt="Mentex C.A." height="40" width="40" />
+        </div>
+
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <!-- Left navbar links -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="@Url.Action("Index", "Home")" class="nav-link"><i class="fas fa-home"></i>&nbsp;Inicio</a>
+                </li>
+                <li><i class="fas fa-money"></i></li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="#" onclick="LoadPrincipal()" class="nav-link"><i class="fas fa-newspaper"></i>&nbsp;Crear Solicitud</a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="#" onclick="AnularSolicitudOrdenPago()" class="nav-link"><i class="fas fa-trash"></i>&nbsp;Anular Solicitud Completa</a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="@Url.Action("CerrarSesion", "Wrkf_Login")" class="nav-link"><i class="fas fa-lock"></i>&nbsp;Cerrar Sesión</a>
+                </li>
+            </ul>
+        </nav>
+        <!-- /.navbar -->
+        <!-- Main Sidebar Container -->
+        <aside class="main-sidebar sidebar-dark-light elevation-4">
+            <!-- Brand Logo -->
+            <a href="#" class="brand-link">
+                <img src="~/Adminlte/img/LogoWorkflow.png" alt="Mentex C.A." class="brand-image img-rounded elevation-3" style="opacity: .8" />
+                <span class="brand-text font-weight-light">MENTEX C.A.</span>
+            </a>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Sidebar user panel (optional) -->
+                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                    <div class="image">
+                        <img src="~/Adminlte/img/user_undefine160x160.png" class="img-circle elevation-2" alt="User Image" />
+                    </div>
+                    <div class="info">
+                        <a href="#" class="d-block">@Session["susuario"]</a>
+                    </div>
+                </div>
+
+                <!-- Sidebar Menu -->
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false" id="ulOpcionesMenu">
+
+                        @foreach (var listadomenu in ViewBag.listaropcionesmenu)
+                        {
+                            <li class="nav - item">
+                                <p>
+                                    <a href="@Url.Action(@listadomenu.Accionx, @listadomenu.Controladorx)"><i class="@listadomenu.Imagenx"></i>&nbsp;@listadomenu.Menux</a>
+                                </p>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+                <!-- /.sidebar-menu -->
+            </div>
+            <!-- /.sidebar -->
+        </aside>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <div class="row">
+                <div class="col-md-12">
+                    &nbsp;
+                </div>
+            </div>
+            <!-- Main content -->
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card card-primary">
+                                <div class="card-header" style="background-color: #82293E;">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h3 class="card-title" id="numordpago">Solicitud de Orden de Pago Manual</h3>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label for="chkCalculaIva">Calcular I.V.A</label>
+                                                    <input type="checkbox" name="chkCalculaIva" id="chkCalculaIva" class="form-check" value="1" checked />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="chkRealizarRetencion">Realizar Retención</label>
+                                                    <input type="checkbox" name="chkRealizarRetencion" id="chkRealizarRetencion" class="form-check" value="1" checked />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.card-header -->
+                                <!-- form start -->
+                                <form enctype="multipart/form-data">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="cboTipoDocumento">Tipo de Documento</label>
+                                                    <select name="cboTipoDocumento" id="cboTipoDocumento" class="form-control" style="background-color: oldlace;">
+                                                        <option value="">--Seleccione Tipo de Documento--</option>
+                                                        @foreach (var listatipodocumento in ViewBag.listatipodocumento)
+                                                        {
+                                                            <option value="@listatipodocumento.Tipodocumento_Id">@listatipodocumento.Documento</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="cbomoneda">Moneda</label>
+                                                    <select name="cbomoneda" id="cbomoneda" class="form-control" style="background-color: oldlace;">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="cboporcentajeretencion">Porcentaje de Retención</label>
+                                                    <select name="cboporcentajeretencion" id="cboporcentajeretencion" class="form-control"
+                                                            style="background-color: oldlace;" onchange="NoAplicaRetencion()">
+                                                        <option value="0">--No Aplica--</option>
+                                                        <option value="75" selected>75 % de Retención</option>
+                                                        <option value="100">100 % de Retención</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="cbogruporubrodesc">
+                                                        <a href="#" data-toggle="modal" data-target="#modal-lg3" style="cursor:pointer; color:blue;" onclick="GetDepartamentos()">
+                                                            <u style="cursor:pointer" title="Despliega una lista con los grupos de rubro">Grupo del Rubro</u>
+                                                        </a>
+                                                    </label>
+                                                    <input type="text" name="cbogruporubrodesc" id="cbogruporubrodesc" value="" class="form-control"
+                                                           readonly onclick="GetDepartamentos()" style="cursor:pointer" data-toggle="modal" data-target="#modal-lg3" />
+                                                    <input type="hidden" name="cbogruporubro" id="cbogruporubro" value="" class="form-control" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <input type="hidden" name="hddSolicitudOrdenPago_Id" id="hddSolicitudOrdenPago_Id" value="-1" />
+                                                    <input type="hidden" name="hddSolicitudOrdenPagoDetalle_Id" id="hddSolicitudOrdenPagoDetalle_Id" value="-1" />
+                                                    <label for="cborubrodesc">
+                                                        <a href="#" data-toggle="modal" data-target="#modal-lg4" style="cursor:pointer; color:blue;" onclick="GetRubros()">
+                                                            <u style="cursor:pointer" title="Despliega una lista con los rubros">Rubro</u>
+                                                        </a>
+                                                    </label>
+                                                    <input type="text" name="cborubrodesc" id="cborubrodesc" value="" class="form-control"
+                                                           readonly onclick="GetRubros()" style="cursor:pointer" data-toggle="modal" data-target="#modal-lg4" />
+                                                    <input type="hidden" name="cborubro" id="cborubro" value="" class="form-control" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="txtfechacreacion">Fecha Documento</label>
+                                                    <input type="date" class="form-control" id="txtfecdocumento" style="background-color: oldlace;" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="txtfechacreacion">Fecha Pago</label>
+                                                    <input type="date" class="form-control" id="txtfecpago" style="background-color: oldlace;" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="txtrif">
+                                                        <a href="#" data-toggle="modal" data-target="#modal-lg" style="cursor:pointer; color:blue;" onclick="GetListadoProveedoresPorClaseId()">
+                                                            <u style="cursor:pointer" title="Despliega una lista con los proveedores">R.I.F</u>
+                                                        </a>
+                                                    </label>
+                                                    <input type="text" class="form-control" id="txtrif" style="background-color: oldlace;" />
+                                                    <input type="hidden" name="hddidproveedor" id="hddidproveedor" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="txtproveedor">
+                                                        <a href="#" data-toggle="modal" data-target="#modal-lg" style="cursor:pointer; color:blue;" onclick="GetListadoProveedoresPorClaseId()">
+                                                            <u style="cursor:pointer" title="Despliega una lista con los proveedores">Proveedor</u>
+                                                        </a>
+                                                    </label>
+                                                    <input type="text" class="form-control" id="txtproveedor" name="txtproveedor" style="background-color: oldlace;" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="txtdescripcion">Descripción</label>
+                                                    <input type="text" class="form-control" id="txtdescripcion" style="background-color: oldlace;" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="txtnumerodocumento"> Número de Documento </label>
+                                                    <input type="text" class="form-control" id="txtnumerodocumento" style="background-color: oldlace;" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="cboformapago">Forma de Pago</label>
+                                                    <select name="cboformapago" id="cboformapago" style="background-color: oldlace;" class="form-control">
+                                                        <option value="0">--Seleccionar--</option>
+                                                        @foreach (var listaformapago in ViewBag.listaformapago)
+                                                        {
+                                                            <option value="@listaformapago.Formapago_Id">@listaformapago.Formadepago</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="txtpreciounitario">Monto del Documento</label>
+                                                    <input type="text" class="form-control" id="txtpreciounitario" style="text-align: right; font-weight: bold;
+                                                        background-color: oldlace;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="txttotaliva">Total I.V.A</label>
+                                                    <input type="text" class="form-control" id="txttotaliva" style="text-align: right; font-weight: bold;" readonly="readonly">
+                                                    <input type="hidden" class="form-control" id="txtporcentajeiva" style="text-align: right; font-weight: bold;" readonly="readonly">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="txttotalretenido">Total Retenido</label>
+                                                    <input type="text" class="form-control" id="txttotalretenido" style="text-align: right; font-weight: bold;" readonly="readonly">
+                                                    <input type="hidden" class="form-control" id="txtporcentajeretencion" style="text-align: right; font-weight: bold;" readonly="readonly">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="txtsubtotal">Sub Total a Pagar</label>
+                                                    <input type="text" class="form-control" id="txtsubtotal" style="text-align: right; font-weight: bold;" readonly="readonly">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="txttotal">Total a Pagar</label>
+                                                    <input type="text" class="form-control" id="txttotal" style="text-align: right; font-weight: bold;" readonly="readonly">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="fileAdjuntarArchivo">Adjuntar Soportes de Pago</label>
+                                                    <input id="fileAdjuntarArchivo" name="fileAdjuntarArchivo" type="file" multiple class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="txtobservaciones">Observaciones</label>
+                                                    <textarea name="txtobservaciones" id="txtobservaciones" class="form-control" rows="1" cols="80" style="background-color: oldlace;"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- /.card-body -->
+
+                                        <div class="card-footer">
+                                            <div class="container-fluid">
+                                                <div class="row">
+                                                    <div class="col-md-2" style="text-align:center">
+                                                        <button type="button" name="btnBuscarOrdenPago" id="btnBuscarOrdenPago"
+                                                                class="btn btn-default" data-toggle="modal" data-target="#modal-lg1" onclick="GetSolicitudOrdenPagoTodas()"
+                                                                style="width: 100%; font-weight: bold; font-family: sans-serif;">
+                                                            <i class="fas fa-search"></i>&nbsp;Buscar
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-2" style="text-align:center">
+                                                        <buttont type="button" name="btndetalleordenpago" id="btndetalleordenpago"
+                                                                 class="btn btn-default" data-toggle="modal" data-target="#modal-lg2"
+                                                                 onclick="GetSolicitudOrdenPagoDetalle('false', '0')"
+                                                                 style="width: 100%; font-weight: bold; font-family: sans-serif;">
+                                                            <i class="fas fa-list"></i>&nbsp;Detalle
+                                                        </buttont>
+                                                    </div>
+                                                    <div class="col-md-2" style="text-align:center">
+                                                        <button type="button" name="btnVerSoportes" id="btnVerSoportes"
+                                                                class="btn btn-default" onclick="Descargarsoporte('@Url.Action("DescargarSoporte", "Wrk_SolicitudOrdenPagoSoporte")')"
+                                                                style="width: 100%; font-weight: bold; font-family: sans-serif;">
+                                                            <i class="fas fa-file-archive"></i>&nbsp;Soportes
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-2" style="text-align:center">
+                                                        <button type="button" name="btncalcular" id="btncalcular"
+                                                                class="btn btn-primary" style="width: 100%; font-weight: bold; font-family:sans-serif;">
+                                                            <i class="fas fa-calculator"></i>&nbsp;Calcular
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-2" style="text-align:center">
+                                                        <button type="button" name="btnagregar" id="btnagregar"
+                                                                class="btn btn-default" style="width: 100%; font-weight: bold; font-family: sans-serif;">
+                                                            <i class="fas fa-save"></i>&nbsp;Guardar
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-2" style="text-align:center">
+                                                        <button type="button" name="btnenviacxp" id="btnenviacxp"
+                                                                class="btn btn-success" style="width: 100%; font-weight: bold; font-family: sans-serif;">
+                                                            <i class="fas fa-envelope"></i>&nbsp;Enviar a CXP
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+
+                        </div>
+                    </div>
+                </div>
+                <!--Lista los proveedores por el rubro seleccionado-->
+                <div class="modal fade" id="modal-lg">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header color-mentex">
+                                <h4 class="modal-title">Listado de Proveedores</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table table-head-fixed text-nowrap table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2">
+                                                <input type="text" name="txtbuscarproveedor" id="txtbuscarproveedor" class="form-control" placeholder="Proveedor" />
+                                            </th>
+                                            <th>
+                                                <input type="button" name="btnvolveramostrar" id="btnvolveramostrar"
+                                                       value="Buscar" class="btn btn-default" onclick="GetListadoProveedorPorNombre()" />
+                                                &nbsp;&nbsp;
+                                                <input type="button" name="btnquitarfiltro" id="btnquitarfiltro"
+                                                       value="Quitar Filtro" class="btn btn-warning" onclick="GetListadoProveedoresPorClaseId()" />
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th>Proveedor ID</th>
+                                            <th>Proveedor</th>
+                                            <th>R.I.F</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="DetalleProveedor"></tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+
+                <div class="modal fade" id="modal-lg1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header color-mentex">
+                                <h4 class="modal-title">Solicitudes de Ordenes de Pagos</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table table-head-fixed text-nowrap table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>N° Orden de Pago</th>
+                                            <th>Fecha de Registro</th>
+                                            <th>Usuario</th>
+                                            <th>Moneda</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="SolicitudOrdenPago"></tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+                <!--Lista el detalle de la solicitud de la orden de pago-->
+                <div class="modal fade" id="modal-lg2">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header color-mentex">
+                                <h4 class="modal-title">Detalle de la Orden de Pago</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table table-head-fixed text-nowrap table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Rif</th>
+                                            <th>Proveedor</th>
+                                            <th>Numerodocumento</th>
+                                            <th>Total a Pagar</th>
+                                            <th>Anular</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="DetalleOrdenPago"></tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+                <!--Lista de los grupos de rubros-->
+                <div class="modal fade" id="modal-lg3">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header color-mentex">
+                                <h4 class="modal-title">Grupo de Rubros</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table table-head-fixed text-nowrap table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <input type="text" name="txtbuscargruporubro" id="txtbuscargruporubro" class="form-control" placeholder="Buscar Grupo Rubro" />
+                                            </th>
+                                            <th style="text-align:center; vertical-align:middle;">
+                                                <input type="button" name="btnvolveramostrar2" id="btnvolveramostrar2"
+                                                       value="Buscar" class="btn btn-default" onclick="GetDepartamentosPorNombre()" />
+                                                &nbsp;&nbsp;
+                                                <input type="button" name="btnquitarfiltro2" id="btnquitarfiltro2"
+                                                       value="Quitar Filtro" class="btn btn-warning" onclick="GetDepartamentos()" />
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="2">Grupo Rubro</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="DetalleGruporubro"></tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+                <!--Lista de los rubros registrados-->
+                <div class="modal fade" id="modal-lg4">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header color-mentex">
+                                <h4 class="modal-title">Rubros</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table table-head-fixed text-nowrap table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th style="vertical-align:middle">
+                                                <input type="text" name="txtbuscarrubrodescrip" id="txtbuscarrubrodescrip" class="form-control" placeholder="Buscar Rubro" />
+                                            </th>
+                                            <th style="text-align:center; vertical-align:middle">
+                                                <input type="button" name="btnvolveramostrar3" id="btnvolveramostrar3"
+                                                       value="Buscar" class="btn btn-default" onclick="GetRubroPorNombreDepartamento()" />
+                                                &nbsp;&nbsp;
+                                                <input type="button" name="btnquitarfiltro3" id="btnquitarfiltro3"
+                                                       value="Quitar Filtro" class="btn btn-warning" onclick="GetRubros()" />
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="2">Rubros</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="DetalleRubro"></tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+                <!--Listar soportes de pagos-->
+                <div class="modal fade" id="modal-lg5">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header color-mentex">
+                                <h4 class="modal-title">Soportes de Pagos</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table table-head-fixed text-nowrap table-bordered" style="width:100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Soportes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="DetalleSoporte"></tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+            </section>
+            <!-- Main content -->
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <footer class="main-footer">
+            @*<strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>All rights reserved.*@
+            <div class="float-right d-none d-sm-inline-block">
+                <b>WorkFlow Cuentas Por Pagar Version</b> 1.0
+            </div>
+        </footer>
+
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+    </div> <!-- ./wrapper -->
+    <!-- jQuery -->
+    <script src="~/Adminlte/plugins/jquery/jquery.min.js"></script>
+    <!-- jQuery UI 1.11.4 -->
+    <script src="~/Adminlte/plugins/jquery-ui/jquery-ui.min.js"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+        $.widget.bridge('uibutton', $.ui.button)
+    </script>
+    <!-- Bootstrap 4 -->
+    <script src="~/Adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Sparkline -->
+    <script src="~/Adminlte/plugins/sparklines/sparkline.js"></script>
+    <!-- jQuery Knob Chart -->
+    <script src="~/Adminlte/plugins/jquery-knob/jquery.knob.min.js"></script>
+    <!-- Summernote -->
+    <script src="~/Adminlte/plugins/summernote/summernote-bs4.min.js"></script>
+    <!-- overlayScrollbars -->
+    <script src="~/Adminlte/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="~/Adminlte/js/adminlte.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="~/Adminlte/js/demo.js"></script>
+    <script src="~/Adminlte/plugins/sweetalert2/sweetalert.min.js"></script>
+    <script src="~/Adminlte/plugins/maskMoney/jquery.maskMoney.min.js"></script>
+    <script>
+        $("#btnagregar").click(function () {
+            AddItemSolicitudPago();
+        });
+
+        $("#btncalcular").click(function () {
+            GetCalcularMontos();
+        });
+
+        $("#btnenviacxp").click(function () {
+            EnviarOrdenPagoCXP();
+        });
+
+        //funcion para ejecutar al momento de la carga del formulario
+        function LoadPrincipal() {
+                //obtiene fecha actual
+             $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetFechaActual", "Wrkf_SolicitudOrdenPago")',
+                content: "application/json; charset=utf-8",
+                dataType: 'json',
+                success: function (data) {
+                    var fecha_actual = [];
+                    fecha_actual = data;
+                    var total_fecha_actual = fecha_actual.length;
+
+                    if (fecha_actual[0].Codigox == "") {
+                        if (total_fecha_actual > 0) {
+                            document.getElementById("txtfecdocumento").value = fecha_actual[0].Fecha_actual;
+                        }
+                    } else {
+                        swal(fecha_actual[0].Codigox + " " + fecha_actual[0].Mensajex, fecha_actual[0].Titulox, fecha_actual[0].Tipox);
+                    }
+                },
+                error: function (ex) {
+                    var r = jQuery.parseJSON(response.responseText);
+                    alert("Message: " + r.Message);
+                    alert("StackTrace: " + r.StackTrace);
+                    alert("ExceptionType: " + r.ExceptionType);
+                }
+             });
+
+            //cargar las monedas de operación
+            GetMoneda(0);
+
+            //inicializar componentes
+            $("#chkCalculaIva").prop("checked", true);
+            $("#chkRealizarRetencion").prop("checked", true);
+            $("#cboTipoDocumento").val("");
+            $("#cbomoneda").val("");
+            $("#cboporcentajeretencion").val("75");
+            $("#cbogruporubro").val("");
+            $("#cborubro").val("");
+            $("#cbogruporubrodesc").val("");
+            $("#cborubrodesc").val("");
+            document.getElementById('txtfecpago').value = "";
+            document.getElementById('txtfecdocumento').value = "";
+            $("#txtrif").val("");
+            $("#txtproveedor").val("");
+            $("#txtdescripcion").val("");
+            $("#txtnumerodocumento").val("");
+            $("#txtpreciounitario").val("0,00");
+            $("#txtporcentajeiva").val("0,00");
+            $("#txttotaliva").val("0,00");
+            $("#txtporcentajeretencion").val("0,00");
+            $("#txttotalretenido").val("0,00");
+            $("#txtsubtotal").val("0,00");
+            $("#txttotal").val("0,00");
+            $("#hddSolicitudOrdenPago_Id").val("-1");
+            $("#hddSolicitudOrdenPagoDetalle_Id").val("-1");
+            $("#numordpago").html("");
+            $("#numordpago").html("Solicitud de Orden de Pago Manual Número");
+            var fileInput = document.getElementById('fileAdjuntarArchivo');
+            fileInput.value = "";
+            $("#cboformapago").val("0");
+            $("#txtobservaciones").val("");
+        }
+
+        //Agregar el Item del formulario al momento de registrar la solicitud de orden de pago
+        function AddItemSolicitudPago() {
+            var codigo = "";
+            var mensaje = "";
+            var titulo = "";
+            var tipo = "";
+            var requerido = false;
+            var cantidad = 100;
+            var anticipo = 0;
+
+
+            var preciounitario = $("#txtpreciounitario").val().replaceAll(".", "");
+            preciounitario = preciounitario.replaceAll(",", "");
+
+            var porcentajeiva = $("#txtporcentajeiva").val().replaceAll(".", "");
+            porcentajeiva = porcentajeiva.replaceAll(",", ".");
+
+            var totaliva = $("#txttotaliva").val().replaceAll(".", "");
+            totaliva = totaliva.replaceAll(",", "");
+
+            var porcentajeretencion = $("#txtporcentajeretencion").val().replaceAll(".", "");
+            porcentajeretencion = porcentajeretencion.replaceAll(",", "");
+
+            var totalretenido = $("#txttotalretenido").val().replaceAll(".", "");
+            var totalretenido = totalretenido.replaceAll(",", "");
+
+            var subtotal = $("#txtsubtotal").val().replace(".", "");
+            subtotal = subtotal.replaceAll(",", "");
+
+            var total = $("#txttotal").val().replaceAll(".", "");
+            total = total.replaceAll(",", "");
+
+
+            //Validar campos requeridos
+            if (requerido == false) {
+                if ($("#cboTipoDocumento").val() == "") {
+                    mensaje = "Seleccione el tipo de documento";
+                    titulo = "Información";
+                    tipo = "error";
+                    requerido = true;
+                }
+            }
+
+            if (requerido == false) {
+                if ($("#txtpreciounitario").val() == "0,00") {
+                    mensaje = "Debe especificar el monto del documento";
+                    titulo = "Información";
+                    tipo = "error";
+                    requerido = true;
+                }
+            }
+
+            if (requerido == false) {
+                if ($("#cbomoneda").val() == "") {
+                    mensaje = "Seleccione la moneda de operación";
+                    titulo = "Información";
+                    tipo = "error";
+                    requerido = true;
+                }
+            }
+
+            if (requerido == false) {
+                if ($("#cbogruporubro").val() == "") {
+                    mensaje = "Seleccione el grupo del rubro";
+                    titulo = "Información";
+                    tipo = "error";
+                    requerido = true;
+                }
+            }
+
+            if (requerido == false) {
+                if ($("#cborubro").val() == "") {
+                    mensaje = "Seleccione el rubro";
+                    titulo = "Información";
+                    tipo = "error";
+                    requerido = true;
+                }
+            }
+
+            if (requerido == false) {
+                if (document.getElementById('txtfecdocumento').value == "") {
+                    mensaje = "La fecha de documento para la solicitud de orden de pago es requerida";
+                    titulo = "Información";
+                    tipo = "error";
+                    requerido = true;
+                }
+            }
+
+            if (requerido == false) {
+
+                if (document.getElementById('txtfecpago').value == "") {
+                    mensaje = "La fecha de pago para la solicitud de orden de pago es requerida";
+                    titulo = "Información";
+                    tipo = "error";
+                    requerido = true;
+                }
+            }
+
+            if (requerido == false) {
+                if ($("#txtproveedor").val() == "") {
+                    mensaje = "El proveedor es requerido";
+                    titulo = "Información";
+                    tipo = "error";
+                    requerido = true;
+                }
+            }
+
+            if (requerido == false) {
+                if ($("#txtdescripcion").val() == "") {
+                    mensaje = "La descripción es requerida";
+                    titulo = "Información";
+                    tipo = "error";
+                    requerido = true;
+                }
+            }
+
+            if (requerido == false) {
+                if (($("#cboTipoDocumento").val() != '3') && ($("#cboTipoDocumento").val() != '4')) {
+                    if ($("#txtnumerodocumento").val() == "") {
+                        mensaje = "El número del documento, factura o nota de credito es requerido";
+                        titulo = "Información";
+                        tipo = "error";
+                        requerido = true;
+                    }
+                }
+            }
+
+            if (requerido == false) {
+                if ($("#cboformapago").val() == "0") {
+                    mensaje = "La forma de pago es requerida";
+                    titulo = "Información";
+                    tipo = "error";
+                    requerido = true;
+                }
+            }
+
+            if (requerido == false) {
+                if ($("#cboTipoDocumento").val() != '4') {
+                    if (parseInt(preciounitario) <= 0) {
+                        mensaje = "El monto a pagar debe ser un valor mayor a cero";
+                        titulo = "Información";
+                        tipo = "error";
+                        requerido = true;
+                    }
+                }
+            }
+
+            if (requerido == false) {
+                if ($('#chkCalculaIva').is(":checked")) {
+                    if ($("#txtporcentajeiva").val() == "") {
+                        mensaje = "El porcentaje del I.V.A es requerido";
+                        titulo = "Información";
+                        tipo = "error";
+                        requerido = true;
+                    }
+                }
+            }
+
+            if (requerido == false) {
+                if (parseInt(total) == 0) {
+                    mensaje = "El Total no puede ser cero";
+                    titulo = "Información";
+                    tipo = "error";
+                    requerido = true;
+                }
+            }
+
+            //si existe al mensaje se muestra por pantalla
+            if (mensaje.length > 0) {
+                swal(mensaje, titulo, tipo);
+            } else {
+
+                //verifica si el checkbox para calcular iva
+                if ($('#chkCalculaIva').is(":checked")) {
+                    var calculariva = true;
+                } else {
+                    var calculariva = false;
+                }
+
+                //verifica si el checkbox para calcular si tiene retensión esta activo
+                if ($('#chkRealizarRetencion').is(":checked")) {
+                    var calcularretension = true;
+                } else {
+                    var calcularretension = false;
+                }
+
+                var parametros = [
+                    $("#cbomoneda").val(), //[0]
+                    $("#cborubro").val(), //[1]
+                    $("#txtfecdocumento").val(), //[2]
+                    $("#txtfecpago").val(), //[3]
+                    $("#hddidproveedor").val(), //[4]
+                    $("#txtproveedor").val(), //[5]
+                    $("#txtdescripcion").val(), //[6]
+                    $("#txtnumerodocumento").val(), //[7]
+                    cantidad, //[8]
+                    preciounitario, //[9]
+                    anticipo, //[10]
+                    subtotal, //[11]
+                    total, //[12]
+                    $("#hddSolicitudOrdenPago_Id").val(), //[13]
+                    $("#hddSolicitudOrdenPagoDetalle_Id").val(), //[14]
+                    $("#cboTipoDocumento").val(), //[15]
+                    calculariva, //[16]
+                    calcularretension, //[17]
+                    porcentajeiva, //[18]
+                    totaliva, //[19]
+                    porcentajeretencion, //[20]
+                    totalretenido, //[21]
+                    $("#cbogruporubro").val(), //[22]
+                    $("#cboformapago").val(), //[23]
+                    $("#txtobservaciones").val() //[24]
+                ];
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'AddItemPago',
+                    dataType: 'json',
+                    data: { "Item": parametros },
+                    success: function (data) {
+
+                        if (data[0].Codigox.length > 0) {
+                            swal(data[0].Codigox + " " + data[0].Mensajex, data[0].Titulox, data[0].Tipox);
+                        } else {
+                            swal("La solicitud de orden de pago se registro con exito", "Información", "info");
+                            $("#hddSolicitudOrdenPago_Id").val(data[0].NumeroRegistroOrdenPagox);
+                            $("#hddSolicitudOrdenPagoDetalle_Id").val("-1");
+                            $("#numordpago").html("");
+                            $("#numordpago").html("Solicitud de Orden de Pago Manual Número: " + data[0].NumeroRegistroOrdenPagox);
+
+                            //si existen soportes de pago los registra
+                            var fileInput = document.getElementById('fileAdjuntarArchivo');
+                            if (fileInput.files.length > 0) {
+                                SubirSoportesPagos(data[0].NumeroRegistroDetallePagox);
+                            }
+
+                            //borrar los campos para ingresar el nuevo pago
+                            $("#chkCalculaIva").prop("checked", true);
+                            $("#chkRealizarRetencion").prop("checked", true);
+                            $("#cboTipoDocumento").val("");
+                            $("#cboporcentajeretencion").val("75");
+                            $("#cbogruporubro").val("");
+                            $("#cbogruporubrodesc").val("");
+                            $("#cborubro").val("");
+                            $("#cborubrodesc").val("");
+                            document.getElementById('txtfecdocumento').value = "";
+                            document.getElementById('txtfecpago').value = "";
+                            $("#txtrif").val("");
+                            $("#hddidproveedor").val("");
+                            $("#txtproveedor").val("");
+                            $("#txtdescripcion").val("");
+                            $("#txtnumerodocumento").val("");
+                            $("#txtpreciounitario").val("0,00");
+                            $("#txtporcentajeiva").val("0,00");
+                            $("#txttotaliva").val("0,00");
+                            $("#txtporcentajeretencion").val("0,00");
+                            $("#txttotalretenido").val("0,00");
+                            $("#txtsubtotal").val("0,00");
+                            $("#txttotal").val("0,00");
+                            fileInput.value = "";
+                            $("#cboformapago").val("0");
+                            $("#txtobservaciones").val("");
+                        }
+                    },
+                    error: function (ex) {
+                        var r = jQuery.parseJSON(response.responseText);
+                        alert("Message: " + r.Message);
+                        alert("StackTrace: " + r.StackTrace);
+                        alert("ExceptionType: " + r.ExceptionType);
+                    }
+                });
+            }
+
+            return;
+        }
+
+        //function para listar todas las solicitudes de las ordenes de pago
+        function GetSolicitudOrdenPagoTodas() {
+            var parametros = {};
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetSolicitudOrdenPagoTodas", "Wrkf_SolicitudOrdenPago")',
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+                    var arrOrdenPago = [];
+                    var total_elemento = 0;
+                    var filastablas = "";
+
+                    arrOrdenPago = data;
+                    total_elemento = arrOrdenPago.length;
+
+                    if (total_elemento > 0) {
+
+                        if (arrOrdenPago[0].Codigox == "") {
+                            for (x = 0; x < total_elemento; x++) {
+                                filastablas += '<tr data-dismiss="modal" style="cursor:pointer;" onclick="GetSolicitudOrdenPagoCabecera(' + arrOrdenPago[x].Solicitudordenpago_Idx + ')">'
+                                    + '<td>' + arrOrdenPago[x].Solicitudordenpago_Idx + '</td>'
+                                    + '<td>' + arrOrdenPago[x].FechaRegx + '</td>'
+                                    + '<td>' + arrOrdenPago[x].Usuarioregistrox + '</td>'
+                                    + '<td>' + arrOrdenPago[x].curncyidx + '</td>'
+                                    + '</tr>';
+                            }
+                            $("#SolicitudOrdenPago").html(filastablas);
+                        } else {
+                            $("#SolicitudOrdenPago").html("");
+                            swal(arrOrdenPago[0].Codigox + ' ' + arrOrdenPago[0].Mensajex, arrOrdenPago[0].Titulox, arrOrdenPago[0].Tipox);
+                        }
+                    }
+                    else {
+                        $("#SolicitudOrdenPago").html("");
+                        swal(arrOrdenPago[0].Codigox + ' ' + arrOrdenPago[0].Mensajex, arrOrdenPago[0].Titulox, arrOrdenPago[0].Tipox);
+                    }
+                },
+                error: function (ex) {
+                    var r = jQuery.parseJSON(response.responseText);
+                    alert("Message: " + r.Message);
+                    alert("StackTrace: " + r.StackTrace);
+                    alert("ExceptionType: " + r.ExceptionType);
+                }
+            });
+            return;
+        }
+
+        //function para listar la cabecera de la solicitud de la orden de pago por campo clave
+        function GetSolicitudOrdenPagoCabecera(solicitud_orden_pago_id = 0) {
+
+            if (solicitud_orden_pago_id == 0) {
+                var parametros = { "solicitud_orden_pago_id": $("#hddSolicitudOrdenPago_Id").val() };
+            } else {
+                var parametros = { "solicitud_orden_pago_id": solicitud_orden_pago_id };
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetSolicitudOrdenPagoPorId", "Wrkf_SolicitudOrdenPago")',
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+                    var arrCabeceraOrdenPago = [];
+                    var total_elemento = 0;
+
+                    arrCabeceraOrdenPago = data;
+                    total_elemento = arrCabeceraOrdenPago.length;
+
+                    if (arrCabeceraOrdenPago[0].Codigox == "") {
+                        if (total_elemento > 0) {
+                            $("#hddSolicitudOrdenPago_Id").val(arrCabeceraOrdenPago[0].Solicitudordenpago_Idx);
+                            $("#numordpago").html("");
+                            $("#numordpago").html("Solicitud de Orden de Pago Manual Número: " + arrCabeceraOrdenPago[0].Solicitudordenpago_Idx);
+
+                            document.getElementById("txtfecdocumento").value = arrCabeceraOrdenPago[0].FechaRegx;
+
+                            //Selecciona la moneda
+                            GetMoneda(arrCabeceraOrdenPago[0].curncyidx);
+
+                            //obtiene la primera fila del detalle de la orden de pago
+                            GetSolicitudOrdenPagoDetalle(true, 0);
+                        }
+                    } else {
+                        swal(arrOrdenPago[0].Codigox + ' ' + arrOrdenPago[0].Mensajex, arrOrdenPago[0].Titulox, arrOrdenPago[0].Tipox);
+                    }
+                },
+                error: function (ex) {
+                    var r = jQuery.parseJSON(response.responseText);
+                    alert("Message: " + r.Message);
+                    alert("StackTrace: " + r.StackTrace);
+                    alert("ExceptionType: " + r.ExceptionType);
+                }
+            });
+            return;
+
+        }
+
+        //funcion para listar el detalle de la orden de solicitud de pago si el valor del parametros primera_fila es true solo obtiene
+        //el primer registro del detalle de la solicitud de orden de pago
+        function GetSolicitudOrdenPagoDetalle(primera_fila, index) {
+            var parametros = { "solicitud_orden_pago_id": $("#hddSolicitudOrdenPago_Id").val() };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetDetalleOrdenPagoPorId", "Wrkf_SolicitudOrdenPago")',
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+                    var arrDetalleOrdenPago = [];
+                    var total_elemento = 0;
+                    var detalles = "";
+                    var param = "";
+
+                    arrDetalleOrdenPago = data;
+                    total_elemento = arrDetalleOrdenPago.length;
+
+                    if (arrDetalleOrdenPago[0].Codigox == "") {
+
+                        if (total_elemento > 0) {
+                            //muestra los datos del primer registro del detalle
+                            if (primera_fila == true) {
+
+                                $("#hddSolicitudOrdenPagoDetalle_Id").val(arrDetalleOrdenPago[index].Solicitudordenpagodetalle_Idx);
+
+                                //calcular iva
+                                if (arrDetalleOrdenPago[index].Calculaivax == true) {
+                                    $("#chkCalculaIva").prop("checked", true);
+                                } else {
+                                    $("#chkCalculaIva").prop("checked", false);
+                                }
+
+                                //calcular retencion
+                                if (arrDetalleOrdenPago[index].Realizaretencionx == true) {
+                                    $("#chkRealizarRetencion").prop("checked", true);
+                                } else {
+                                    $("#chkRealizarRetencion").prop("checked", false);
+                                }
+
+                                //tipo de documento
+                                $("#cboTipoDocumento").val(arrDetalleOrdenPago[index].TipoDocumentox);
+                                $("#cboporcentajeretencion").val(arrDetalleOrdenPago[index].Porcentajeretencionx.replaceAll(",00", ""));
+                                document.getElementById("txtfecpago").value = arrDetalleOrdenPago[index].FechaPagx;
+                                document.getElementById("txtfecdocumento").value = arrDetalleOrdenPago[index].FechaDocux;
+
+                                //Selecciona el departamento o el grupo del rubro
+                                GetDepartamentosPorId(arrDetalleOrdenPago[index].Gruporubro_Idx);
+
+                                //Selecciona el rubro
+                                GetRubroPorId(arrDetalleOrdenPago[index].Rubro_Idx, arrDetalleOrdenPago[index].Gruporubro_Idx);
+
+                                $("#txtrif").val(arrDetalleOrdenPago[index].Rifx);
+                                $("#hddidproveedor").val(arrDetalleOrdenPago[index].IdProveedorx);
+                                $("#txtproveedor").val(arrDetalleOrdenPago[index].Proveedorx);
+                                $("#txtdescripcion").val(arrDetalleOrdenPago[index].Descripcionx);
+                                $("#txtnumerodocumento").val(arrDetalleOrdenPago[index].Numerodocumentox);
+                                $("#txtpreciounitario").val(arrDetalleOrdenPago[index].Preciounitariox);
+                                $("#txtporcentajeiva").val(arrDetalleOrdenPago[index].Porcentajeivax);
+                                $("#txttotaliva").val(arrDetalleOrdenPago[index].Montoivax);
+                                $("#txtporcentajeretencion").val(arrDetalleOrdenPago[index].Porcentajeretencionx);
+                                $("#txttotalretenido").val(arrDetalleOrdenPago[index].Totalretenidox);
+                                $("#txtsubtotal").val(arrDetalleOrdenPago[index].Subtotalx);
+                                $("#txttotal").val(arrDetalleOrdenPago[index].Totalx);
+                                $("#cboformapago").val(arrDetalleOrdenPago[index].Formapago_Idx);
+                                $("#txtobservaciones").val(arrDetalleOrdenPago[index].Observacionesx);
+                            } else {
+                                if (arrDetalleOrdenPago[0].Codigox == "") {
+                                    for (x = 0; x < total_elemento; x++) {
+                                        param = true + "," + x;
+                                        paramanular = "'" + arrDetalleOrdenPago[x].Solicitudordenpagodetalle_Idx + "',";
+                                        paramanular += "'" + arrDetalleOrdenPago[x].Solicitudordenpago_Idx + "',";
+
+                                        detalles += '<tr onclick="GetSolicitudOrdenPagoDetalle(' + param + ')" style="cursor:pointer;" data-dismiss="modal">'
+                                            + '<td>' + arrDetalleOrdenPago[x].Rifx + '</td>'
+                                            + '<td>' + arrDetalleOrdenPago[x].Proveedorx + '</td>'
+                                            + '<td>' + arrDetalleOrdenPago[x].Numerodocumentox + '</td>'
+                                            + '<td style="text-align: right;">' + arrDetalleOrdenPago[x].Totalx + '</td>'
+                                            + '<td style="text-align: center;"><img src="../Adminlte/img/anular_16x16.png" onclick="AnularPagoSolicitud(' + paramanular + ')" /></td>'
+                                            + '</tr>';
+                                    }
+                                    $("#DetalleOrdenPago").html(detalles);
+                                } else {
+                                    swal(arrDetalleOrdenPago[0].Codigox + ' ' + arrDetalleOrdenPago[0].Mensajex, arrDetalleOrdenPago[0].Titulox, arrDetalleOrdenPago[0].Tipox);
+                                }
+                            }
+                        }
+                        else {
+                            swal(arrDetalleOrdenPago[0].Codigox + ' ' + arrDetalleOrdenPago[0].Mensajex, arrDetalleOrdenPago[0].Titulox, arrDetalleOrdenPago[0].Tipox);
+                        }
+                    } else {
+                        swal(arrDetalleOrdenPago[0].Codigox + ' ' + arrDetalleOrdenPago[0].Mensajex, arrDetalleOrdenPago[0].Titulox, arrDetalleOrdenPago[0].Tipox);
+                    }
+                },
+                error: function (ex) {
+                    var r = jQuery.parseJSON(response.responseText);
+                    alert("Message: " + r.Message);
+                    alert("StackTrace: " + r.StackTrace);
+                    alert("ExceptionType: " + r.ExceptionType);
+                }
+            });
+        }
+
+        //Anular un pago especifico de la solicitud
+        function AnularPagoSolicitud(Solicitudordenpagodetalle_Id, Solicitudordenpago_Id) {
+
+            var parametros = { "Solicitudordenpagodetalle_Id": Solicitudordenpagodetalle_Id, "Solicitudordenpago_Id": Solicitudordenpago_Id };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("AnularPagoEspecificoSolicitud", "Wrkf_SolicitudOrdenPago")',
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+
+                    if (data.Codigox.length > 0) {
+                        swal(data.Codigox + " " + data.Mensajex, data.Titulox, data.Tipox);
+                    }
+                },
+                error: function (ex) {
+                    var r = jQuery.parseJSON(response.responseText);
+                    alert("Message: " + r.Message);
+                    alert("StackTrace: " + r.StackTrace);
+                    alert("ExceptionType: " + r.ExceptionType);
+                }
+            });
+        }
+
+        //function GetSeleccionarDetalle(arrDetalleOrdenPago, posicion) {
+        //    alert(arrDetalleOrdenPago[posicion].Proveedorx);
+        //}
+
+        function GetCalcularMontos() {
+            //el precio unitario sean especificados
+            if ($("#txtpreciounitario").val() !== "") {
+
+                //verifica si el checkbox para calcular iva
+                if ($('#chkCalculaIva').is(":checked")) {
+                    var calculariva = true;
+                } else {
+                    var calculariva = false;
+                }
+
+                //verifica si el checkbox para calcular si tiene retensión esta activo
+                if ($('#chkRealizarRetencion').is(":checked")) {
+                    var calcularretension = true;
+                } else {
+                    var calcularretension = false;
+                }
+
+                var preciounitario = $("#txtpreciounitario").val().replaceAll(".", "");
+                preciounitario = preciounitario.replaceAll(",", "");
+
+                var parametros = {
+                    "calculariva": calculariva,
+                    "calcularretencion": calcularretension,
+                    "cantidad": 100,
+                    "preciounitario": preciounitario,
+                    "anticipo": 0,
+                    "porcentajeretencion": $("#cboporcentajeretencion").val()
+                };
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'GetCalcularMontos',
+                    dataType: 'json',
+                    data: parametros,
+                    success: function (data) {
+                        var arrMontos = [];
+                        arrMontos = data;
+
+                        if (arrMontos[0].Codigox != "") {
+                            swal(arrMontos[0].Codigox + " " + arrMontos[0].Mensajex, arrMontos[0].Titulox, arrMontos[0].Tipox);
+                        } else {
+                            $("#txtporcentajeiva").val(arrMontos[0].Porcentajeiva);
+                            $("#txttotaliva").val(arrMontos[0].Montoiva);
+                            $("#txtporcentajeretencion").val(arrMontos[0].Porcentajeretencion);
+                            $("#txttotalretenido").val(arrMontos[0].Montoretencion);
+                            $("#txtsubtotal").val(arrMontos[0].Subtotal);
+                            $("#txttotal").val(arrMontos[0].Total);
+                        }
+                    },
+                    error: function (ex) {
+                        var r = jQuery.parseJSON(response.responseText);
+                        alert("Message: " + r.Message);
+                        alert("StackTrace: " + r.StackTrace);
+                        alert("ExceptionType: " + r.ExceptionType);
+                    }
+                });
+            }
+            else {
+                swal("El monto del documento es requerido", "Error", "error");
+            }
+        }
+
+        //La función muestra un listado de los proveedores por clase ID
+        function GetListadoProveedoresPorClaseId() {
+
+            //borra el campo de busqueda del proveedor
+            $("#txtbuscarproveedor").val("");
+
+                var total_elemento = 0;
+                var parametros = {};
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'GetProveedoresPorClaseId',
+                    dataType: 'json',
+                    data: parametros,
+                    success: function (data) {
+                        var proveedoresporclaseid = [];
+                        proveedoresporclaseid = data;
+                        var detalles = '';
+                        total_elemento = proveedoresporclaseid.length;
+
+                        if (proveedoresporclaseid[0].Codigox == "") {
+                            if (total_elemento > 0) {
+                                for (x = 0; x < total_elemento; x++) {
+                                    var param = "'" + proveedoresporclaseid[x].Vendorid + "', '" + proveedoresporclaseid[x].Txrgnnum + "','" + proveedoresporclaseid[x].Vendname + "'";
+                                    detalles += '<tr data-dismiss="modal" onclick="SeleccionarProveedorRif(' + param + ')" style="cursor:pointer;">'
+                                        + '<td>' + proveedoresporclaseid[x].Vendorid + '</td>'
+                                        + '<td>' + proveedoresporclaseid[x].Vendname + '</td>'
+                                        + '<td>' + proveedoresporclaseid[x].Txrgnnum + '</td>'
+                                        + '</tr>';
+                                }
+                                $("#DetalleProveedor").html("");
+                                $("#DetalleProveedor").html(detalles);
+                            }
+                        }
+                        else {
+                            swal(proveedoresporclaseid[0].Codigox + " " + proveedoresporclaseid[0].Mensajex, proveedoresporclaseid[0].Titulox, proveedoresporclaseid[0].Tipox);
+                        }
+                    },
+                    error: function (ex) {
+                        var r = jQuery.parseJSON(response.responseText);
+                        alert("Message: " + r.Message);
+                        alert("StackTrace: " + r.StackTrace);
+                        alert("ExceptionType: " + r.ExceptionType);
+                    }
+                });
+        }
+
+        //La funcion muestra un listado de los proveedores por nombre
+        function GetListadoProveedorPorNombre() {
+                var total_elemento = 0;
+                var parametros = {
+                    "vendname": $("#txtbuscarproveedor").val()
+                };
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetListadoProveedorPorNombre", "Wrkf_SolicitudOrdenPago")',
+                    content: "application/json; charset=utf-8",
+                    dataType: 'json',
+                    data: parametros,
+                    success: function (data) {
+                        var proveedorespornombre = [];
+                        proveedorespornombre = data;
+                        var detalles = '';
+                        total_elemento = proveedorespornombre.length;
+
+                        if (proveedorespornombre[0].Codigox == "") {
+                            if (total_elemento > 0) {
+                                for (x = 0; x < total_elemento; x++) {
+                                    var param = "'" + proveedorespornombre[x].Vendorid + "','" + proveedorespornombre[x].Txrgnnum + "','" + proveedorespornombre[x].Vendname + "'";
+                                    detalles += '<tr data-dismiss="modal" onclick="SeleccionarProveedorRif(' + param + ')" style="cursor:pointer;">'
+                                        + '<td>' + proveedorespornombre[x].Vendorid + '</td>'
+                                        + '<td>' + proveedorespornombre[x].Vendname + '</td>'
+                                        + '<td>' + proveedorespornombre[x].Txrgnnum + '</td>'
+                                        + '</tr>';
+                                }
+                                $("#DetalleProveedor").html("");
+                                $("#DetalleProveedor").html(detalles);
+                            } else {
+                                swal("No se encontrarón registros para mostrar", "Listado de Proveedores", "error");
+                            }
+                        } else {
+                            swal(proveedorespornombre[0].Codigox + " " + proveedorespornombre[0].Mensajex, proveedorespornombre[0].Titulox, proveedorespornombre[0].Tipox);
+                        }
+                    },
+                    error: function (ex) {
+                        var r = jQuery.parseJSON(response.responseText);
+                        alert("Message: " + r.Message);
+                        alert("StackTrace: " + r.StackTrace);
+                        alert("ExceptionType: " + r.ExceptionType);
+                    }
+                });
+        }
+
+        function SeleccionarProveedorRif(pIdproveedor, rif, proveedor) {
+            $("#hddidproveedor").val(pIdproveedor);
+            $("#txtrif").val(rif);
+            $("#txtproveedor").val(proveedor);
+        }
+
+        //subir los soportes de pago
+        function SubirSoportesPagos(NumeroRegistroDetallePago) {
+            var formData = new FormData();
+            var fileInput = document.getElementById('fileAdjuntarArchivo');
+            for (i = 0; i < fileInput.files.length; i++) {
+                formData.append(fileInput.files[i].name, fileInput.files[i]);
+            }
+
+            formData.append("directorio", $("#txtproveedor").val());
+            formData.append("numero_solicitud", $("#hddSolicitudOrdenPago_Id").val());
+            formData.append("numero_solicitud_det_id", NumeroRegistroDetallePago);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '@Url.Action("UploadSoportesPago", "Wrkf_SolicitudOrdenPago")');
+            xhr.send(formData);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                }
+            }
+        }
+
+        //crear un listado de los soportes de cada solicitud
+        @*function ListarSoportesPago() {
+            var parametros = {
+                "Solicitudordenpago_Id": $("#hddSolicitudOrdenPago_Id").val(),
+                "Solicitudordenpagodetalle_Id": $("#hddSolicitudOrdenPagoDetalle_Id").val()
+            };
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ListarSoportePago", "Wrkf_SolicitudOrdenPago")',
+                content: "application/json; charset=utf-8",
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+                    var soportes = [];
+                    soportes = data;
+                    var detalles = '';
+                    total_elemento = soportes.length;
+
+                    if (total_elemento > 0) {
+                        if (soportes[0].Codigox == "") {
+                            for (x = 0; x < total_elemento; x++) {
+                                var param = "'" + soportes[x].Soporte_idx + "'";
+                                detalles += '<tr data-dismiss="modal" onclick="Descargarsoporte(' + param + ')" style="cursor:pointer;">'
+                                    + '<td>' + soportes[x].NombreArchivox + '</td>'
+                                    + '</tr>';
+                            }
+                            $("#DetalleSoporte").html(detalles);
+                        } else {
+                            $("#DetalleSoporte").html("");
+                            swal(soportes[0].Codigox + ' ' + soportes[0].Mensajex, soportes[0].Titulox, soportes[0].Tipox);
+                        }
+                    } else {
+                        $("#DetalleSoporte").html("");
+                        swal(soportes[0].Codigox + ' ' + soportes[0].Mensajex, soportes[0].Titulox, soportes[0].Tipox);
+                    }
+                },
+                error: function (ex) {
+                    var r = jQuery.parseJSON(response.responseText);
+                    alert("Message: " + r.Message);
+                    alert("StackTrace: " + r.StackTrace);
+                    alert("ExceptionType: " + r.ExceptionType);
+                }
+            });
+        }*@
+
+        @*function Descargarsoporte(numero_id)  {
+            var parametros = { "soporte_id": numero_id };
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("Download", "Wrkf_SolicitudOrdenPago")',
+                data: parametros,
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (data) {
+                },
+                error: function (ex) {
+                    var r = jQuery.parseJSON(response.responseText);
+                    alert("Message: " + r.Message);
+                    alert("StackTrace: " + r.StackTrace);
+                    alert("ExceptionType: " + r.ExceptionType);
+                }
+            });
+        }*@
+
+        //lista los rubros segun el departamento o grupo de rubros
+        function GetRubros() {
+            //borra el campo de busqueda del rubro
+            $("#txtbuscarrubrodescrip").val("");
+
+            if ($("#cbogruporubro").val() == "") {
+                swal("El grupo del rubro es requerido", "Información", "info");
+            } else {
+                var parametros = { "Departamento_Id": $("#cbogruporubro").val() };
+
+                 $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetRubros", "Wrkf_Rubro")',
+                    content: "application/json; charset=utf-8",
+                    dataType: 'json',
+                    data: parametros,
+                    success: function (data) {
+                        var rubros = [];
+                        rubros = data;
+                        var total_rubros = rubros.length;
+                        var detalles = ''
+                        if (total_rubros > 0) {
+                            for (x = 0; x < total_rubros; x++) {
+                                var param = "'" + rubros[x].Rubro_Idx + "','" + rubros[x].Descripcionx + "'";
+                                detalles += '<tr data-dismiss="modal" onclick="SeleccionarRubro(' + param + ')" style="cursor:pointer;">'
+                                    + '<td colspan="2">' + rubros[x].Descripcionx + '</td>'
+                                    + '</tr>';
+                            }
+                            $("#DetalleRubro").html(detalles);
+                        }
+                    },
+                    error: function (ex) {
+                        var r = jQuery.parseJSON(response.responseText);
+                        alert("Message: " + r.Message);
+                        alert("StackTrace: " + r.StackTrace);
+                        alert("ExceptionType: " + r.ExceptionType);
+                    }
+                 });
+            }
+        }
+
+        function SeleccionarRubro(Rubro_Id, Rubro) {
+            $("#cborubrodesc").val(Rubro);
+            $("#cborubro").val(Rubro_Id);
+        }
+
+        //selecciona los datos del rubro por Rubro_Id y Departamento_Id
+        function GetRubroPorId(Rubro_Id, Departamento_Id) {
+            var parametros = { "Rubro_Id": Rubro_Id, "Departamento_Id": Departamento_Id };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetRubroPorId", "Wrkf_Rubro")',
+                content: "application/json; charset=utf-8",
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+                    var rubros = [];
+                    rubros = data;
+                    var total_rubros = rubros.length;
+
+                    if (total_rubros > 0) {
+                        SeleccionarRubro(rubros[0].Rubro_Idx, rubros[0].Descripcionx);
+                    }
+                },
+                error: function (ex) {
+                    var r = jQuery.parseJSON(response.responseText);
+                    alert("Message: " + r.Message);
+                    alert("StackTrace: " + r.StackTrace);
+                    alert("ExceptionType: " + r.ExceptionType);
+                }
+            });
+        }
+
+        //selecciona los datos del rubro por descripcion y Departamento_Id
+        function GetRubroPorNombreDepartamento() {
+
+            if ($("#cbogruporubro").val() == "") {
+                swal("El grupo del rubro es requerido", "Información", "info");
+            } else {
+                var parametros = { "Descripcion": $("#txtbuscarrubrodescrip").val(), "Departamento_Id": $("#cbogruporubro").val() };
+
+                 $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetRubroPorNombreDepartamento", "Wrkf_Rubro")',
+                    content: "application/json; charset=utf-8",
+                    dataType: 'json',
+                    data: parametros,
+                    success: function (data) {
+                        var rubros = [];
+                        rubros = data;
+                        var total_rubros = rubros.length;
+                        var detalles = ''
+                        if (total_rubros > 0) {
+                            for (x = 0; x < total_rubros; x++) {
+                                var param = "'" + rubros[x].Rubro_Idx + "','" + rubros[x].Descripcionx + "'";
+                                detalles += '<tr data-dismiss="modal" onclick="SeleccionarRubro(' + param + ')" style="cursor:pointer;">'
+                                    + '<td colspan="2">' + rubros[x].Descripcionx + '</td>'
+                                    + '</tr>';
+                            }
+                            $("#DetalleRubro").html(detalles);
+                        }
+                    },
+                    error: function (ex) {
+                        var r = jQuery.parseJSON(response.responseText);
+                        alert("Message: " + r.Message);
+                        alert("StackTrace: " + r.StackTrace);
+                        alert("ExceptionType: " + r.ExceptionType);
+                    }
+                 });
+            }
+        }
+
+        //Funcion para listar los departamentos o grupos de rubros
+        function GetDepartamentos() {
+
+            //borrar el campo de busqueda del departamento
+            $("#txtbuscargruporubro").val("");
+
+             $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetDepartamentos", "Wrkf_Departamento")',
+                content: "application/json; charset=utf-8",
+                dataType: 'json',
+                success: function (data) {
+                    var departamentos = [];
+                    departamentos = data;
+                    var total_departamento = departamentos.length;
+                    var detalles = '';
+                    if (total_departamento > 0) {
+                        for (x = 0; x < total_departamento; x++) {
+                            var param = "'" + departamentos[x].Departamento_Idx + "','" + departamentos[x].Departamentox + "'";
+                            detalles += '<tr data-dismiss="modal" onclick="SeleccionarDepartamento(' + param + ')" style="cursor:pointer;">'
+                                + '<td colspan="2">' + departamentos[x].Departamentox + '</td>'
+                                + '</tr>';
+                        }
+                        $("#DetalleGruporubro").html(detalles);
+                    }
+                },
+                error: function (ex) {
+                    var r = jQuery.parseJSON(response.responseText);
+                    alert("Message: " + r.Message);
+                    alert("StackTrace: " + r.StackTrace);
+                    alert("ExceptionType: " + r.ExceptionType);
+                }
+             });
+        }
+
+        //Funcion para listar los departamentos o grupos de rubros por nombre
+        function GetDepartamentosPorNombre() {
+
+            var parametros = { "departamento": $("#txtbuscargruporubro").val() };
+
+             $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetDepartamentosPorNombre", "Wrkf_Departamento")',
+                content: "application/json; charset=utf-8",
+                data: parametros,
+                dataType: 'json',
+                success: function (data) {
+                    var departamentos = [];
+                    departamentos = data;
+                    var total_departamento = departamentos.length;
+                    var detalles = '';
+                    if (total_departamento > 0) {
+                        for (x = 0; x < total_departamento; x++) {
+                            var param = "'" + departamentos[x].Departamento_Idx + "','" + departamentos[x].Departamentox + "'";
+                            detalles += '<tr data-dismiss="modal" onclick="SeleccionarDepartamento(' + param + ')" style="cursor:pointer;">'
+                                + '<td colspan="2">' + departamentos[x].Departamentox + '</td>'
+                                + '</tr>';
+                        }
+                        $("#DetalleGruporubro").html(detalles);
+                    }
+                },
+                error: function (ex) {
+                    var r = jQuery.parseJSON(response.responseText);
+                    alert("Message: " + r.Message);
+                    alert("StackTrace: " + r.StackTrace);
+                    alert("ExceptionType: " + r.ExceptionType);
+                }
+             });
+        }
+
+        //asigna los datos del departamento o grupo de rubro a los campos de la vista
+        function SeleccionarDepartamento(Departamento_Id, Departamento) {
+            $("#cbogruporubro").val(Departamento_Id);
+            $("#cbogruporubrodesc").val(Departamento);
+        }
+
+        //Selecciona los datos del grupo de rubro o departamento
+        function GetDepartamentosPorId(Departamento_Id) {
+            var parametros = { "Departamento_Id": Departamento_Id };
+             $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetDepartamentosPorId", "Wrkf_Departamento")',
+                content: "application/json; charset=utf-8",
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+                    var departamentos = [];
+                    departamentos = data;
+                    var total_departamento = departamentos.length;
+                    if (total_departamento > 0) {
+                        SeleccionarDepartamento(departamentos[0].Departamento_Idx, departamentos[0].Departamentox);
+                    }
+                },
+                error: function (ex) {
+                    var r = jQuery.parseJSON(response.responseText);
+                    alert("Message: " + r.Message);
+                    alert("StackTrace: " + r.StackTrace);
+                    alert("ExceptionType: " + r.ExceptionType);
+                }
+             });
+        }
+
+        //Funcion listar la moneda de operacion
+        function GetMoneda(curncyid) {
+
+            var parametros = {};
+            var total_elemento = 0;
+            var detalles = "";
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetListarMonedas", "Wrkf_Moneda")',
+                content: "application/json; charset=utf-8",
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+                    var monedas = [];
+                    monedas = data;
+                    total_elemento = monedas.length;
+                    detalles = '<option value="">--Seleccionar--</option>';
+                    if (total_elemento > 0) {
+                        for (x = 0; x < total_elemento; x++) {
+                            if (curncyid == monedas[x].Curncyid)
+                                detalles += '<option value="' + monedas[x].Curncyid + '" selected>' + monedas[x].Curncyid + " - " + monedas[x].Crncydsc + '</option>';
+                            else
+                                detalles += '<option value="' + monedas[x].Curncyid + '">' + monedas[x].Curncyid + " - " + monedas[x].Crncydsc + '</option>';
+                        }
+                        $("#cbomoneda").html(detalles);
+                    }
+                },
+                error: function (ex) {
+                    var r = jQuery.parseJSON(response.responseText);
+                    alert("Message: " + r.Message);
+                    alert("StackTrace: " + r.StackTrace);
+                    alert("ExceptionType: " + r.ExceptionType);
+                }
+            });
+        }
+
+        //envia la solicitud de la orden de pago aCXP
+        function EnviarOrdenPagoCXP() {
+            if ($("#hddSolicitudOrdenPago_Id").val() == "-1") {
+                swal("Debe seleccionar una solicitud para realizar el envio a cuentas por pagar", "Información", "info");
+            } else {
+                swal({
+                    title: "Enviar a Cuentas Por Pagar",
+                    text: "Despues que la solicitud de la orden de pago se envia a cuentas por pagar no permitira cambios en los datos ¿Desea Continuar...?",
+                    icon: "warning",
+                    buttons: true,
+                    successMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                            var parametros = { "Solicitudordenpago_Id": $("#hddSolicitudOrdenPago_Id").val() };
+                            $.ajax({
+                                type: 'POST',
+                                url: '@Url.Action("EnviaraCXP", "Wrkf_SolicitudOrdenPago")',
+                                content: "application/json; charset=utf-8",
+                                dataType: 'json',
+                                data: parametros,
+                                success: function (data) {
+
+                                    if (data.Codigox.length > 0) {
+                                        swal(data.Codigox + " " + data.Mensajex, data.Titulox, data.Tipox);
+                                    } else {
+                                        swal("La solicitud de orden de pago fue enviada a Cuentas por Pagar para su revisión", "Información", "info");
+                                        //imprimir el detalle de la solicitud de la orden de pago
+                                        ImprimirSolicitudOrdenPago($("#hddSolicitudOrdenPago_Id").val());
+                                        LoadPrincipal();
+                                    }
+                                },
+                                error: function (ex) {
+                                    var r = jQuery.parseJSON(response.responseText);
+                                    alert("Message: " + r.Message);
+                                    alert("StackTrace: " + r.StackTrace);
+                                    alert("ExceptionType: " + r.ExceptionType);
+                                }
+                            });
+                    }
+                });
+            }
+        }
+
+        //La funcion anula la solicitud de orden de pago seleccionada
+        function AnularSolicitudOrdenPago() {
+            var mensaje = "";
+
+            if ($("#hddSolicitudOrdenPago_Id").val() == "-1") {
+                swal("Debe seleccionar una solicitud para realizar la Anulación", "Información", "info");
+            } else {
+                mensaje = "La anulación sera aplicada a todos los pagos que esten asociados a la solicitud. ";
+                mensaje += "Despues que la solicitud de la orden de pago sea anulada no permitira cambios en los datos ¿Desea Continuar...?";
+
+                swal({
+                    title: "Anular Solicitud Orden de Pago",
+                    text: mensaje,
+                    icon: "warning",
+                    buttons: true,
+                    successMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                            var parametros = { "Solicitudordenpago_Id": $("#hddSolicitudOrdenPago_Id").val() };
+                            $.ajax({
+                                type: 'POST',
+                                url: '@Url.Action("AnularSolicitudOrdenPago", "Wrkf_SolicitudOrdenPago")',
+                                content: "application/json; charset=utf-8",
+                                dataType: 'json',
+                                data: parametros,
+                                success: function (data) {
+                                    if (data.Codigox.length > 0) {
+                                        swal(data.Codigox + " " + data.Mensajex, data.Titulox, data.Tipox);
+                                    } else {
+                                        swal("La solicitud de orden de pago fue anulada", "Información", "info");
+                                        LoadPrincipal();
+                                    }
+                                },
+                                error: function (ex) {
+                                    var r = jQuery.parseJSON(response.responseText);
+                                    alert("Message: " + r.Message);
+                                    alert("StackTrace: " + r.StackTrace);
+                                    alert("ExceptionType: " + r.ExceptionType);
+                                }
+                            });
+                    }
+                });
+            }
+        }
+
+        //tilda o destilda el checkbox de calcular la retención si en la lista desplegable selecciona no aplica
+        function NoAplicaRetencion() {
+            if ($("#cboporcentajeretencion").val() == '0') {
+                if ($('#chkRealizarRetencion').is(":checked")) {
+                    $("#chkRealizarRetencion").prop("checked", false);
+                }
+            } else {
+                $("#chkRealizarRetencion").prop("checked", true);
+            }
+        }
+
+        //Coloca en cero los campos calculados
+        function ColocarCeroCamposCalculados() {
+            $("#txtporcentajeiva").val("0,00");
+            $("#txttotaliva").val("0,00");
+            $("#txtporcentajeretencion").val("0,00");
+            $("#txttotalretenido").val("0,00");
+            $("#txtsubtotal").val("0,00");
+            $("#txttotal").val("0,00");
+        }
+
+        //descargar soporte de la solicitud
+        function Descargarsoporte(url) {
+            var urldescarga = url + '?Solicitudordenpago_Id=' + $("#hddSolicitudOrdenPago_Id").val() + '&Solicitudordenpagodetalle_Id=' + $("#hddSolicitudOrdenPagoDetalle_Id").val();
+            window.open(urldescarga, "_blank", "directories=no,location=no,menubar=no,status=no,titlebar=no,toolbar=no,scrollbars=yes,resizable=no,top=500,left=500,width=500,height=500");
+        }
+
+        //imprime un reporte de la solicitud enviada a CxP
+        function ImprimirSolicitudOrdenPago(solicitudordenpago_id) {
+
+            var screenWidth = screen.width;
+            var screenHeight = screen.height;
+
+            var url = '@Url.Action("ReporteSolicitudEnviadaCxP", "Wrkf_SolicitudOrdenPago")';
+            url += '?Solicitudordenpago_Id=' + solicitudordenpago_id;
+
+            window.open(url, '_blank', 'toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=' + screenWidth + ',height=' + screenHeight);
+        }
+
+        var inputPreciounitario = document.getElementById("txtpreciounitario");
+        // Execute a function when the user releases a key on the keyboard
+        inputPreciounitario.addEventListener("keyup", function (event) {
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                // Trigger the button element with a click
+                GetCalcularMontos();
+            }
+        });
+
+        $("#txtpreciounitario").maskMoney({ thousands: '.', decimal: ',', allowZero: true });
+
+    </script>
+</body>
+</html>

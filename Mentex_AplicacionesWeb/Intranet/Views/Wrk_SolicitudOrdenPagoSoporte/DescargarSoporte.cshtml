@@ -1,0 +1,75 @@
+﻿<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Listado de Soportes del Pago</title>
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
+    <!-- Font Awesome -->
+    <link href="~/Adminlte/plugins/fontawesome-free/css/all.min.css" rel="stylesheet" />
+    <!-- DataTables -->
+    <link href="~/Adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/Adminlte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/Adminlte/plugins/datatables-buttons/css/buttons.bootstrap4.min.css" rel="stylesheet" />
+    <!-- Theme style -->
+    <link href="~/Adminlte/css/adminlte.min.css" rel="stylesheet" />
+    <link href="~/Adminlte/css/mentex.css" rel="stylesheet" />
+
+    <!---mensajes sweetalert-->
+    <script src="~/Adminlte/plugins/sweetalert2/sweetalert.min.js"></script>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+
+    <div class="wrapper">
+        <!-- Preloader -->
+        <div class="preloader flex-column justify-content-center align-items-center">
+            <img src="~/Adminlte/img/Iphone-spinner-2.gif" class="animation__shake brand-image img-rounded elevation-3" alt="Mentex C.A." height="40" width="40" />
+        </div>
+
+        <div class="card-body">
+            <ul class="todo-list" data-widget="todo-list">
+                @foreach (var listadosoporte in ViewBag.listadosoporte)
+                {
+                    <li>
+                        <!-- drag handle -->
+                        <span class="handle">
+                            <i class="fas fa-ellipsis-v"></i>
+                            <i class="fas fa-ellipsis-v"></i>
+                        </span>
+                        <!-- todo text -->
+                        <span class="text">
+                            <a href="@Url.Action("RevisarSoporte", "Wrk_SolicitudOrdenPagoSoporte", new { ruta = listadosoporte.RutaDirectoriox, archivo = listadosoporte.NombreArchivox })">
+                                @listadosoporte.NombreArchivox
+                            </a>
+                        </span>
+                        <!-- General tools such as edit or delete-->
+                        <div class="tools">
+                            <a href="@Url.Action("RevisarSoporte", "Wrk_SolicitudOrdenPagoSoporte", new { ruta = listadosoporte.RutaDirectoriox, archivo = listadosoporte.NombreArchivox })">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="~/Adminlte/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/Adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables  & Plugins -->
+    <script src="~/Adminlte/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="~/Adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+
+    <!-- AdminLTE App -->
+    <script src="~/Adminlte/js/adminlte.min.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="~/Adminlte/js/demo.js"></script>
+</body>
+</html>

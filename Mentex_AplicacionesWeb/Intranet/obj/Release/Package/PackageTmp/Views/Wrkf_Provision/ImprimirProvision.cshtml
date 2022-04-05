@@ -1,0 +1,197 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Reporte de Provision</title>
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
+    <!-- Font Awesome -->
+    <link href="~/Adminlte/plugins/fontawesome-free/css/all.min.css" rel="stylesheet" />
+    <!-- DataTables -->
+    <link href="~/Adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/Adminlte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/Adminlte/plugins/datatables-buttons/css/buttons.bootstrap4.min.css" rel="stylesheet" />
+    <!-- Theme style -->
+    <link href="~/Adminlte/css/adminlte.min.css" rel="stylesheet" />
+    <link href="~/Adminlte/css/mentex.css" rel="stylesheet" />
+</head>
+<body onload="ListarProvisiones()">
+    <input type="hidden" name="txtcodigomoneda" id="txtcodigomoneda" value="@ViewBag.codigomoneda" />
+    <input type="hidden" name="txtfechadesde" id="txtfechadesde" value="@ViewBag.fechadesde" />
+    <input type="hidden" name="txtfechahasta" id="txtfechahasta" value="@ViewBag.fechahasta" />
+    <input type="hidden" name="txtchequeraidfiltro" id="txtchequeraidfiltro" value="@ViewBag.listadochequera" />
+
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Listado de Provisiones de Pago Desde: @ViewBag.fechadesde Hasta: @ViewBag.fechahasta </h2>
+        </div>
+    </div>
+
+    <table id="table-provisiones" class="table table-bordered table-hover" style="width:100%;">
+        <thead>
+            <tr class="cabecera-tabla">
+                <th style="text-align:center; font-weight:bold;">Grupo Rubro</th>
+                <th style="text-align:center; font-weight:bold;">Rubro</th>
+                <th style="text-align:center; font-weight:bold;">Código Plantilla</th>
+                <th style="text-align:center; font-weight:bold;">Nombre Plantilla</th>
+                <th style="text-align:center; font-weight:bold;">Nombre Proveedor</th>
+                <th style="text-align:center; font-weight:bold;">Tienda</th>
+                <th style="text-align:center; font-weight:bold;">Moneda</th>
+                <th style="text-align:center; font-weight:bold;">Id Chequera</th>
+                <th style="text-align:center; font-weight:bold;">Forma de Pago</th>
+                <th style="text-align:center; font-weight:bold;">Monto</th>
+                <th style="text-align:center; font-weight:bold;">Fecha Creación</th>
+                <th style="text-align:center; font-weight:bold;">Fecha Pago</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr style="background-color:beige;">
+                <th colspan="9" style="text-align: left; font-weight:bold; font-size:12px; font-family:'Arial';">Total Global:</th>
+                <th><div id="divmontototal" style="text-align: right; font-weight:bold; font-size:12px; font-family:'Arial';"></div></th>
+                <th colspan="2">&nbsp;</th>
+            </tr>
+        </tfoot>
+    </table>
+    <!-- jQuery -->
+    <script src="~/Adminlte/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/Adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables  & Plugins -->
+    <script src="~/Adminlte/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="~/Adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+    <script src="~/Adminlte/plugins/sweetalert2/sweetalert.min.js"></script>
+    <script src="~/Adminlte/plugins/maskMoney/jquery.maskMoney.min.js"></script>
+
+    <!-- AdminLTE App -->
+    <script src="~/Adminlte/js/adminlte.min.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="~/Adminlte/js/demo.js"></script>
+
+    <script>
+        //listar las provisiones
+        function ListarProvisiones() {
+
+            var parametros = {
+                "codigo_moneda": $("#txtcodigomoneda").val(),
+                "fecha_desde": $("#txtfechadesde").val(),
+                "fecha_hasta": $("#txtfechahasta").val(),
+                "listadoChequera": $("#txtchequeraidfiltro").val()
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ListarProvision", "Wrkf_Provision")',
+                content: "application/json; charset=utf-8",
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+
+                    if (data.provision[0].Codigox.length > 0) {
+                        swal(data.provision[0].Codigox + " " + data.provision[0].Mensajex, data.provision[0].Titulox, data.provision[0].Tipox);
+                    } else {
+
+                        var total = 0;
+
+                        //sumar total de los montos
+                        if (data.provision.length > 0) {
+                            for (x = 0; x < data.provision.length; x++) {
+                                total += parseFloat(data.provision[x].Montox);
+                            }
+
+                            //especifica el monto total
+                            $("#divmontototal").html(new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(total));
+                        }
+
+                        $("#table-provisiones").DataTable({
+                            "destroy": true,
+                            "paging": false,
+                            "lengthChange": false,
+                            "searching": false,
+                            "ordering": false,
+                            "info": false,
+                            "autoWidth": false,
+                            "responsive": false,
+                            data: data.provision,
+                            columns: [
+                                {
+                                    "data": "Departamentox", "render": function (data) {
+                                        return '<div style="font-size:11px; font-family:Arial;">' + data + '</div>';
+                                    }
+                                },
+                                {
+                                    "data": "Rubrox", "render": function (data) {
+                                        return '<div style="font-size:11px; font-family:Arial;">' + data + '</div>';
+                                    }
+                                },
+                                {
+                                    "data": "CodigoPlantillax", "render": function (data) {
+                                        return '<div style="font-size:11px; font-family:Arial;">' + data + '</div>';
+                                    }
+                                },
+                                {
+                                    "data": "Plantillax", "render": function (data) {
+                                        return '<div style="font-size:11px; font-family:Arial;">' + data + '</div>';
+                                    }
+                                },
+                                {
+                                    "data": "Proveedorx", "render": function (data) {
+                                        return '<div style="font-size:11px; font-family:Arial;">' + data + '</div>';
+                                    }
+                                },
+                                {
+                                    "data": "Tiendax", "render": function (data) {
+                                        return '<div style="font-size:11px; font-family:Arial;">' + data + '</div>';
+                                    }
+                                },
+                                {
+                                    "data": "CodigoMonedax", "render": function (data) {
+                                        return '<div style="font-size:11px; font-family:Arial; text-align:center;">' + data + '</div>';
+                                    }
+                                },
+                                {
+                                    "data": "IdChequerax", "render": function (data) {
+                                        return '<div style="font-size:11px; font-family:Arial; text-align:center;">' + data + '</div>';
+                                    }
+                                },
+                                {
+                                    "data": "Formapagox", "render": function (data) {
+                                        return '<div style="font-size:11px; font-family:Arial;">' + data + '</div>';
+                                    }
+                                },
+                                {
+                                    "data": "Montox", "render": function (data) {
+                                        return '<div style="text-align: right; font-weight:bold; font-size:11px; font-family:Arial;">' +
+                                            new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data) + '</div>';
+                                    }
+                                },
+                                {
+                                    "data": "FechaCreacionx", "render": function (data) {
+                                        return '<div style="font-size:11px; font-family:Arial; text-align:center;">' + data + '</div>';
+                                    }
+                                },
+                                {
+                                    "data": "FechaPagox", "render": function (data) {
+                                        return '<div style="font-size:11px; font-family:Arial; text-align:center;">' + data + '</div>';
+                                    }
+                                }
+                            ]
+                        });
+                    }
+                },
+                error: function (ex) {
+                    var r = jQuery.parseJSON(response.responseText);
+                    alert("Message: " + r.Message);
+                    alert("StackTrace: " + r.StackTrace);
+                    alert("ExceptionType: " + r.ExceptionType);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
