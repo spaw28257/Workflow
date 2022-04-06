@@ -14,6 +14,7 @@
     <link href="~/Adminlte/plugins/icheck-bootstrap/icheck-bootstrap.min.css" rel="stylesheet" />
     <!-- Theme style -->
     <link href="~/Adminlte/css/adminlte.min.css" rel="stylesheet" />
+
 </head>
 <body class="hold-transition login-page">
     <div class="login-box">
@@ -83,36 +84,34 @@
 
     <script>
         $("#btnAceptar").click(function () {
-            var codigo = "";
-            var mensaje = "";
-            var titulo = "";
-            var tipo = "";
-            var requerido = false;
+            var vErrorMensaje = "";
+            var vErrorTitle = "Autenticación de Usuario";
+            var vErrorType = "error";
 
             if ($("#txtUsuario").val() == "") {
-                mensaje = "Debe especificar el usuario";
-                titulo = "Información";
-                tipo = "info";
-                requerido = true;
-                $("#txtUsuario").focus();
+                vErrorMensaje = "El usuario es requerido";
             }
 
-            if (requerido == false) {
+            if (vErrorMensaje.length == 0) {
                 if ($("#txtclave").val() == "") {
-                    mensaje = "Debe especificar la clave";
-                    titulo = "Información";
-                    tipo = "info";
-                    requerido = true;
-                    $("#txtclave").focus();
+                    vErrorMensaje = "La Contraseña es requerida";
                 }
             }
 
             //si existe algun campo vacio muestra el mensaje, de lo contrario valida el usuario en la base de datos.
-            if (mensaje.length > 0) {
-                swal(mensaje, titulo, tipo);
+            if (vErrorMensaje.length > 0) {
+                swal({
+                    title: vErrorTitle,
+                    text: vErrorMensaje,
+                    icon: vErrorType,
+                    dangerMode: true
+                });
             } else {
 
-                var parametros = { "usuario": $("#txtUsuario").val(), "clave": $("#txtclave").val() };
+                var parametros = {
+                    "pUSERID": $("#txtUsuario").val(),
+                    "pClaveAcceso": $("#txtclave").val()
+                };
 
                 $.ajax({
                     type: 'POST',
@@ -120,15 +119,15 @@
                     data: parametros,
                     dataType: "json",
                     success: function (data) {
-                        var usuario = [];
-                        usuario = data;
+                        var ArrUsuario = [];
+                        ArrUsuario = data.Usuario;
 
                         //captura los mensajes de error que se generan en la ejecución
                         //mensaje[0] => código error; mensaje[1] => mensaje de error; mensaje[2] => tipo de error; mensaje[3] => titulo del error
 
                         //si existe al error lo muestra por pantalla
-                        if ((usuario[0].Codigox.length > 0) || (usuario[0].Mensajex.length > 0)) {
-                            swal(usuario[0].Codigox + " " + usuario[0].Mensajex, usuario[0].Titulox, usuario[0].Tipox);
+                        if ((ArrUsuario.Codigox.length > 0) || (ArrUsuario.Mensajex.length > 0)) {
+                            swal(ArrUsuario.Codigox + " " + ArrUsuario.Mensajex, ArrUsuario.Titulox, ArrUsuario.Tipox);
                         } else {
                             location.href = '@Url.Action("Index", "Home")';
                         }

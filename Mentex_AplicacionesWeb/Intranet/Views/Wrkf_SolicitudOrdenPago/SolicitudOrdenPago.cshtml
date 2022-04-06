@@ -130,58 +130,28 @@
                                 <!-- form start -->
                                 <form enctype="multipart/form-data">
                                     <div class="card-body">
+
+                                        <!--Datos del Plantilla---------------------------------------------------------------------------------------->
                                         <div class="row">
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="txtCodigoPlantilla">
-                                                        <a href="#" data-toggle="modal" 
+                                                        <a href="#" data-toggle="modal"
                                                            data-target="#modal-plantillas" style="cursor:pointer; color:blue;" onclick="ListarPlantillasPagoNofrecuente()">
                                                             Código Plantilla &nbsp; <i class="fas fa-search"></i>
                                                         </a>
                                                     </label>
-                                                    <input type="text" id="txtCodigoPlantilla" name="txtCodigoPlantilla" 
+                                                    <input type="text" id="txtCodigoPlantilla" name="txtCodigoPlantilla"
                                                            class="form-control" style="background-color: oldlace;" />
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="txtNombrePlantilla">Nombre Plantilla</label>
-                                                    <input type="text" id="txtNombrePlantilla" name="txtNombrePlantilla" class="form-control" 
+                                                    <input type="text" id="txtNombrePlantilla" name="txtNombrePlantilla" class="form-control"
                                                            style="background-color: oldlace;" readonly />
                                                 </div>
                                             </div>
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label for="cboTipoDocumento">Tipo de Documento</label>
-                                                    <select name="cboTipoDocumento" id="cboTipoDocumento" class="form-control" style="background-color: oldlace;">
-                                                        <option value="">--Seleccione Tipo de Documento--</option>
-                                                        @foreach (var listatipodocumento in ViewBag.listatipodocumento)
-                                                        {
-                                                            <option value="@listatipodocumento.Tipodocumento_Id">@listatipodocumento.Documento</option>
-                                                        }
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <label for="cbomoneda">Moneda</label>
-                                                    <select name="cbomoneda" id="cbomoneda" class="form-control" style="background-color: oldlace;">
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <label for="cboporcentajeretencion">Porcentaje de Retención</label>
-                                                    <select name="cboporcentajeretencion" id="cboporcentajeretencion" class="form-control"
-                                                            style="background-color: oldlace;" onchange="NoAplicaRetencion()">
-                                                        <option value="0">--No Aplica--</option>
-                                                        <option value="75" selected>75 % de Retención</option>
-                                                        <option value="100">100 % de Retención</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="cbogruporubrodesc">
@@ -208,20 +178,22 @@
                                                     <input type="hidden" name="cborubro" id="cborubro" value="" class="form-control" />
                                                 </div>
                                             </div>
+
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label for="txtfechacreacion">Fecha Documento</label>
-                                                    <input type="date" class="form-control" id="txtfecdocumento" style="background-color: oldlace;" />
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label for="txtfechacreacion">Fecha Pago</label>
-                                                    <input type="date" class="form-control" id="txtfecpago" style="background-color: oldlace;" />
+                                                    <label for="cboTipoDocumento">Tipo de Documento</label>
+                                                    <select name="cboTipoDocumento" id="cboTipoDocumento" class="form-control" style="background-color: oldlace;">
+                                                        <option value="">--Seleccione Tipo de Documento--</option>
+                                                        @foreach (var listatipodocumento in ViewBag.listatipodocumento)
+                                                        {
+                                                            <option value="@listatipodocumento.Tipodocumento_Id">@listatipodocumento.Documento</option>
+                                                        }
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <!------------------------------------------------------------------------------------------------------------->
+                                        <!--Datos del Proveedor---------------------------------------------------------------------------------------->
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <div class="form-group">
@@ -246,20 +218,62 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="form-group">
+                                                    <label for="cboporcentajeiva">Porcentaje Iva</label>
+                                                    <select name="cboporcentajeiva" id="cboporcentajeiva" class="form-control"
+                                                            style="background-color: oldlace;">
+                                                        <option value="0">--No Aplica--</option>
+                                                        <option value="16" selected>16 % de IVA</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="cboporcentajeretencion">Porcentaje Retención</label>
+                                                    <select name="cboporcentajeretencion" id="cboporcentajeretencion" class="form-control"
+                                                            style="background-color: oldlace;" onchange="NoAplicaRetencion()">
+                                                        <option value="0">--No Aplica--</option>
+                                                        <option value="75" selected>75 % de Retención</option>
+                                                        <option value="100">100 % de Retención</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!------------------------------------------------------------------------------------------------------------->
+                                        <!--Datos del documento---------------------------------------------------------------------------------------->
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
                                                     <label for="txtdescripcion">Descripción</label>
                                                     <input type="text" class="form-control" id="txtdescripcion" style="background-color: oldlace;" />
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label for="txtnumerodocumento"> Número de Documento </label>
+                                                    <label for="txtnumerodocumento"> Número Documento </label>
                                                     <input type="text" class="form-control" id="txtnumerodocumento" style="background-color: oldlace;" />
                                                 </div>
                                             </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="txtnumcontrol"> Número Control </label>
+                                                    <input type="text" class="form-control" id="txtnumcontrol" style="background-color: oldlace;" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="txtfechacreacion">Fecha Documento</label>
+                                                    <input type="date" class="form-control" id="txtfecdocumento" style="background-color: oldlace;" />
+                                                </div>
+                                            </div>
                                         </div>
-
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="txtfechacreacion">Fecha Pago</label>
+                                                    <input type="date" class="form-control" id="txtfecpago" style="background-color: oldlace;" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="cboformapago">Forma de Pago</label>
                                                     <select name="cboformapago" id="cboformapago" style="background-color: oldlace;" class="form-control">
@@ -271,14 +285,23 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="txtpreciounitario">Monto del Documento</label>
                                                     <input type="text" class="form-control" id="txtpreciounitario" style="text-align: right; font-weight: bold;
                                                         background-color: oldlace;" />
                                                 </div>
                                             </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="cbomoneda">Moneda</label>
+                                                    <select name="cbomoneda" id="cbomoneda" class="form-control" style="background-color: oldlace;">
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
+                                        <!------------------------------------------------------------------------------------------------------------->
+
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">

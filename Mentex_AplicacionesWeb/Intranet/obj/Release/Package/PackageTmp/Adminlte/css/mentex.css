@@ -11,11 +11,21 @@
     font-weight: bold;
 }
 
+.alinear-derecha2 {
+    text-align: right;
+}
+
 .alinear-izquierda {
     text-align: left;
     font-family: Arial;
     font-size: 15px;
     font-weight: bold;
+}
+
+.alinear-izquierda2 {
+    text-align: left;
+    font-family: Arial;
+    font-size: 12px;
 }
 
 .justificar-parrafo {
@@ -65,9 +75,16 @@
     font-size: 13px;
 }
 
+.campo-text {
+    background-color: oldlace;
+    font-family: Arial;
+    font-size: 12px;
+}
+
 .campo-seleccion {
     font-family: Arial;
     font-size: 12px;
+    background-color: oldlace;
 }
 
 .boton-selecciona-chequera {
@@ -82,4 +99,8 @@
     font-size: 12px;
     font-weight: bold;
     color: #FFFFFF;
+}
+
+.color-link {
+    color:black;
 }

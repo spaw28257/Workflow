@@ -9,6 +9,11 @@
     <!-- Font Awesome -->
     <link href="~/Adminlte/plugins/fontawesome-free/css/all.min.css" rel="stylesheet" />
 
+    <!-- DataTables -->
+    <link href="~/Adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/Adminlte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/Adminlte/plugins/datatables-buttons/css/buttons.bootstrap4.min.css" rel="stylesheet" />
+
     <!-- Theme style -->
     <link href="~/Adminlte/css/adminlte.min.css" rel="stylesheet" />
     <!-- overlayScrollbars -->
@@ -66,7 +71,7 @@
                         <img src="~/Adminlte/img/user_undefine160x160.png" class="img-circle elevation-2" alt="User Image" />
                     </div>
                     <div class="info">
-                        <a href="#" class="d-block">@Session["susuario"]</a>
+                        <a href="#" class="d-block">@Session["sUsuario_Id"]</a>
                     </div>
                 </div>
 
@@ -126,7 +131,26 @@
                                 <form enctype="multipart/form-data">
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="txtCodigoPlantilla">
+                                                        <a href="#" data-toggle="modal" 
+                                                           data-target="#modal-plantillas" style="cursor:pointer; color:blue;" onclick="ListarPlantillasPagoNofrecuente()">
+                                                            Código Plantilla &nbsp; <i class="fas fa-search"></i>
+                                                        </a>
+                                                    </label>
+                                                    <input type="text" id="txtCodigoPlantilla" name="txtCodigoPlantilla" 
+                                                           class="form-control" style="background-color: oldlace;" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="txtNombrePlantilla">Nombre Plantilla</label>
+                                                    <input type="text" id="txtNombrePlantilla" name="txtNombrePlantilla" class="form-control" 
+                                                           style="background-color: oldlace;" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="cboTipoDocumento">Tipo de Documento</label>
                                                     <select name="cboTipoDocumento" id="cboTipoDocumento" class="form-control" style="background-color: oldlace;">
@@ -138,14 +162,14 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="cbomoneda">Moneda</label>
                                                     <select name="cbomoneda" id="cbomoneda" class="form-control" style="background-color: oldlace;">
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="cboporcentajeretencion">Porcentaje de Retención</label>
                                                     <select name="cboporcentajeretencion" id="cboporcentajeretencion" class="form-control"
@@ -408,6 +432,46 @@
                     <!-- /.modal-dialog -->
                 </div>
                 <!-- /.modal -->
+                <!--Listado de plantillas-->
+                <div class="modal fade" id="modal-plantillas">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header color-mentex">
+                                <h4 class="modal-title">Listado de Plantillas</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <table id="table-plantillas" class="table table-bordered table-hover" style="width:100%;">
+                                    <thead>
+                                        <tr class="cabecera-tabla">
+                                            <th style="text-align:center; font-weight:bold;">Código</th>
+                                            <th style="text-align:center; font-weight:bold;">Nombre</th>
+                                            <th style="text-align:center; font-weight:bold;">Código SubGrupo</th>
+                                            <th style="text-align:center; font-weight:bold;">Frecuencia</th>
+                                            <th style="text-align:center; font-weight:bold;">Sensibilidad</th>
+                                            <th style="text-align:center; font-weight:bold;">Estatus</th>
+                                            <th style="text-align:center; font-weight:bold;">Id Clase Proveedor</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr style="background-color:beige;">
+                                            <th colspan="7" style="text-align: left; font-weight:bold; font-size:12px; font-family:'Arial';">&nbsp;</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+                <!------------------------->
 
                 <div class="modal fade" id="modal-lg1">
                     <div class="modal-dialog modal-lg">
@@ -625,6 +689,15 @@
     <script src="~/Adminlte/js/adminlte.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="~/Adminlte/js/demo.js"></script>
+
+    <!-- DataTables  & Plugins -->
+    <script src="~/Adminlte/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="~/Adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/Adminlte/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+
     <script src="~/Adminlte/plugins/sweetalert2/sweetalert.min.js"></script>
     <script src="~/Adminlte/plugins/maskMoney/jquery.maskMoney.min.js"></script>
     <script>
@@ -1397,69 +1470,143 @@
             }
         }
 
-        //crear un listado de los soportes de cada solicitud
-        @*function ListarSoportesPago() {
-            var parametros = {
-                "Solicitudordenpago_Id": $("#hddSolicitudOrdenPago_Id").val(),
-                "Solicitudordenpagodetalle_Id": $("#hddSolicitudOrdenPagoDetalle_Id").val()
-            };
+        /*Listar las plantillas de pagos no frecuentes*/
+        function ListarPlantillasPagoNofrecuente() {
             $.ajax({
                 type: 'POST',
-                url: '@Url.Action("ListarSoportePago", "Wrkf_SolicitudOrdenPago")',
+                url: '@Url.Action("ListarPlantillasPagoNofrecuente", "Wrkf_Plantilla")',
+                content: "application/json; charset=utf-8",
+                dataType: 'json',
+                success: function (data) {
+
+                    if (data.Plantillas[0].Codigox.length > 0) {
+                        swal(data.Plantillas[0].Codigox + ' ' + data.Plantillas[0].Mensajex, data.Plantillas[0].Titulox, data.Plantillas[0].Tipox);
+                    } else {
+                        $("#table-plantillas").DataTable({
+                            "destroy": true,
+                            "paging": true,
+                            "lengthChange": true,
+                            "searching": true,
+                            "ordering": true,
+                            "info": true,
+                            "autoWidth": true,
+                            "responsive": true,
+                            data: data.Plantillas,
+                            columns: [
+                                {
+                                    "data": "Codigo", "render": function (data) {
+                                        var pCodigoPlantilla = "'" + data + "'";
+                                        return '<a href="#" onclick="SeleccionarPlantilla(' + pCodigoPlantilla + ')" data-dismiss="modal">' + data + '</a>';
+                                    }
+                                },
+                                {
+                                    "data": "Nombre"
+                                },
+                                {
+                                    "data": "CodigoSubgrupo", "render": function (data) {
+                                        return '<div style="text-align:center;">' + data + '</div>';
+                                    }
+                                },
+                                {
+                                    "data": "Frecuencia", "render": function (data) {
+                                        return '<div style="text-align:center;">' + data + '</div>';
+                                    }
+                                },
+                                {
+                                    "data": "Sensibilidad", "render": function (data) {
+                                        return '<div style="text-align:center;">' + data + '</div>';
+                                    }
+                                },
+                                {
+                                    "data": "Estatus", "render": function (data) {
+                                        return '<div style="text-align:center;">' + data + '</div>';
+                                    }
+                                },
+                                {
+                                    "data": "IdClaseProveedor", "render": function (data) {
+                                        return '<div style="text-align:center;">' + data + '</div>';
+                                    }
+                                }
+                            ]
+                        });
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                        swal(msg, 'Error', 'error');
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                        swal(msg, 'Error', 'error');
+                    }
+                }
+            });
+        }
+
+        //Selecciona el codigo y el nombre de la plantilla
+        function SeleccionarPlantilla(pCodigoPlantilla) {
+            var parametros = {
+                "codigo": pCodigoPlantilla
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SeleccionarPlantillaPorCodigo", "Wrkf_SolicitudOrdenPagoPlantilla")',
                 content: "application/json; charset=utf-8",
                 dataType: 'json',
                 data: parametros,
                 success: function (data) {
-                    var soportes = [];
-                    soportes = data;
-                    var detalles = '';
-                    total_elemento = soportes.length;
-
-                    if (total_elemento > 0) {
-                        if (soportes[0].Codigox == "") {
-                            for (x = 0; x < total_elemento; x++) {
-                                var param = "'" + soportes[x].Soporte_idx + "'";
-                                detalles += '<tr data-dismiss="modal" onclick="Descargarsoporte(' + param + ')" style="cursor:pointer;">'
-                                    + '<td>' + soportes[x].NombreArchivox + '</td>'
-                                    + '</tr>';
-                            }
-                            $("#DetalleSoporte").html(detalles);
-                        } else {
-                            $("#DetalleSoporte").html("");
-                            swal(soportes[0].Codigox + ' ' + soportes[0].Mensajex, soportes[0].Titulox, soportes[0].Tipox);
-                        }
+                    if (data.Codigox.length > 0) {
+                        swal(data.Codigox + ' ' + data.Mensajex, data.Titulox, data.Tipox);
                     } else {
-                        $("#DetalleSoporte").html("");
-                        swal(soportes[0].Codigox + ' ' + soportes[0].Mensajex, soportes[0].Titulox, soportes[0].Tipox);
+                        $("#txtCodigoPlantilla").val(data.Codigo);
+                        $("#txtNombrePlantilla").val(data.Nombre);
                     }
                 },
-                error: function (ex) {
-                    var r = jQuery.parseJSON(response.responseText);
-                    alert("Message: " + r.Message);
-                    alert("StackTrace: " + r.StackTrace);
-                    alert("ExceptionType: " + r.ExceptionType);
+                error: function (jqXHR, exception) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                        swal(msg, 'Error', 'error');
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                        swal(msg, 'Error', 'error');
+                    }
                 }
             });
-        }*@
-
-        @*function Descargarsoporte(numero_id)  {
-            var parametros = { "soporte_id": numero_id };
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("Download", "Wrkf_SolicitudOrdenPago")',
-                data: parametros,
-                contentType: 'application/json; charset=utf-8',
-                dataType: 'json',
-                success: function (data) {
-                },
-                error: function (ex) {
-                    var r = jQuery.parseJSON(response.responseText);
-                    alert("Message: " + r.Message);
-                    alert("StackTrace: " + r.StackTrace);
-                    alert("ExceptionType: " + r.ExceptionType);
-                }
-            });
-        }*@
+        }
+        /**************************************************/
 
         //lista los rubros segun el departamento o grupo de rubros
         function GetRubros() {
@@ -1851,6 +1998,18 @@
                 event.preventDefault();
                 // Trigger the button element with a click
                 GetCalcularMontos();
+            }
+        });
+
+        var inputPreciounitario = document.getElementById("txtCodigoPlantilla");
+        // Execute a function when the user releases a key on the keyboard
+        inputPreciounitario.addEventListener("keyup", function (event) {
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                // Trigger the button element with a click
+                SeleccionarPlantilla($("#txtCodigoPlantilla").val());
             }
         });
 

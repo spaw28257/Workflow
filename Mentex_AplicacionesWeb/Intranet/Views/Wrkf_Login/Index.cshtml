@@ -122,9 +122,6 @@
                         var ArrUsuario = [];
                         ArrUsuario = data.Usuario;
 
-                        //captura los mensajes de error que se generan en la ejecución
-                        //mensaje[0] => código error; mensaje[1] => mensaje de error; mensaje[2] => tipo de error; mensaje[3] => titulo del error
-
                         //si existe al error lo muestra por pantalla
                         if ((ArrUsuario.Codigox.length > 0) || (ArrUsuario.Mensajex.length > 0)) {
                             swal(ArrUsuario.Codigox + " " + ArrUsuario.Mensajex, ArrUsuario.Titulox, ArrUsuario.Tipox);
