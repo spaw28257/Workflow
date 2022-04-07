@@ -586,6 +586,7 @@
     <Content Include="Adminlte\plugins\tempusdominus-bootstrap-4\js\tempusdominus-bootstrap-4.min.js" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\Parametros.js" />
+    <Content Include="Scripts\SolicitudOrdenPago.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

@@ -130,10 +130,10 @@
                                 <!-- form start -->
                                 <form enctype="multipart/form-data">
                                     <div class="card-body">
-
+                                        <h4><u>Datos de la Plantilla</u></h4>
                                         <!--Datos del Plantilla---------------------------------------------------------------------------------------->
                                         <div class="row">
-                                            <div class="col-md-2">
+                                            <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="txtCodigoPlantilla">
                                                         <a href="#" data-toggle="modal"
@@ -157,10 +157,11 @@
                                                     <label for="cbogruporubrodesc">
                                                         <a href="#" data-toggle="modal" data-target="#modal-lg3" style="cursor:pointer; color:blue;" onclick="GetDepartamentos()">
                                                             <u style="cursor:pointer" title="Despliega una lista con los grupos de rubro">Grupo del Rubro</u>
+                                                            &nbsp; <i class="fas fa-search"></i>
                                                         </a>
                                                     </label>
                                                     <input type="text" name="cbogruporubrodesc" id="cbogruporubrodesc" value="" class="form-control"
-                                                           readonly onclick="GetDepartamentos()" style="cursor:pointer" data-toggle="modal" data-target="#modal-lg3" />
+                                                           readonly onclick="GetDepartamentos()" style="cursor: pointer; background-color: oldlace;" data-toggle="modal" data-target="#modal-lg3" />
                                                     <input type="hidden" name="cbogruporubro" id="cbogruporubro" value="" class="form-control" />
                                                 </div>
                                             </div>
@@ -171,35 +172,25 @@
                                                     <label for="cborubrodesc">
                                                         <a href="#" data-toggle="modal" data-target="#modal-lg4" style="cursor:pointer; color:blue;" onclick="GetRubros()">
                                                             <u style="cursor:pointer" title="Despliega una lista con los rubros">Rubro</u>
+                                                            &nbsp; <i class="fas fa-search"></i>
                                                         </a>
                                                     </label>
                                                     <input type="text" name="cborubrodesc" id="cborubrodesc" value="" class="form-control"
-                                                           readonly onclick="GetRubros()" style="cursor:pointer" data-toggle="modal" data-target="#modal-lg4" />
+                                                           readonly onclick="GetRubros()" style="cursor: pointer; background-color: oldlace;" data-toggle="modal" data-target="#modal-lg4" />
                                                     <input type="hidden" name="cborubro" id="cborubro" value="" class="form-control" />
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label for="cboTipoDocumento">Tipo de Documento</label>
-                                                    <select name="cboTipoDocumento" id="cboTipoDocumento" class="form-control" style="background-color: oldlace;">
-                                                        <option value="">--Seleccione Tipo de Documento--</option>
-                                                        @foreach (var listatipodocumento in ViewBag.listatipodocumento)
-                                                        {
-                                                            <option value="@listatipodocumento.Tipodocumento_Id">@listatipodocumento.Documento</option>
-                                                        }
-                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
                                         <!------------------------------------------------------------------------------------------------------------->
                                         <!--Datos del Proveedor---------------------------------------------------------------------------------------->
+                                        <h4><u>Datos del Proveedor</u></h4>
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="txtrif">
                                                         <a href="#" data-toggle="modal" data-target="#modal-lg" style="cursor:pointer; color:blue;" onclick="GetListadoProveedoresPorClaseId()">
                                                             <u style="cursor:pointer" title="Despliega una lista con los proveedores">R.I.F</u>
+                                                            &nbsp; <i class="fas fa-search"></i>
                                                         </a>
                                                     </label>
                                                     <input type="text" class="form-control" id="txtrif" style="background-color: oldlace;" />
@@ -211,6 +202,7 @@
                                                     <label for="txtproveedor">
                                                         <a href="#" data-toggle="modal" data-target="#modal-lg" style="cursor:pointer; color:blue;" onclick="GetListadoProveedoresPorClaseId()">
                                                             <u style="cursor:pointer" title="Despliega una lista con los proveedores">Proveedor</u>
+                                                            &nbsp; <i class="fas fa-search"></i>
                                                         </a>
                                                     </label>
                                                     <input type="text" class="form-control" id="txtproveedor" name="txtproveedor" style="background-color: oldlace;" />
@@ -230,7 +222,7 @@
                                                 <div class="form-group">
                                                     <label for="cboporcentajeretencion">Porcentaje Retención</label>
                                                     <select name="cboporcentajeretencion" id="cboporcentajeretencion" class="form-control"
-                                                            style="background-color: oldlace;" onchange="NoAplicaRetencion()">
+                                                            style="background-color: oldlace;">
                                                         <option value="0">--No Aplica--</option>
                                                         <option value="75" selected>75 % de Retención</option>
                                                         <option value="100">100 % de Retención</option>
@@ -240,40 +232,53 @@
                                         </div>
                                         <!------------------------------------------------------------------------------------------------------------->
                                         <!--Datos del documento---------------------------------------------------------------------------------------->
+                                        <h4><u>Datos del Documento</u></h4>
                                         <div class="row">
                                             <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="cboTipoDocumento">Tipo</label>
+                                                    <select name="cboTipoDocumento" id="cboTipoDocumento" class="form-control" style="background-color: oldlace;">
+                                                        <option value="">--Seleccione Tipo de Documento--</option>
+                                                        @foreach (var listatipodocumento in ViewBag.listatipodocumento)
+                                                        {
+                                                            <option value="@listatipodocumento.Tipodocumento_Id">@listatipodocumento.Documento</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-9">
                                                 <div class="form-group">
                                                     <label for="txtdescripcion">Descripción</label>
                                                     <input type="text" class="form-control" id="txtdescripcion" style="background-color: oldlace;" />
                                                 </div>
                                             </div>
-                                            <div class="col-md-3">
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <label for="txtnumerodocumento"> Número Documento </label>
+                                                    <label for="txtnumerodocumento"> N° Documento </label>
                                                     <input type="text" class="form-control" id="txtnumerodocumento" style="background-color: oldlace;" />
                                                 </div>
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <label for="txtnumcontrol"> Número Control </label>
+                                                    <label for="txtnumcontrol"> N° Control </label>
                                                     <input type="text" class="form-control" id="txtnumcontrol" style="background-color: oldlace;" />
                                                 </div>
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <label for="txtfechacreacion">Fecha Documento</label>
+                                                    <label for="txtfechacreacion">Fecha Doc.</label>
                                                     <input type="date" class="form-control" id="txtfecdocumento" style="background-color: oldlace;" />
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="txtfechacreacion">Fecha Pago</label>
                                                     <input type="date" class="form-control" id="txtfecpago" style="background-color: oldlace;" />
                                                 </div>
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="cboformapago">Forma de Pago</label>
                                                     <select name="cboformapago" id="cboformapago" style="background-color: oldlace;" class="form-control">
@@ -285,66 +290,60 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <label for="txtpreciounitario">Monto del Documento</label>
+                                                    <label for="txtpreciounitario">Monto</label>
                                                     <input type="text" class="form-control" id="txtpreciounitario" style="text-align: right; font-weight: bold;
                                                         background-color: oldlace;" />
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label for="cbomoneda">Moneda</label>
-                                                    <select name="cbomoneda" id="cbomoneda" class="form-control" style="background-color: oldlace;">
-                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
                                         <!------------------------------------------------------------------------------------------------------------->
 
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="cbomoneda">Moneda</label>
+                                                    <select name="cbomoneda" id="cbomoneda" class="form-control" style="background-color: oldlace;">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="txttotaliva">Total I.V.A</label>
-                                                    <input type="text" class="form-control" id="txttotaliva" style="text-align: right; font-weight: bold;" readonly="readonly">
-                                                    <input type="hidden" class="form-control" id="txtporcentajeiva" style="text-align: right; font-weight: bold;" readonly="readonly">
+                                                    <input type="text" class="form-control" id="txttotaliva" style="text-align: right; font-weight: bold; background-color: oldlace;" readonly>
+                                                    <input type="hidden" class="form-control" id="txtporcentajeiva" style="text-align: right; font-weight: bold;" readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="txttotalretenido">Total Retenido</label>
-                                                    <input type="text" class="form-control" id="txttotalretenido" style="text-align: right; font-weight: bold;" readonly="readonly">
-                                                    <input type="hidden" class="form-control" id="txtporcentajeretencion" style="text-align: right; font-weight: bold;" readonly="readonly">
+                                                    <input type="text" class="form-control" id="txttotalretenido" style="text-align: right; font-weight: bold; background-color: oldlace;" readonly>
+                                                    <input type="hidden" class="form-control" id="txtporcentajeretencion" style="text-align: right; font-weight: bold;" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="txtsubtotal">Sub Total</label>
+                                                    <input type="text" class="form-control" id="txtsubtotal" style="text-align: right; font-weight: bold; background-color: oldlace;" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="txtsubtotal">Sub Total a Pagar</label>
-                                                    <input type="text" class="form-control" id="txtsubtotal" style="text-align: right; font-weight: bold;" readonly="readonly">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="form-group">
                                                     <label for="txttotal">Total a Pagar</label>
-                                                    <input type="text" class="form-control" id="txttotal" style="text-align: right; font-weight: bold;" readonly="readonly">
+                                                    <input type="text" class="form-control" id="txttotal" style="text-align: right; font-weight: bold; background-color: oldlace;" readonly="readonly">
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="row">
-                                            <div class="col-md-12">
+                                            <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="fileAdjuntarArchivo">Adjuntar Soportes de Pago</label>
-                                                    <input id="fileAdjuntarArchivo" name="fileAdjuntarArchivo" type="file" multiple class="form-control">
+                                                    <input id="fileAdjuntarArchivo" name="fileAdjuntarArchivo" type="file" multiple class="form-control" style="background-color: oldlace;">
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-12">
+                                            <div class="col-md-8">
                                                 <div class="form-group">
                                                     <label for="txtobservaciones">Observaciones</label>
                                                     <textarea name="txtobservaciones" id="txtobservaciones" class="form-control" rows="1" cols="80" style="background-color: oldlace;"></textarea>
@@ -671,6 +670,29 @@
                     <!-- /.modal-dialog -->
                 </div>
                 <!-- /.modal -->
+
+                <!--Mensajes de Error-->
+                <div class="modal fade" id="modal-lista-errores">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header color-mentex">
+                                <h4 class="modal-title" id="TituloMensaje">Mensaje de Errores</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" id="divMensajesError"></div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+                <!------------------------->
+
             </section>
             <!-- Main content -->
             <!-- /.content -->
@@ -723,6 +745,7 @@
 
     <script src="~/Adminlte/plugins/sweetalert2/sweetalert.min.js"></script>
     <script src="~/Adminlte/plugins/maskMoney/jquery.maskMoney.min.js"></script>
+    <script src="~/Scripts/SolicitudOrdenPago.js"></script>
     <script>
         $("#btnagregar").click(function () {
             AddItemSolicitudPago();
@@ -752,6 +775,7 @@
                     if (fecha_actual[0].Codigox == "") {
                         if (total_fecha_actual > 0) {
                             document.getElementById("txtfecdocumento").value = fecha_actual[0].Fecha_actual;
+                            document.getElementById("txtfecpago").value = fecha_actual[0].Fecha_actual;
                         }
                     } else {
                         swal(fecha_actual[0].Codigox + " " + fecha_actual[0].Mensajex, fecha_actual[0].Titulox, fecha_actual[0].Tipox);
@@ -799,282 +823,6 @@
             fileInput.value = "";
             $("#cboformapago").val("0");
             $("#txtobservaciones").val("");
-        }
-
-        //Agregar el Item del formulario al momento de registrar la solicitud de orden de pago
-        function AddItemSolicitudPago() {
-            var codigo = "";
-            var mensaje = "";
-            var titulo = "";
-            var tipo = "";
-            var requerido = false;
-            var cantidad = 100;
-            var anticipo = 0;
-
-
-            var preciounitario = $("#txtpreciounitario").val().replaceAll(".", "");
-            preciounitario = preciounitario.replaceAll(",", "");
-
-            var porcentajeiva = $("#txtporcentajeiva").val().replaceAll(".", "");
-            porcentajeiva = porcentajeiva.replaceAll(",", ".");
-
-            var totaliva = $("#txttotaliva").val().replaceAll(".", "");
-            totaliva = totaliva.replaceAll(",", "");
-
-            var porcentajeretencion = $("#txtporcentajeretencion").val().replaceAll(".", "");
-            porcentajeretencion = porcentajeretencion.replaceAll(",", "");
-
-            var totalretenido = $("#txttotalretenido").val().replaceAll(".", "");
-            var totalretenido = totalretenido.replaceAll(",", "");
-
-            var subtotal = $("#txtsubtotal").val().replace(".", "");
-            subtotal = subtotal.replaceAll(",", "");
-
-            var total = $("#txttotal").val().replaceAll(".", "");
-            total = total.replaceAll(",", "");
-
-
-            //Validar campos requeridos
-            if (requerido == false) {
-                if ($("#cboTipoDocumento").val() == "") {
-                    mensaje = "Seleccione el tipo de documento";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-                if ($("#txtpreciounitario").val() == "0,00") {
-                    mensaje = "Debe especificar el monto del documento";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-                if ($("#cbomoneda").val() == "") {
-                    mensaje = "Seleccione la moneda de operación";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-                if ($("#cbogruporubro").val() == "") {
-                    mensaje = "Seleccione el grupo del rubro";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-                if ($("#cborubro").val() == "") {
-                    mensaje = "Seleccione el rubro";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-                if (document.getElementById('txtfecdocumento').value == "") {
-                    mensaje = "La fecha de documento para la solicitud de orden de pago es requerida";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-
-                if (document.getElementById('txtfecpago').value == "") {
-                    mensaje = "La fecha de pago para la solicitud de orden de pago es requerida";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-                if ($("#txtproveedor").val() == "") {
-                    mensaje = "El proveedor es requerido";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-                if ($("#txtdescripcion").val() == "") {
-                    mensaje = "La descripción es requerida";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-                if (($("#cboTipoDocumento").val() != '3') && ($("#cboTipoDocumento").val() != '4')) {
-                    if ($("#txtnumerodocumento").val() == "") {
-                        mensaje = "El número del documento, factura o nota de credito es requerido";
-                        titulo = "Información";
-                        tipo = "error";
-                        requerido = true;
-                    }
-                }
-            }
-
-            if (requerido == false) {
-                if ($("#cboformapago").val() == "0") {
-                    mensaje = "La forma de pago es requerida";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-                if ($("#cboTipoDocumento").val() != '4') {
-                    if (parseInt(preciounitario) <= 0) {
-                        mensaje = "El monto a pagar debe ser un valor mayor a cero";
-                        titulo = "Información";
-                        tipo = "error";
-                        requerido = true;
-                    }
-                }
-            }
-
-            if (requerido == false) {
-                if ($('#chkCalculaIva').is(":checked")) {
-                    if ($("#txtporcentajeiva").val() == "") {
-                        mensaje = "El porcentaje del I.V.A es requerido";
-                        titulo = "Información";
-                        tipo = "error";
-                        requerido = true;
-                    }
-                }
-            }
-
-            if (requerido == false) {
-                if (parseInt(total) == 0) {
-                    mensaje = "El Total no puede ser cero";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            //si existe al mensaje se muestra por pantalla
-            if (mensaje.length > 0) {
-                swal(mensaje, titulo, tipo);
-            } else {
-
-                //verifica si el checkbox para calcular iva
-                if ($('#chkCalculaIva').is(":checked")) {
-                    var calculariva = true;
-                } else {
-                    var calculariva = false;
-                }
-
-                //verifica si el checkbox para calcular si tiene retensión esta activo
-                if ($('#chkRealizarRetencion').is(":checked")) {
-                    var calcularretension = true;
-                } else {
-                    var calcularretension = false;
-                }
-
-                var parametros = [
-                    $("#cbomoneda").val(), //[0]
-                    $("#cborubro").val(), //[1]
-                    $("#txtfecdocumento").val(), //[2]
-                    $("#txtfecpago").val(), //[3]
-                    $("#hddidproveedor").val(), //[4]
-                    $("#txtproveedor").val(), //[5]
-                    $("#txtdescripcion").val(), //[6]
-                    $("#txtnumerodocumento").val(), //[7]
-                    cantidad, //[8]
-                    preciounitario, //[9]
-                    anticipo, //[10]
-                    subtotal, //[11]
-                    total, //[12]
-                    $("#hddSolicitudOrdenPago_Id").val(), //[13]
-                    $("#hddSolicitudOrdenPagoDetalle_Id").val(), //[14]
-                    $("#cboTipoDocumento").val(), //[15]
-                    calculariva, //[16]
-                    calcularretension, //[17]
-                    porcentajeiva, //[18]
-                    totaliva, //[19]
-                    porcentajeretencion, //[20]
-                    totalretenido, //[21]
-                    $("#cbogruporubro").val(), //[22]
-                    $("#cboformapago").val(), //[23]
-                    $("#txtobservaciones").val() //[24]
-                ];
-
-                $.ajax({
-                    type: 'POST',
-                    url: 'AddItemPago',
-                    dataType: 'json',
-                    data: { "Item": parametros },
-                    success: function (data) {
-
-                        if (data[0].Codigox.length > 0) {
-                            swal(data[0].Codigox + " " + data[0].Mensajex, data[0].Titulox, data[0].Tipox);
-                        } else {
-                            swal("La solicitud de orden de pago se registro con exito", "Información", "info");
-                            $("#hddSolicitudOrdenPago_Id").val(data[0].NumeroRegistroOrdenPagox);
-                            $("#hddSolicitudOrdenPagoDetalle_Id").val("-1");
-                            $("#numordpago").html("");
-                            $("#numordpago").html("Solicitud de Orden de Pago Manual Número: " + data[0].NumeroRegistroOrdenPagox);
-
-                            //si existen soportes de pago los registra
-                            var fileInput = document.getElementById('fileAdjuntarArchivo');
-                            if (fileInput.files.length > 0) {
-                                SubirSoportesPagos(data[0].NumeroRegistroDetallePagox);
-                            }
-
-                            //borrar los campos para ingresar el nuevo pago
-                            $("#chkCalculaIva").prop("checked", true);
-                            $("#chkRealizarRetencion").prop("checked", true);
-                            $("#cboTipoDocumento").val("");
-                            $("#cboporcentajeretencion").val("75");
-                            $("#cbogruporubro").val("");
-                            $("#cbogruporubrodesc").val("");
-                            $("#cborubro").val("");
-                            $("#cborubrodesc").val("");
-                            document.getElementById('txtfecdocumento').value = "";
-                            document.getElementById('txtfecpago').value = "";
-                            $("#txtrif").val("");
-                            $("#hddidproveedor").val("");
-                            $("#txtproveedor").val("");
-                            $("#txtdescripcion").val("");
-                            $("#txtnumerodocumento").val("");
-                            $("#txtpreciounitario").val("0,00");
-                            $("#txtporcentajeiva").val("0,00");
-                            $("#txttotaliva").val("0,00");
-                            $("#txtporcentajeretencion").val("0,00");
-                            $("#txttotalretenido").val("0,00");
-                            $("#txtsubtotal").val("0,00");
-                            $("#txttotal").val("0,00");
-                            fileInput.value = "";
-                            $("#cboformapago").val("0");
-                            $("#txtobservaciones").val("");
-                        }
-                    },
-                    error: function (ex) {
-                        var r = jQuery.parseJSON(response.responseText);
-                        alert("Message: " + r.Message);
-                        alert("StackTrace: " + r.StackTrace);
-                        alert("ExceptionType: " + r.ExceptionType);
-                    }
-                });
-            }
-
-            return;
         }
 
         //function para listar todas las solicitudes de las ordenes de pago
@@ -1970,17 +1718,6 @@
                             });
                     }
                 });
-            }
-        }
-
-        //tilda o destilda el checkbox de calcular la retención si en la lista desplegable selecciona no aplica
-        function NoAplicaRetencion() {
-            if ($("#cboporcentajeretencion").val() == '0') {
-                if ($('#chkRealizarRetencion').is(":checked")) {
-                    $("#chkRealizarRetencion").prop("checked", false);
-                }
-            } else {
-                $("#chkRealizarRetencion").prop("checked", true);
             }
         }
 

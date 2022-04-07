@@ -237,4 +237,3 @@ C:\Models\ProyectoMentex\Mentex_AplicacionesWeb\Intranet\obj\Debug\Intranet.cspr
 C:\Models\ProyectoMentex\Mentex_AplicacionesWeb\Intranet\obj\Debug\Intranet.csproj.CopyComplete
 C:\Models\ProyectoMentex\Mentex_AplicacionesWeb\Intranet\obj\Debug\Intranet.dll
 C:\Models\ProyectoMentex\Mentex_AplicacionesWeb\Intranet\obj\Debug\Intranet.pdb
-C:\Models\ProyectoMentex\Mentex_AplicacionesWeb\Intranet\obj\Debug\Intranet.csproj.AssemblyReference.cache
