@@ -11,6 +11,106 @@ namespace Intranet.Controllers
 {
     public class Wrkf_SolicitudOrdenPagoCxPController : Controller
     {
+        /// <summary>
+        /// Retorna una vista con los pagos que seran aprobados por CXP
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Index()
+        {
+            //Verificar que la sesión de usuario este activa
+            if (Session["sUsuario_Id"] == null)
+            {
+                return RedirectToAction("CerrarSesion", "Wrkf_Login");
+            }
+            else
+            {
+                try
+                {
+                    //Obtener una lista con las opciones de menu
+                    List<Wrkf_OpcionesMenuItem> lstopcionesmenuitem;
+                    Wrkf_DbOpcionesMenu objdbopcionesmenu = new Wrkf_DbOpcionesMenu();
+
+                    //obtiene el menu de opciones
+                    lstopcionesmenuitem = objdbopcionesmenu.Fn_ListarOpcionesMenuPorRol(Session["sUsuario_Id"].ToString());
+                    ViewBag.listaropcionesmenu = lstopcionesmenuitem;
+
+                    //obtiene la fecha actual y calcula el primer dia de la semana
+                    FechaHora objFechaHora = new FechaHora();
+                    ConvertExtension objConvertExtension = new ConvertExtension();
+                    //obtiene el rango de la fecha de pago 15 días hacia atras y 15 días hacia adelante
+                    Wrkf_DiaIFSemana objwrkf_DiaIFSemana = objConvertExtension.ObtenerPrimerDiaSemana(objFechaHora.Fecha_Actual2);
+                    ViewBag.FechaPagoDesde = objwrkf_DiaIFSemana.Primerdiasemana;
+                    ViewBag.FechaPagoHasta = objwrkf_DiaIFSemana.Ultimodiasemana;
+                }
+                catch(Exception ex)
+                {
+                    MensajeError mensajeerror;
+                    Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
+                    Wrkf_RespuestaOperacion objRespuestaOperacion = new Wrkf_RespuestaOperacion();
+
+                    mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
+                    objRespuestaOperacion.Codigox = mensajeerror.Codigox;
+                    objRespuestaOperacion.Mensajex = mensajeerror.Mensajex;
+                    objRespuestaOperacion.Tipox = mensajeerror.Tipox;
+                    objRespuestaOperacion.Titulox = mensajeerror.Titulox;
+                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoCxPController/SolicitudOrdenPagoCxP");
+
+                }
+            }
+
+            return View();
+        }
+
+        /// <summary>
+        /// Realizar la aprobacion de los pagos por el jefe de cuentas por pagar
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult ListadoAprobacionRechazoPagoCxP()
+        {
+            //Verificar que la sesión de usuario este activa
+            if (Session["sUsuario_Id"] == null)
+            {
+                return RedirectToAction("CerrarSesion", "Wrkf_Login");
+            }
+            else
+            {
+                try
+                {
+                    //Obtener una lista con las opciones de menu
+                    List<Wrkf_OpcionesMenuItem> lstopcionesmenuitem;
+                    Wrkf_DbOpcionesMenu objdbopcionesmenu = new Wrkf_DbOpcionesMenu();
+
+                    //obtiene el menu de opciones
+                    lstopcionesmenuitem = objdbopcionesmenu.Fn_ListarOpcionesMenuPorRol(Session["sUsuario_Id"].ToString());
+                    ViewBag.listaropcionesmenu = lstopcionesmenuitem;
+
+                    //obtiene la fecha actual y calcula el primer dia de la semana
+                    FechaHora objFechaHora = new FechaHora();
+                    ConvertExtension objConvertExtension = new ConvertExtension();
+                    //obtiene el rango de la fecha de pago 15 días hacia atras y 15 días hacia adelante
+                    Wrkf_DiaIFSemana objwrkf_DiaIFSemana = objConvertExtension.ObtenerPrimerDiaSemana(objFechaHora.Fecha_Actual2);
+                    ViewBag.FechaPagoDesde = objwrkf_DiaIFSemana.Primerdiasemana;
+                    ViewBag.FechaPagoHasta = objwrkf_DiaIFSemana.Ultimodiasemana;
+                }
+                catch (Exception ex)
+                {
+                    MensajeError mensajeerror;
+                    Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
+                    Wrkf_RespuestaOperacion objRespuestaOperacion = new Wrkf_RespuestaOperacion();
+
+                    mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
+                    objRespuestaOperacion.Codigox = mensajeerror.Codigox;
+                    objRespuestaOperacion.Mensajex = mensajeerror.Mensajex;
+                    objRespuestaOperacion.Tipox = mensajeerror.Tipox;
+                    objRespuestaOperacion.Titulox = mensajeerror.Titulox;
+                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoCxPController/AprobacionRechazoPagoCxP");
+
+                }
+            }
+
+            return View();
+        }
+
         // GET: Wrkf_SolicitudOrdenPagoCxP
         public ActionResult SolicitudOrdenPagoCxP()
         {
@@ -47,281 +147,279 @@ namespace Intranet.Controllers
             return View();
         }
 
+        ///// <summary>
+        ///// Muestar un listado de los pagos por el rubro especificado parametros por get
+        ///// </summary>
+        ///// <param name="rubro_id"></param>
+        ///// <returns></returns>
+        //public ActionResult ListaPagosPorRubroId(string rubro_id, string fechadesde, string fechahasta, string tipodocumento)
+        //{
+        //    MensajeError mensajeerror;
+        //    Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
+        //    Wrkf_RespuestaOperacion objRespuestaOperacion = new Wrkf_RespuestaOperacion();
+        //    //Obtener una lista con las opciones de menu
+        //    List<Wrkf_OpcionesMenuItem> lstopcionesmenuitem;
+        //    Wrkf_DbOpcionesMenu objdbopcionesmenu = new Wrkf_DbOpcionesMenu();
+        //    Wrkf_DiaIFSemana wrkfdiaifsemana;
+        //    ConvertExtension objconvertextension = new ConvertExtension();
+        //    List<Wrkf_ListaPagosPorRubroId> lstpagosporrubro;
+        //    //Obtener las formas de pagos
+        //    Wrkf_DbFormaPago objdbformapago = new Wrkf_DbFormaPago();
+        //    //Obtener el listado de chequeras
+        //    List<Wrkf_Chequera> lstchequeras;
+        //    Wrkf_DbChequera objdbchequera = new Wrkf_DbChequera();
+        //    Wrkf_DbSolicitudOrdenPagoCxP objdbsolicitudordenpagocxp = new Wrkf_DbSolicitudOrdenPagoCxP();
+
+        //    //Verificar que la sesión de usuario este activa
+        //    if (Session["sUsuario_Id"] == null)
+        //    {
+        //        return RedirectToAction("CerrarSesion", "Wrkf_Login");
+        //    }
+        //    else
+        //    {
+        //        try
+        //        {
+        //            lstopcionesmenuitem = objdbopcionesmenu.Fn_ListarOpcionesMenuPorRol(Session["sUsuario_Id"].ToString());
+        //            ViewBag.listaropcionesmenu = lstopcionesmenuitem;
+
+        //            string format = "yyyy-MM-dd";
+        //            var now = DateTime.Now.ToString(format);
+
+        //            //verificar los rangos de fecha
+        //            if ((fechadesde == null || fechadesde == "") && (fechahasta == null || fechahasta == ""))
+        //            {
+        //                wrkfdiaifsemana = objconvertextension.ObtenerPrimerDiaSemana(Convert.ToDateTime(now));
+        //                fechadesde = wrkfdiaifsemana.Primerdiasemana;
+        //                fechahasta = wrkfdiaifsemana.Ultimodiasemana;
+        //            }
+
+        //            ViewBag.rubro_id = rubro_id;
+        //            ViewBag.fechadesde = fechadesde;
+        //            ViewBag.fechahasta = fechahasta;
+        //            ViewBag.tipodocu = tipodocumento;
+
+        //            if (tipodocumento != "NC")
+        //            {
+        //                lstpagosporrubro = objdbsolicitudordenpagocxp.ListaPagosPorRubroId(rubro_id, Convert.ToDateTime(fechadesde), Convert.ToDateTime(fechahasta));
+        //            }
+        //            else
+        //            {
+        //                lstpagosporrubro = objdbsolicitudordenpagocxp.ListaNotasCreditoPorRubroId(rubro_id, Convert.ToDateTime(fechadesde), Convert.ToDateTime(fechahasta));
+        //            }
+
+        //            ViewBag.listarubrospagos = lstpagosporrubro;
+
+
+        //            List<Wrkf_FormaPago> lstformapago = objdbformapago.GetFormasPago();
+        //            ViewBag.listarformapago = lstformapago;
+
+
+        //            //lstchequeras = objdbchequera.GetListadoChequera();
+        //            //ViewBag.listadochequera = lstchequeras;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
+        //            objRespuestaOperacion.Codigox = mensajeerror.Codigox;
+        //            objRespuestaOperacion.Mensajex = mensajeerror.Mensajex;
+        //            objRespuestaOperacion.Tipox = mensajeerror.Tipox;
+        //            objRespuestaOperacion.Titulox = mensajeerror.Titulox;
+        //            wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoCxPController/ListaPagosPorRubroId");
+        //        }
+        //    }
+
+        //    return View();
+        //}
+
+        ///// <summary>
+        ///// Muestar un listado de los pagos por el rubro especificado parametros por post
+        ///// </summary>
+        ///// <param name="rubro_id"></param>
+        ///// <returns></returns>
+        //public ActionResult ListaPagosPorRubroIdPost()
+        //{
+        //    //Verificar que la sesión de usuario este activa
+        //    if (Session["sUsuario_Id"] == null)
+        //    {
+        //        return RedirectToAction("CerrarSesion", "Wrkf_Login");
+        //    } 
+        //    else
+        //    {
+        //        try
+        //        {
+        //            //Obtener una lista con las opciones de menu
+        //            List<Wrkf_OpcionesMenuItem> lstopcionesmenuitem = new List<Wrkf_OpcionesMenuItem>();
+        //            Wrkf_DbOpcionesMenu objdbopcionesmenu = new Wrkf_DbOpcionesMenu();
+        //            Wrkf_DiaIFSemana wrkfdiaifsemana = new Wrkf_DiaIFSemana();
+        //            ConvertExtension objconvertextension = new ConvertExtension();
+        //            List<Wrkf_ListaPagosPorRubroId> lstpagosporrubro;
+
+        //            string fechadesde;
+        //            string fechahasta;
+        //            string rubro_id;
+        //            string tipodocumento;
+
+        //            lstopcionesmenuitem = objdbopcionesmenu.Fn_ListarOpcionesMenuPorRol(Session["sUsuario_Id"].ToString());
+        //            ViewBag.listaropcionesmenu = lstopcionesmenuitem;
+
+        //            string format = "yyyy-MM-dd";
+        //            var now = DateTime.Now.ToString(format);
+
+        //            //obtener los pagos asociados al rubro por rango de fecha
+        //            rubro_id = Request.Form["rubro_id"];
+        //            fechadesde = objconvertextension.FormatoFecha2(Convert.ToDateTime(Request.Form["txtfechadesde"]));
+        //            fechahasta = objconvertextension.FormatoFecha2(Convert.ToDateTime(Request.Form["txtfechahasta"]));
+        //            tipodocumento = Request.Form["tipodocumento"];
+
+        //            //verificar los rangos de fecha
+        //            if ((fechadesde == null || fechadesde == "") && (fechahasta == null || fechahasta == ""))
+        //            {
+        //                wrkfdiaifsemana = objconvertextension.ObtenerPrimerDiaSemana(Convert.ToDateTime(now));
+        //                fechadesde = wrkfdiaifsemana.Primerdiasemana;
+        //                fechahasta = wrkfdiaifsemana.Ultimodiasemana;
+        //            }
+
+        //            ViewBag.rubro_id = rubro_id;
+        //            ViewBag.fechadesde = fechadesde;
+        //            ViewBag.fechahasta = fechahasta;
+        //            Wrkf_DbSolicitudOrdenPagoCxP objdbsolicitudordenpagocxp = new Wrkf_DbSolicitudOrdenPagoCxP();
+
+        //            if (tipodocumento != "NC")
+        //            {
+        //                lstpagosporrubro = objdbsolicitudordenpagocxp.ListaPagosPorRubroId(rubro_id, Convert.ToDateTime(fechadesde), Convert.ToDateTime(fechahasta));
+        //            }
+        //            else
+        //            {
+        //                lstpagosporrubro = objdbsolicitudordenpagocxp.ListaNotasCreditoPorRubroId(rubro_id, Convert.ToDateTime(fechadesde), Convert.ToDateTime(fechahasta));
+        //            }
+
+        //            ViewBag.listarubrospagos = lstpagosporrubro;
+
+        //            //Obtener las formas de pagos
+        //            Wrkf_DbFormaPago objdbformapago = new Wrkf_DbFormaPago();
+        //            List<Wrkf_FormaPago> lstformapago = objdbformapago.GetFormasPago();
+        //            ViewBag.listarformapago = lstformapago;
+
+        //            //Obtener el listado de chequeras
+        //            List<Wrkf_Chequera> lstchequeras = new List<Wrkf_Chequera>();
+        //            Wrkf_DbChequera objdbchequera = new Wrkf_DbChequera();
+        //            //lstchequeras = objdbchequera.GetListadoChequera();
+        //            //ViewBag.listadochequera = lstchequeras;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            ViewBag.CodigoError = "EXC000";
+        //            ViewBag.MensajeError = ex.Message.ToString();
+        //            ViewBag.TipoError = "error";
+        //            ViewBag.TituloError = "Listado Solicitudes Pagos Por Rubro Id";
+        //        }
+        //    }
+
+        //    return View("ListaPagosPorRubroId");
+        //}
+
         /// <summary>
-        /// Muestra una vista con el listado de los grupos de rubros con los pagos asociados para la revición de CxP.
+        /// Obtener el listado de pagos por revisar por el analista de CXP
         /// </summary>
+        /// <param name="pFechaPagoDesde"></param>
+        /// <param name="pFechaPagoHasta"></param>
         /// <returns></returns>
-        public ActionResult GrupoRubroPagosAsociados()
+        public JsonResult GetPagosRevisionCxP(DateTime pFechaPagoDesde, DateTime pFechaPagoHasta)
         {
+            List<Wrkf_SolicitudOrdenPago> lstSolicitudOrdenPagoCxP = new List<Wrkf_SolicitudOrdenPago>();
+            Wrkf_DbSolicitudOrdenPagoCxP Objwrkf_DbSolicitudOrdenPagoCxP = new Wrkf_DbSolicitudOrdenPagoCxP();
+            Wrkf_SolicitudOrdenPago Objwrkf_SolicitudOrdenPagoCxP = new Wrkf_SolicitudOrdenPago();
+            ConvertExtension ObjconvertExtension = new ConvertExtension();
             MensajeError mensajeerror;
             Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
-            Wrkf_RespuestaOperacion objRespuestaOperacion = new Wrkf_RespuestaOperacion();
 
-            //Verificar que la sesión de usuario este activa
             if (Session["sUsuario_Id"] == null)
             {
-                return RedirectToAction("CerrarSesion", "Wrkf_Login");
+                mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99998", "SessionLogout");
+                Objwrkf_SolicitudOrdenPagoCxP.Codigox = mensajeerror.Codigox;
+                Objwrkf_SolicitudOrdenPagoCxP.Mensajex = mensajeerror.Mensajex;
+                Objwrkf_SolicitudOrdenPagoCxP.Tipox = mensajeerror.Tipox;
+                Objwrkf_SolicitudOrdenPagoCxP.Titulox = mensajeerror.Titulox;
+                lstSolicitudOrdenPagoCxP.Add(Objwrkf_SolicitudOrdenPagoCxP);
             }
             else
             {
                 try
                 {
-                    //Obtener una lista con las opciones de menu
-                    List<Wrkf_OpcionesMenuItem> lstopcionesmenuitem = new List<Wrkf_OpcionesMenuItem>();
-                    Wrkf_DbOpcionesMenu objdbopcionesmenu = new Wrkf_DbOpcionesMenu();
-                    lstopcionesmenuitem = objdbopcionesmenu.Fn_ListarOpcionesMenuPorRol(Session["sUsuario_Id"].ToString());
-                    ViewBag.listaropcionesmenu = lstopcionesmenuitem;
-
-                    //Obtener los rubros con los pagos asociados
-                    Wrkf_DbSolicitudOrdenPagoCxP objdbsolicitudordenpagocxp = new Wrkf_DbSolicitudOrdenPagoCxP();
-                    List<Wrkf_Departamento> lstgruporubro = objdbsolicitudordenpagocxp.lstGrupoRubroPagosAsociados();
-                    ViewBag.listagruporubrospagos = lstgruporubro;
-
-                    //Obtener los rubros con las notas de credito
-                    List<Wrkf_Departamento> lstGrupoRubrosNotasCreditosAproCxP = objdbsolicitudordenpagocxp.lstGrupoRubrosNotasCreditosAproCxP();
-                    ViewBag.listagruporubronotacredito = lstGrupoRubrosNotasCreditosAproCxP;
+                    string vFechaPagoDesde = ObjconvertExtension.FormatoFechayyyyMMdd(pFechaPagoDesde).ToString();
+                    string vFechaPagoHasta = ObjconvertExtension.FormatoFechayyyyMMdd(pFechaPagoHasta).ToString();
+                    lstSolicitudOrdenPagoCxP = Objwrkf_DbSolicitudOrdenPagoCxP.GetPagosRevisionCxP(vFechaPagoDesde, vFechaPagoHasta);
                 }
                 catch (Exception ex)
                 {
                     mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
-                    objRespuestaOperacion.Codigox = mensajeerror.Codigox;
-                    objRespuestaOperacion.Mensajex = mensajeerror.Mensajex;
-                    objRespuestaOperacion.Tipox = mensajeerror.Tipox;
-                    objRespuestaOperacion.Titulox = mensajeerror.Titulox;
-                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoCxPController/GrupoRubroPagosAsociados");
+                    Objwrkf_SolicitudOrdenPagoCxP.Codigox = mensajeerror.Codigox;
+                    Objwrkf_SolicitudOrdenPagoCxP.Mensajex = mensajeerror.Mensajex;
+                    Objwrkf_SolicitudOrdenPagoCxP.Tipox = mensajeerror.Tipox;
+                    Objwrkf_SolicitudOrdenPagoCxP.Titulox = mensajeerror.Titulox;
+                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoCxPController/GetPagosRevisionCxP");
+                    lstSolicitudOrdenPagoCxP.Add(Objwrkf_SolicitudOrdenPagoCxP);
                 }
             }
 
-            return View();
+            return Json(new { ListadoPago = lstSolicitudOrdenPagoCxP });
         }
 
+
         /// <summary>
-        /// Muestra una vista con el listado de rubros con los pagos asociados para la revición de CxP.
+        /// Obtener el listado de pagos por aprobar por el jefe de CXP
         /// </summary>
+        /// <param name="pFechaPagoDesde"></param>
+        /// <param name="pFechaPagoHasta"></param>
         /// <returns></returns>
-        public ActionResult ListarRubrosPagosCxP(int gruporubro_id)
+        public JsonResult GetPagosAprobacionCxP(DateTime pFechaPagoDesde, DateTime pFechaPagoHasta)
         {
+            List<Wrkf_SolicitudOrdenPago> lstSolicitudOrdenPagoCxP = new List<Wrkf_SolicitudOrdenPago>();
+            Wrkf_DbSolicitudOrdenPagoCxP Objwrkf_DbSolicitudOrdenPagoCxP = new Wrkf_DbSolicitudOrdenPagoCxP();
+            Wrkf_SolicitudOrdenPago Objwrkf_SolicitudOrdenPagoCxP = new Wrkf_SolicitudOrdenPago();
+            ConvertExtension ObjconvertExtension = new ConvertExtension();
             MensajeError mensajeerror;
             Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
-            Wrkf_RespuestaOperacion objRespuestaOperacion = new Wrkf_RespuestaOperacion();
 
-            //Verificar que la sesión de usuario este activa
             if (Session["sUsuario_Id"] == null)
             {
-                return RedirectToAction("CerrarSesion", "Wrkf_Login");
+                mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99998", "SessionLogout");
+                Objwrkf_SolicitudOrdenPagoCxP.Codigox = mensajeerror.Codigox;
+                Objwrkf_SolicitudOrdenPagoCxP.Mensajex = mensajeerror.Mensajex;
+                Objwrkf_SolicitudOrdenPagoCxP.Tipox = mensajeerror.Tipox;
+                Objwrkf_SolicitudOrdenPagoCxP.Titulox = mensajeerror.Titulox;
+                lstSolicitudOrdenPagoCxP.Add(Objwrkf_SolicitudOrdenPagoCxP);
             }
             else
             {
                 try
                 {
-                    //Obtener una lista con las opciones de menu
-                    List<Wrkf_OpcionesMenuItem> lstopcionesmenuitem = new List<Wrkf_OpcionesMenuItem>();
-                    Wrkf_DbOpcionesMenu objdbopcionesmenu = new Wrkf_DbOpcionesMenu();
-                    lstopcionesmenuitem = objdbopcionesmenu.Fn_ListarOpcionesMenuPorRol(Session["sUsuario_Id"].ToString());
-                    ViewBag.listaropcionesmenu = lstopcionesmenuitem;
-
-                    //Obtener los rubros con los pagos asociados
-                    Wrkf_DbSolicitudOrdenPagoCxP objdbsolicitudordenpagocxp = new Wrkf_DbSolicitudOrdenPagoCxP();
-                    List<Wrkf_Rubro> lstrubro = objdbsolicitudordenpagocxp.lstRubrosPagosAsociados(gruporubro_id);
-                    ViewBag.listarubrospagos = lstrubro;
-
-                    //Obtener los rubros con notas de créditos
-                    List<Wrkf_Rubro> lstrubronotacredito = objdbsolicitudordenpagocxp.lstRubrosConNotasCreditosAsociados(gruporubro_id);
-                    ViewBag.listarubronotacredito = lstrubronotacredito;
+                    string vFechaPagoDesde = ObjconvertExtension.FormatoFechayyyyMMdd(pFechaPagoDesde).ToString();
+                    string vFechaPagoHasta = ObjconvertExtension.FormatoFechayyyyMMdd(pFechaPagoHasta).ToString();
+                    lstSolicitudOrdenPagoCxP = Objwrkf_DbSolicitudOrdenPagoCxP.ListadoAprobacionRechazoPagoCxP(vFechaPagoDesde, vFechaPagoHasta);
                 }
                 catch (Exception ex)
                 {
                     mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
-                    objRespuestaOperacion.Codigox = mensajeerror.Codigox;
-                    objRespuestaOperacion.Mensajex = mensajeerror.Mensajex;
-                    objRespuestaOperacion.Tipox = mensajeerror.Tipox;
-                    objRespuestaOperacion.Titulox = mensajeerror.Titulox;
-                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoCxPController/GrupoRubroPagosAsociados");
+                    Objwrkf_SolicitudOrdenPagoCxP.Codigox = mensajeerror.Codigox;
+                    Objwrkf_SolicitudOrdenPagoCxP.Mensajex = mensajeerror.Mensajex;
+                    Objwrkf_SolicitudOrdenPagoCxP.Tipox = mensajeerror.Tipox;
+                    Objwrkf_SolicitudOrdenPagoCxP.Titulox = mensajeerror.Titulox;
+                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoCxPController/GetPagosRevisionCxP");
+                    lstSolicitudOrdenPagoCxP.Add(Objwrkf_SolicitudOrdenPagoCxP);
                 }
             }
 
-            return View();
+            return Json(new { ListadoPago = lstSolicitudOrdenPagoCxP });
         }
 
         /// <summary>
-        /// Muestar un listado de los pagos por el rubro especificado parametros por get
-        /// </summary>
-        /// <param name="rubro_id"></param>
-        /// <returns></returns>
-        public ActionResult ListaPagosPorRubroId(string rubro_id, string fechadesde, string fechahasta, string tipodocumento)
-        {
-            MensajeError mensajeerror;
-            Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
-            Wrkf_RespuestaOperacion objRespuestaOperacion = new Wrkf_RespuestaOperacion();
-            //Obtener una lista con las opciones de menu
-            List<Wrkf_OpcionesMenuItem> lstopcionesmenuitem;
-            Wrkf_DbOpcionesMenu objdbopcionesmenu = new Wrkf_DbOpcionesMenu();
-            Wrkf_DiaIFSemana wrkfdiaifsemana;
-            ConvertExtension objconvertextension = new ConvertExtension();
-            List<Wrkf_ListaPagosPorRubroId> lstpagosporrubro;
-            //Obtener las formas de pagos
-            Wrkf_DbFormaPago objdbformapago = new Wrkf_DbFormaPago();
-            //Obtener el listado de chequeras
-            List<Wrkf_Chequera> lstchequeras;
-            Wrkf_DbChequera objdbchequera = new Wrkf_DbChequera();
-            Wrkf_DbSolicitudOrdenPagoCxP objdbsolicitudordenpagocxp = new Wrkf_DbSolicitudOrdenPagoCxP();
-
-            //Verificar que la sesión de usuario este activa
-            if (Session["sUsuario_Id"] == null)
-            {
-                return RedirectToAction("CerrarSesion", "Wrkf_Login");
-            }
-            else
-            {
-                try
-                {
-                    lstopcionesmenuitem = objdbopcionesmenu.Fn_ListarOpcionesMenuPorRol(Session["sUsuario_Id"].ToString());
-                    ViewBag.listaropcionesmenu = lstopcionesmenuitem;
-
-                    string format = "yyyy-MM-dd";
-                    var now = DateTime.Now.ToString(format);
-
-                    //verificar los rangos de fecha
-                    if ((fechadesde == null || fechadesde == "") && (fechahasta == null || fechahasta == ""))
-                    {
-                        wrkfdiaifsemana = objconvertextension.ObtenerPrimerDiaSemana(Convert.ToDateTime(now));
-                        fechadesde = wrkfdiaifsemana.Primerdiasemana;
-                        fechahasta = wrkfdiaifsemana.Ultimodiasemana;
-                    }
-
-                    ViewBag.rubro_id = rubro_id;
-                    ViewBag.fechadesde = fechadesde;
-                    ViewBag.fechahasta = fechahasta;
-                    ViewBag.tipodocu = tipodocumento;
-
-                    if (tipodocumento != "NC")
-                    {
-                        lstpagosporrubro = objdbsolicitudordenpagocxp.ListaPagosPorRubroId(rubro_id, Convert.ToDateTime(fechadesde), Convert.ToDateTime(fechahasta));
-                    }
-                    else
-                    {
-                        lstpagosporrubro = objdbsolicitudordenpagocxp.ListaNotasCreditoPorRubroId(rubro_id, Convert.ToDateTime(fechadesde), Convert.ToDateTime(fechahasta));
-                    }
-
-                    ViewBag.listarubrospagos = lstpagosporrubro;
-
-
-                    List<Wrkf_FormaPago> lstformapago = objdbformapago.GetFormasPago();
-                    ViewBag.listarformapago = lstformapago;
-
-
-                    lstchequeras = objdbchequera.GetListadoChequera();
-                    ViewBag.listadochequera = lstchequeras;
-                }
-                catch (Exception ex)
-                {
-                    mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
-                    objRespuestaOperacion.Codigox = mensajeerror.Codigox;
-                    objRespuestaOperacion.Mensajex = mensajeerror.Mensajex;
-                    objRespuestaOperacion.Tipox = mensajeerror.Tipox;
-                    objRespuestaOperacion.Titulox = mensajeerror.Titulox;
-                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoCxPController/ListaPagosPorRubroId");
-                }
-            }
-
-            return View();
-        }
-
-        /// <summary>
-        /// Muestar un listado de los pagos por el rubro especificado parametros por post
-        /// </summary>
-        /// <param name="rubro_id"></param>
-        /// <returns></returns>
-        public ActionResult ListaPagosPorRubroIdPost()
-        {
-            //Verificar que la sesión de usuario este activa
-            if (Session["sUsuario_Id"] == null)
-            {
-                return RedirectToAction("CerrarSesion", "Wrkf_Login");
-            } 
-            else
-            {
-                try
-                {
-                    //Obtener una lista con las opciones de menu
-                    List<Wrkf_OpcionesMenuItem> lstopcionesmenuitem = new List<Wrkf_OpcionesMenuItem>();
-                    Wrkf_DbOpcionesMenu objdbopcionesmenu = new Wrkf_DbOpcionesMenu();
-                    Wrkf_DiaIFSemana wrkfdiaifsemana = new Wrkf_DiaIFSemana();
-                    ConvertExtension objconvertextension = new ConvertExtension();
-                    List<Wrkf_ListaPagosPorRubroId> lstpagosporrubro;
-
-                    string fechadesde;
-                    string fechahasta;
-                    string rubro_id;
-                    string tipodocumento;
-
-                    lstopcionesmenuitem = objdbopcionesmenu.Fn_ListarOpcionesMenuPorRol(Session["sUsuario_Id"].ToString());
-                    ViewBag.listaropcionesmenu = lstopcionesmenuitem;
-
-                    string format = "yyyy-MM-dd";
-                    var now = DateTime.Now.ToString(format);
-
-                    //obtener los pagos asociados al rubro por rango de fecha
-                    rubro_id = Request.Form["rubro_id"];
-                    fechadesde = objconvertextension.FormatoFecha2(Convert.ToDateTime(Request.Form["txtfechadesde"]));
-                    fechahasta = objconvertextension.FormatoFecha2(Convert.ToDateTime(Request.Form["txtfechahasta"]));
-                    tipodocumento = Request.Form["tipodocumento"];
-
-                    //verificar los rangos de fecha
-                    if ((fechadesde == null || fechadesde == "") && (fechahasta == null || fechahasta == ""))
-                    {
-                        wrkfdiaifsemana = objconvertextension.ObtenerPrimerDiaSemana(Convert.ToDateTime(now));
-                        fechadesde = wrkfdiaifsemana.Primerdiasemana;
-                        fechahasta = wrkfdiaifsemana.Ultimodiasemana;
-                    }
-
-                    ViewBag.rubro_id = rubro_id;
-                    ViewBag.fechadesde = fechadesde;
-                    ViewBag.fechahasta = fechahasta;
-                    Wrkf_DbSolicitudOrdenPagoCxP objdbsolicitudordenpagocxp = new Wrkf_DbSolicitudOrdenPagoCxP();
-
-                    if (tipodocumento != "NC")
-                    {
-                        lstpagosporrubro = objdbsolicitudordenpagocxp.ListaPagosPorRubroId(rubro_id, Convert.ToDateTime(fechadesde), Convert.ToDateTime(fechahasta));
-                    }
-                    else
-                    {
-                        lstpagosporrubro = objdbsolicitudordenpagocxp.ListaNotasCreditoPorRubroId(rubro_id, Convert.ToDateTime(fechadesde), Convert.ToDateTime(fechahasta));
-                    }
-
-                    ViewBag.listarubrospagos = lstpagosporrubro;
-
-                    //Obtener las formas de pagos
-                    Wrkf_DbFormaPago objdbformapago = new Wrkf_DbFormaPago();
-                    List<Wrkf_FormaPago> lstformapago = objdbformapago.GetFormasPago();
-                    ViewBag.listarformapago = lstformapago;
-
-                    //Obtener el listado de chequeras
-                    List<Wrkf_Chequera> lstchequeras = new List<Wrkf_Chequera>();
-                    Wrkf_DbChequera objdbchequera = new Wrkf_DbChequera();
-                    lstchequeras = objdbchequera.GetListadoChequera();
-                    ViewBag.listadochequera = lstchequeras;
-                }
-                catch (Exception ex)
-                {
-                    ViewBag.CodigoError = "EXC000";
-                    ViewBag.MensajeError = ex.Message.ToString();
-                    ViewBag.TipoError = "error";
-                    ViewBag.TituloError = "Listado Solicitudes Pagos Por Rubro Id";
-                }
-            }
-
-            return View("ListaPagosPorRubroId");
-        }
-
-        /// <summary>
-        /// Obtiene las solicitudes de ordenes de pago por revisar por CxP
+        /// Obtiene el detalle de las solicitudes de ordenes de pago por código
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult GetSolicitudOrdenPagoRevisarCxP()
+        public JsonResult GetDetalleOrdenPagoPorRevisarCxP(string pCodigo)
         {
-            List<Wrkf_SolicitudOrdenPago> lstSolicitudOrdenPago = new List<Wrkf_SolicitudOrdenPago>();
             Wrkf_DbSolicitudOrdenPagoCxP objDbSolicitudOrdenPagoCxP = new Wrkf_DbSolicitudOrdenPagoCxP();
             Wrkf_SolicitudOrdenPago objsolicitudordenpago = new Wrkf_SolicitudOrdenPago();
             MensajeError mensajeerror;
@@ -334,14 +432,12 @@ namespace Intranet.Controllers
                 objsolicitudordenpago.Mensajex = mensajeerror.Mensajex;
                 objsolicitudordenpago.Tipox = mensajeerror.Tipox;
                 objsolicitudordenpago.Titulox = mensajeerror.Titulox;
-
-                lstSolicitudOrdenPago.Add(objsolicitudordenpago);
             }
             else
             {
                 try
                 {
-                    lstSolicitudOrdenPago = objDbSolicitudOrdenPagoCxP.GetSolicitudOrdenPagoRevisarCxP();
+                    objsolicitudordenpago = objDbSolicitudOrdenPagoCxP.GetDetalleOrdenPagoPorRevisarCxP(pCodigo);
                 }
                 catch (Exception ex)
                 {
@@ -350,58 +446,97 @@ namespace Intranet.Controllers
                     objsolicitudordenpago.Mensajex = mensajeerror.Mensajex;
                     objsolicitudordenpago.Tipox = mensajeerror.Tipox;
                     objsolicitudordenpago.Titulox = mensajeerror.Titulox;
-                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoCxPController/GetSolicitudOrdenPagoRevisarCxP");
-
-                    lstSolicitudOrdenPago.Add(objsolicitudordenpago);
+                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoCxPController/GetDetalleOrdenPagoPorRevisarCxP");
                 }
             }
 
-            return Json(lstSolicitudOrdenPago, JsonRequestBehavior.AllowGet);
+            return Json(new { DetallePago = objsolicitudordenpago });
         }
 
         /// <summary>
-        /// Obtiene el detalle de las solicitudes de ordenes de pago
+        /// Actualiza los datos del pago en la tabla del workflow
         /// </summary>
+        /// <param name="pcodigo"></param>
+        /// <param name="pgruporubro_id"></param>
+        /// <param name="prubro_id"></param>
+        /// <param name="psoportesfacturas"></param>
         /// <returns></returns>
-        [HttpPost]
-        public JsonResult GetDetalleOrdenPagoPorRevisarCxP(int numerosolicitud_Id)
+        public JsonResult ActualizarGrupoRubro(string pcodigo, int pgruporubro_id, string prubro_id, bool psoportesfacturas, string pobservacion)
         {
-            List<Wrkf_SolicitudOrdenPagoDetalle> lstSolicitudOrdenPagoDetalleCxP = new List<Wrkf_SolicitudOrdenPagoDetalle>();
-            Wrkf_DbSolicitudOrdenPagoCxP objSolicitudOrdenPagoCxP = new Wrkf_DbSolicitudOrdenPagoCxP();
-            Wrkf_SolicitudOrdenPagoDetalle objsolicitudordenpagodetalle = new Wrkf_SolicitudOrdenPagoDetalle();
+            Wrkf_DbSolicitudOrdenPagoCxP objDbSolicitudOrdenPagoCxP = new Wrkf_DbSolicitudOrdenPagoCxP();
+            Wrkf_RespuestaOperacion Objwrkf_RespuestaOperacion = new Wrkf_RespuestaOperacion();
             MensajeError mensajeerror;
             Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
 
             if (Session["sUsuario_Id"] == null)
             {
                 mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99998", "SessionLogout");
-                objsolicitudordenpagodetalle.Codigox = mensajeerror.Codigox;
-                objsolicitudordenpagodetalle.Mensajex = mensajeerror.Mensajex;
-                objsolicitudordenpagodetalle.Tipox = mensajeerror.Tipox;
-                objsolicitudordenpagodetalle.Titulox = mensajeerror.Titulox;
-
-                lstSolicitudOrdenPagoDetalleCxP.Add(objsolicitudordenpagodetalle);
+                Objwrkf_RespuestaOperacion.Codigox = mensajeerror.Codigox;
+                Objwrkf_RespuestaOperacion.Mensajex = mensajeerror.Mensajex;
+                Objwrkf_RespuestaOperacion.Tipox = mensajeerror.Tipox;
+                Objwrkf_RespuestaOperacion.Titulox = mensajeerror.Titulox;
             }
             else
             {
                 try
                 {
-                    lstSolicitudOrdenPagoDetalleCxP = objSolicitudOrdenPagoCxP.GetDetalleOrdenPagoPorRevisarCxP(numerosolicitud_Id);
+                    Objwrkf_RespuestaOperacion = objDbSolicitudOrdenPagoCxP.ActualizarGrupoRubro(pcodigo, pgruporubro_id, prubro_id, psoportesfacturas, Convert.ToString(Session["sUsuario_Id"]), pobservacion);
                 }
                 catch (Exception ex)
                 {
                     mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
-                    objsolicitudordenpagodetalle.Codigox = mensajeerror.Codigox;
-                    objsolicitudordenpagodetalle.Mensajex = mensajeerror.Mensajex;
-                    objsolicitudordenpagodetalle.Tipox = mensajeerror.Tipox;
-                    objsolicitudordenpagodetalle.Titulox = mensajeerror.Titulox;
-                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoCxPController/GetDetalleOrdenPagoPorRevisarCxP");
-
-                    lstSolicitudOrdenPagoDetalleCxP.Add(objsolicitudordenpagodetalle);
+                    Objwrkf_RespuestaOperacion.Codigox = mensajeerror.Codigox;
+                    Objwrkf_RespuestaOperacion.Mensajex = mensajeerror.Mensajex;
+                    Objwrkf_RespuestaOperacion.Tipox = mensajeerror.Tipox;
+                    Objwrkf_RespuestaOperacion.Titulox = mensajeerror.Titulox;
+                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoCxPController/ActualizarGrupoRubro");
                 }
             }
 
-            return Json(lstSolicitudOrdenPagoDetalleCxP, JsonRequestBehavior.AllowGet);
+            return Json(new { RespuestaOperacion = Objwrkf_RespuestaOperacion });
+        }
+
+        /// <summary>
+        /// Aprobar o rechazar los pagos por CxP
+        /// </summary>
+        /// <param name="pcodigo"></param>
+        /// <param name="pgruporubro_id"></param>
+        /// <param name="prubro_id"></param>
+        /// <param name="psoportesfacturas"></param>
+        /// <returns></returns>
+        public JsonResult AprobarRechazarPagosCxP(string plistapagosaprobados, string plistapagosrechazados, string plistadopagossoportes, string pobservacion)
+        {
+            Wrkf_DbSolicitudOrdenPagoCxP objDbSolicitudOrdenPagoCxP = new Wrkf_DbSolicitudOrdenPagoCxP();
+            Wrkf_RespuestaOperacion Objwrkf_RespuestaOperacion = new Wrkf_RespuestaOperacion();
+            MensajeError mensajeerror;
+            Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
+
+            if (Session["sUsuario_Id"] == null)
+            {
+                mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99998", "SessionLogout");
+                Objwrkf_RespuestaOperacion.Codigox = mensajeerror.Codigox;
+                Objwrkf_RespuestaOperacion.Mensajex = mensajeerror.Mensajex;
+                Objwrkf_RespuestaOperacion.Tipox = mensajeerror.Tipox;
+                Objwrkf_RespuestaOperacion.Titulox = mensajeerror.Titulox;
+            }
+            else
+            {
+                try
+                {
+                    Objwrkf_RespuestaOperacion = objDbSolicitudOrdenPagoCxP.AprobarRechazarPagosCxP(plistapagosaprobados, plistapagosrechazados, plistadopagossoportes, Convert.ToString(Session["sUsuario_Id"]), pobservacion);
+                }
+                catch (Exception ex)
+                {
+                    mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
+                    Objwrkf_RespuestaOperacion.Codigox = mensajeerror.Codigox;
+                    Objwrkf_RespuestaOperacion.Mensajex = mensajeerror.Mensajex;
+                    Objwrkf_RespuestaOperacion.Tipox = mensajeerror.Tipox;
+                    Objwrkf_RespuestaOperacion.Titulox = mensajeerror.Titulox;
+                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoCxPController/ActualizarGrupoRubro");
+                }
+            }
+
+            return Json(new { RespuestaOperacion = Objwrkf_RespuestaOperacion });
         }
 
         /// <summary>
@@ -411,41 +546,40 @@ namespace Intranet.Controllers
         /// <param name="Solicitudordenpagodetalle_Id"></param>
         /// <param name="Solicitudordenpago_Id"></param>
         /// <returns></returns>
-        [HttpPost]
-        public JsonResult ActualizarFormaPagoRevisionCxP(int forma_pago_id, int Solicitudordenpagodetalle_Id, int Solicitudordenpago_Id)
-        {
-            Wrkf_RespuestaOperacion objrespuestaoperacion = new Wrkf_RespuestaOperacion();
-            Wrkf_DbSolicitudOrdenPagoCxP objSolicitudOrdenPagoCxP = new Wrkf_DbSolicitudOrdenPagoCxP();
-            MensajeError mensajeerror;
-            Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
+        //public JsonResult ActualizarFormaPagoRevisionCxP(int forma_pago_id, int Solicitudordenpagodetalle_Id, int Solicitudordenpago_Id)
+        //{
+        //    Wrkf_RespuestaOperacion objrespuestaoperacion = new Wrkf_RespuestaOperacion();
+        //    Wrkf_DbSolicitudOrdenPagoCxP objSolicitudOrdenPagoCxP = new Wrkf_DbSolicitudOrdenPagoCxP();
+        //    MensajeError mensajeerror;
+        //    Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
 
-            if (Session["sUsuario_Id"] == null)
-            {
-                mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99998", "SessionLogout");
-                objrespuestaoperacion.Codigox = mensajeerror.Codigox;
-                objrespuestaoperacion.Mensajex = mensajeerror.Mensajex;
-                objrespuestaoperacion.Tipox = mensajeerror.Tipox;
-                objrespuestaoperacion.Titulox = mensajeerror.Titulox;
-            }
-            else
-            {
-                try
-                {
-                    objrespuestaoperacion = objSolicitudOrdenPagoCxP.ActualizarFormaPagoRevisionCxP(forma_pago_id, Solicitudordenpagodetalle_Id, Solicitudordenpago_Id);
-                }
-                catch (Exception ex)
-                {
-                    mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
-                    objrespuestaoperacion.Codigox = mensajeerror.Codigox;
-                    objrespuestaoperacion.Mensajex = mensajeerror.Mensajex;
-                    objrespuestaoperacion.Tipox = mensajeerror.Tipox;
-                    objrespuestaoperacion.Titulox = mensajeerror.Titulox;
-                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoCxPController/ActualizarFormaPagoRevisionCxP");
-                }
-            }
-            
-            return Json(objrespuestaoperacion, JsonRequestBehavior.AllowGet);
-        }
+        //    if (Session["sUsuario_Id"] == null)
+        //    {
+        //        mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99998", "SessionLogout");
+        //        objrespuestaoperacion.Codigox = mensajeerror.Codigox;
+        //        objrespuestaoperacion.Mensajex = mensajeerror.Mensajex;
+        //        objrespuestaoperacion.Tipox = mensajeerror.Tipox;
+        //        objrespuestaoperacion.Titulox = mensajeerror.Titulox;
+        //    }
+        //    else
+        //    {
+        //        try
+        //        {
+        //            objrespuestaoperacion = objSolicitudOrdenPagoCxP.ActualizarFormaPagoRevisionCxP(forma_pago_id, Solicitudordenpagodetalle_Id, Solicitudordenpago_Id);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
+        //            objrespuestaoperacion.Codigox = mensajeerror.Codigox;
+        //            objrespuestaoperacion.Mensajex = mensajeerror.Mensajex;
+        //            objrespuestaoperacion.Tipox = mensajeerror.Tipox;
+        //            objrespuestaoperacion.Titulox = mensajeerror.Titulox;
+        //            wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoCxPController/ActualizarFormaPagoRevisionCxP");
+        //        }
+        //    }
+
+        //    return Json(objrespuestaoperacion, JsonRequestBehavior.AllowGet);
+        //}
 
         /// <summary>
         /// Actualizar el número de chequera a la solicitud
@@ -454,7 +588,6 @@ namespace Intranet.Controllers
         /// <param name="Solicitudordenpago_Id"></param>
         /// <param name="Chekbkid"></param>
         /// <returns></returns>
-        [HttpPost]
         public JsonResult ActualizarNumeroChequeraRevisionCxP(int Solicitudordenpagodetalle_Id, int Solicitudordenpago_Id, string Chekbkid)
         {
             Wrkf_RespuestaOperacion objrespuestaoperacion = new Wrkf_RespuestaOperacion();

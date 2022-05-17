@@ -16,462 +16,248 @@ namespace Intranet.Ado.DbContent
         /// Obtiene un listado de las solicitudes de ordenes de pago.
         /// </summary>
         /// <returns></returns>
-        public List<Wrkf_SolicitudOrdenPago> GetSolicitudOrdenPagoRevisarCxP()
+        public List<Wrkf_SolicitudOrdenPago> GetPagosRevisionCxP(string pFechaPagoDesde, string pFechaPagoHasta)
         {
-            double TotalSolicitudPagox;
-
             List<Wrkf_SolicitudOrdenPago> lstSolicitudOrdenPago = new List<Wrkf_SolicitudOrdenPago>();
 
             SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
             Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
+                new SqlParameter("@pFechaPagoDesde", pFechaPagoDesde),
+                new SqlParameter("@pFechaPagoHasta", pFechaPagoHasta),
+                new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
+                new SqlParameter("pMensajeError", SqlDbType.VarChar, 200),
+                new SqlParameter("@pTipoError", SqlDbType.VarChar, 20),
+                new SqlParameter("@pTituloError", SqlDbType.VarChar, 60)
             });
 
-            DataTable DtSolicitudRevisarCxP = Sqlprovider.ExecuteStoredProcedure("Workflow.sp_sel_SolicitudOrdenPagoRevisarCxP_Encab", CommandType.StoredProcedure);
+            Sqlprovider.Oparameters[2].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[4].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[5].Direction = ParameterDirection.Output;
 
-            int total_registros = DtSolicitudRevisarCxP.Rows.Count;
+            DataTable DtPagosRevisionCxP = Sqlprovider.ExecuteStoredProcedureWithOutputParameter("WorkFlow.PL_Sel_RevisionCXP", CommandType.StoredProcedure, out Dictionary<string, string> outparam);
+
+            int total_registros = DtPagosRevisionCxP.Rows.Count;
 
             if (total_registros > 0)
             {
                 for (int i = 0; i < total_registros; i++)
                 {
-                    TotalSolicitudPagox = Convert.ToDouble(DtSolicitudRevisarCxP.Rows[i]["TotalSolicitudPago"]);
-
                     Wrkf_SolicitudOrdenPago objsolicitudordenpago = new Wrkf_SolicitudOrdenPago
                     {
-                        Solicitudordenpago_Idx = Convert.ToInt32(DtSolicitudRevisarCxP.Rows[i]["Solicitudordenpago_Id"]),
-                        Codigoplantillax = Convert.ToString(DtSolicitudRevisarCxP.Rows[i]["Codigoplantilla"]),
-                        Nombreplantillax = Convert.ToString(DtSolicitudRevisarCxP.Rows[i]["Nombreplantilla"]),
-                        Recibidocxpx = Convert.ToBoolean(DtSolicitudRevisarCxP.Rows[i]["Recibidocxp"]),
-                        Aprobadocontraloriax = Convert.ToBoolean(DtSolicitudRevisarCxP.Rows[i]["Aprobadocontraloria"]),
-                        Aprobadovpx = Convert.ToBoolean(DtSolicitudRevisarCxP.Rows[i]["Aprobadovp"]),
-                        Aplicadotesoreriax = Convert.ToBoolean(DtSolicitudRevisarCxP.Rows[i]["Aplicadotesoreria"]),
-                        Anuladax = Convert.ToBoolean(DtSolicitudRevisarCxP.Rows[i]["Anulada"]),
-                        Usuarioregistrox = Convert.ToString(DtSolicitudRevisarCxP.Rows[i]["Usuarioregistro"]),
-                        FechaRegx = Convert.ToString(DtSolicitudRevisarCxP.Rows[i]["Fecharegistro"]),
-                        curncyidx = Convert.ToString(DtSolicitudRevisarCxP.Rows[i]["curncyid"]),
-                        TotalSolicitudPagox = TotalSolicitudPagox.ToString("N", new CultureInfo("is-IS"))
+                        Codigo = DtPagosRevisionCxP.Rows[i]["NroPago"].ToString(),
+                        GAPCodigoItem = DtPagosRevisionCxP.Rows[i]["NroItem"].ToString(),
+                        GAPCodigoPlantilla = DtPagosRevisionCxP.Rows[i]["CodigoPlantilla"].ToString(),
+                        GAPProveedor = DtPagosRevisionCxP.Rows[i]["Beneficiario"].ToString(),
+                        GAPIdProveedor = DtPagosRevisionCxP.Rows[i]["IdProveedor"].ToString(),
+                        GAPNroFactura = DtPagosRevisionCxP.Rows[i]["NroFactura"].ToString(),
+                        GAPDescripcionFactura = DtPagosRevisionCxP.Rows[i]["DescripcionFactura"].ToString(),
+                        GAPFechaFactura = DtPagosRevisionCxP.Rows[i]["FechaFactura"].ToString(),
+                        GAPFechaPago = DtPagosRevisionCxP.Rows[i]["FechaPago"].ToString(),
+                        GAPMonto = Convert.ToDouble(DtPagosRevisionCxP.Rows[i]["Monto"]),
+                        GAPIdChequera = DtPagosRevisionCxP.Rows[i]["IdChequera"].ToString(),
+                        GrupoRubro_Id = Convert.ToInt32(DtPagosRevisionCxP.Rows[i]["GruporubroId"]),
+                        GrupoRubroDescripcion = DtPagosRevisionCxP.Rows[i]["GrupoRubro"].ToString(),
+                        Rubro_Id = DtPagosRevisionCxP.Rows[i]["RubroId"].ToString(),
+                        RubroDescripcion = DtPagosRevisionCxP.Rows[i]["Rubro"].ToString(),
+                        CodigoMoneda = DtPagosRevisionCxP.Rows[i]["CodigoMoneda"].ToString()
                     };
                     lstSolicitudOrdenPago.Add(objsolicitudordenpago);
                 }
+            }
+            else
+            {
+                Wrkf_SolicitudOrdenPago objsolicitudordenpago = new Wrkf_SolicitudOrdenPago()
+                {
+                    Mensajex = "No existen registros para el rango de fecha especificado"
+                };
+                lstSolicitudOrdenPago.Add(objsolicitudordenpago);
             }
             return lstSolicitudOrdenPago;
         }
 
         /// <summary>
-        /// Obtiene un listado del detalle de las solicitudes de ordenes de pago.
+        /// Obtiene un listado de las solicitudes de ordenes de pago.
         /// </summary>
         /// <returns></returns>
-        public List<Wrkf_SolicitudOrdenPagoDetalle> GetDetalleOrdenPagoPorRevisarCxP(int numerosolicitud_Id)
+        public List<Wrkf_SolicitudOrdenPago> ListadoAprobacionRechazoPagoCxP(string pFechaPagoDesde, string pFechaPagoHasta)
         {
-            double Cantidadaux;
-            double Preciounitarioaux;
-            double Subtotalaux;
-            double Anticipoaux;
-            double Totalaux;
-            double Porcentajeivaaux;
-            double Montoivaaux;
-            double Porcentajeretencionaux;
-            double Totalretenidoaux;
-
-            List<Wrkf_SolicitudOrdenPagoDetalle> lstSolicitudOrdenPagoDetalleCxP = new List<Wrkf_SolicitudOrdenPagoDetalle>();
+            List<Wrkf_SolicitudOrdenPago> lstSolicitudOrdenPago = new List<Wrkf_SolicitudOrdenPago>();
 
             SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
             Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                new SqlParameter("@Solicitudordenpago_Id", numerosolicitud_Id),
+                new SqlParameter("@pFechaPagoDesde", pFechaPagoDesde),
+                new SqlParameter("@pFechaPagoHasta", pFechaPagoHasta),
+                new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
+                new SqlParameter("pMensajeError", SqlDbType.VarChar, 200),
+                new SqlParameter("@pTipoError", SqlDbType.VarChar, 20),
+                new SqlParameter("@pTituloError", SqlDbType.VarChar, 60)
             });
 
-            DataTable DtListadoDetalle = Sqlprovider.ExecuteStoredProcedure("Workflow.sp_sel_SolicitudOrdenPagoRevisarCxP_Detalle", CommandType.StoredProcedure);
+            Sqlprovider.Oparameters[2].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[4].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[5].Direction = ParameterDirection.Output;
 
-            int total_registros = DtListadoDetalle.Rows.Count;
+            DataTable DtPagosAprobacionCxP = Sqlprovider.ExecuteStoredProcedureWithOutputParameter("WorkFlow.PL_Sel_AprobacionCXP", CommandType.StoredProcedure, out Dictionary<string, string> outparam);
+
+            int total_registros = DtPagosAprobacionCxP.Rows.Count;
 
             if (total_registros > 0)
             {
                 for (int i = 0; i < total_registros; i++)
                 {
-                    Cantidadaux = Convert.ToDouble(DtListadoDetalle.Rows[i]["Cantidad"]);
-                    Preciounitarioaux = Convert.ToDouble(DtListadoDetalle.Rows[i]["Preciounitario"]);
-                    Subtotalaux = Convert.ToDouble(DtListadoDetalle.Rows[i]["Subtotal"]);
-                    Anticipoaux = Convert.ToDouble(DtListadoDetalle.Rows[i]["Anticipo"]);
-                    Totalaux = Convert.ToDouble(DtListadoDetalle.Rows[i]["Total"]);
-                    Porcentajeivaaux = Convert.ToDouble(DtListadoDetalle.Rows[i]["Porcentajeiva"]);
-                    Montoivaaux = Convert.ToDouble(DtListadoDetalle.Rows[i]["Montoiva"]);
-                    Porcentajeretencionaux = Convert.ToDouble(DtListadoDetalle.Rows[i]["Porcentajeretencion"]);
-                    Totalretenidoaux = Convert.ToDouble(DtListadoDetalle.Rows[i]["Totalretenido"]);
-
-                    Wrkf_SolicitudOrdenPagoDetalle objDetalleOrdenPago = new Wrkf_SolicitudOrdenPagoDetalle()
+                    Wrkf_SolicitudOrdenPago objsolicitudordenpago = new Wrkf_SolicitudOrdenPago
                     {
-                        Solicitudordenpagodetalle_Idx = Convert.ToInt32(DtListadoDetalle.Rows[i]["Solicitudordenpagodetalle_Id"]),
-                        Solicitudordenpago_Idx = Convert.ToInt32(DtListadoDetalle.Rows[i]["Solicitudordenpago_Id"]),
-                        Rifx = Convert.ToString(DtListadoDetalle.Rows[i]["Rif"]).Trim(),
-                        Proveedorx = Convert.ToString(DtListadoDetalle.Rows[i]["Proveedor"]).Trim(),
-                        Descripcionx = Convert.ToString(DtListadoDetalle.Rows[i]["Descripcion"]).Trim(),
-                        Numerodocumentox = Convert.ToString(DtListadoDetalle.Rows[i]["Numerodocumento"]).Trim(),
-                        Cantidadx = Cantidadaux.ToString("N", new CultureInfo("is-IS")),
-                        Preciounitariox = Preciounitarioaux.ToString("N", new CultureInfo("is-IS")),
-                        Subtotalx = Subtotalaux.ToString("N", new CultureInfo("is-IS")),
-                        Anticipox = Anticipoaux.ToString("N", new CultureInfo("is-IS")),
-                        Totalx = Totalaux.ToString("N", new CultureInfo("is-IS")),
-                        Aprobadox = Convert.ToBoolean(DtListadoDetalle.Rows[i]["Aprobado"]),
-                        TipoDocumentox = Convert.ToInt32(DtListadoDetalle.Rows[i]["Tipodocumento"]),
-                        Calculaivax = Convert.ToBoolean(DtListadoDetalle.Rows[i]["Calculaiva"]),
-                        Realizaretencionx = Convert.ToBoolean(DtListadoDetalle.Rows[i]["Realizaretencion"]),
-                        Porcentajeivax = Porcentajeivaaux.ToString("N", new CultureInfo("is-IS")),
-                        Montoivax = Montoivaaux.ToString("N", new CultureInfo("is-IS")),
-                        Porcentajeretencionx = Porcentajeretencionaux.ToString("N", new CultureInfo("is-IS")),
-                        Totalretenidox = Totalretenidoaux.ToString("N", new CultureInfo("is-IS")),
-                        Gruporubro_Idx = Convert.ToInt32(DtListadoDetalle.Rows[i]["Gruporubro_Id"]),
-                        Rubro_Idx = Convert.ToString(DtListadoDetalle.Rows[i]["Rubro_Id"]),
-                        FechaPagx = Convert.ToString(DtListadoDetalle.Rows[i]["Fechapago"])
+                        Codigo = DtPagosAprobacionCxP.Rows[i]["NroPago"].ToString(),
+                        GAPCodigoItem = DtPagosAprobacionCxP.Rows[i]["NroItem"].ToString(),
+                        GAPCodigoPlantilla = DtPagosAprobacionCxP.Rows[i]["CodigoPlantilla"].ToString(),
+                        GAPProveedor = DtPagosAprobacionCxP.Rows[i]["Beneficiario"].ToString(),
+                        GAPIdProveedor = DtPagosAprobacionCxP.Rows[i]["IdProveedor"].ToString(),
+                        GAPNroFactura = DtPagosAprobacionCxP.Rows[i]["NroFactura"].ToString(),
+                        GAPDescripcionFactura = DtPagosAprobacionCxP.Rows[i]["DescripcionFactura"].ToString(),
+                        GAPFechaFactura = DtPagosAprobacionCxP.Rows[i]["FechaFactura"].ToString(),
+                        GAPFechaPago = DtPagosAprobacionCxP.Rows[i]["FechaPago"].ToString(),
+                        GAPMonto = Convert.ToDouble(DtPagosAprobacionCxP.Rows[i]["Monto"]),
+                        GAPIdChequera = DtPagosAprobacionCxP.Rows[i]["IdChequera"].ToString(),
+                        GrupoRubro_Id = Convert.ToInt32(DtPagosAprobacionCxP.Rows[i]["GruporubroId"]),
+                        GrupoRubroDescripcion = DtPagosAprobacionCxP.Rows[i]["GrupoRubro"].ToString(),
+                        Rubro_Id = DtPagosAprobacionCxP.Rows[i]["RubroId"].ToString(),
+                        RubroDescripcion = DtPagosAprobacionCxP.Rows[i]["Rubro"].ToString(),
+                        CodigoMoneda = DtPagosAprobacionCxP.Rows[i]["CodigoMoneda"].ToString()
                     };
-
-                    lstSolicitudOrdenPagoDetalleCxP.Add(objDetalleOrdenPago);
+                    lstSolicitudOrdenPago.Add(objsolicitudordenpago);
                 }
             }
             else
             {
-                Wrkf_SolicitudOrdenPagoDetalle objDetalleOrdenPago = new Wrkf_SolicitudOrdenPagoDetalle();
-                lstSolicitudOrdenPagoDetalleCxP.Add(objDetalleOrdenPago);
+                Wrkf_SolicitudOrdenPago objsolicitudordenpago = new Wrkf_SolicitudOrdenPago()
+                {
+                    Mensajex = "No existen registros para el rango de fecha especificado"
+                };
+                lstSolicitudOrdenPago.Add(objsolicitudordenpago);
             }
-
-            return lstSolicitudOrdenPagoDetalleCxP;
+            return lstSolicitudOrdenPago;
         }
 
         /// <summary>
-        /// Obtiene un listado de los grupos de rubros que tienen pagos asociados
+        /// Obtiene un detalle de la solicitud de la orden de pago.
         /// </summary>
         /// <returns></returns>
-        public List<Wrkf_Departamento> lstGrupoRubroPagosAsociados()
+        public Wrkf_SolicitudOrdenPago GetDetalleOrdenPagoPorRevisarCxP(string pCodigo)
         {
-            List<Wrkf_Departamento> lstgruporubro = new List<Wrkf_Departamento>();
+
+            Wrkf_SolicitudOrdenPago SolicitudOrdenPagoCxP = new Wrkf_SolicitudOrdenPago();
 
             SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
             Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
+                new SqlParameter("@pCodigo", pCodigo),
+                new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
+                new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
+                new SqlParameter("@pTipoError", SqlDbType.VarChar, 20),
+                new SqlParameter("@pTituloError", SqlDbType.VarChar, 60),
             });
 
-            DataTable DtGrupoRubrosConPagos = Sqlprovider.ExecuteStoredProcedure("workflow.PL_Sel_GrupoRubrosConPagosPorAprobarCxP", CommandType.StoredProcedure);
+            Sqlprovider.Oparameters[1].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[2].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[4].Direction = ParameterDirection.Output;
 
-            int total_registros = DtGrupoRubrosConPagos.Rows.Count;
+            DataTable DtsolicitudOrdenPago = Sqlprovider.ExecuteStoredProcedureWithOutputParameter("WorkFlow.PL_Sel_DetallePago_Key", CommandType.StoredProcedure, out Dictionary<string, string> outparam);
+
+            int total_registros = DtsolicitudOrdenPago.Rows.Count;
 
             if (total_registros > 0)
             {
-                for (int i = 0; i < total_registros; i++)
-                {
-                    Wrkf_Departamento objgruporubro = new Wrkf_Departamento()
-                    {
-                        Departamento_Idx = Convert.ToInt32(DtGrupoRubrosConPagos.Rows[i]["Gruporubro_Id"]),
-                        Departamentox = Convert.ToString(DtGrupoRubrosConPagos.Rows[i]["Departamento"]),
-                        TotalRubrosx = Convert.ToInt32(DtGrupoRubrosConPagos.Rows[i]["TotalRubros"])
-                    };
-
-                    lstgruporubro.Add(objgruporubro);
-                }
+                SolicitudOrdenPagoCxP.Codigo = DtsolicitudOrdenPago.Rows[0]["Codigo"].ToString();
+                SolicitudOrdenPagoCxP.GAPCodigoItem = DtsolicitudOrdenPago.Rows[0]["CodigoItem"].ToString();
+                SolicitudOrdenPagoCxP.GAPCodigoPlantilla = DtsolicitudOrdenPago.Rows[0]["CodigoPlantilla"].ToString();
+                SolicitudOrdenPagoCxP.GAPDescripcionPlantilla = DtsolicitudOrdenPago.Rows[0]["DescripcionPlantilla"].ToString();
+                SolicitudOrdenPagoCxP.GAPMonto = Convert.ToDouble(DtsolicitudOrdenPago.Rows[0]["Monto"]);
+                SolicitudOrdenPagoCxP.GAPFechaFactura = DtsolicitudOrdenPago.Rows[0]["FechaFactura"].ToString();
+                SolicitudOrdenPagoCxP.GAPFechaPago = DtsolicitudOrdenPago.Rows[0]["FechaPago"].ToString();
+                SolicitudOrdenPagoCxP.GAPEstatus = Convert.ToInt32(DtsolicitudOrdenPago.Rows[0]["Estatus"]);
+                SolicitudOrdenPagoCxP.GAPFechaAprobacion = DtsolicitudOrdenPago.Rows[0]["FechaAprobacion"].ToString();
+                SolicitudOrdenPagoCxP.GAPUsuarioAprueba = DtsolicitudOrdenPago.Rows[0]["UsuarioAprueba"].ToString();
+                SolicitudOrdenPagoCxP.GAPFechaRechazo = DtsolicitudOrdenPago.Rows[0]["FechaRechazo"].ToString();
+                SolicitudOrdenPagoCxP.GAPUsuarioRechaza = DtsolicitudOrdenPago.Rows[0]["UsuarioRechaza"].ToString();
+                SolicitudOrdenPagoCxP.GAPNroFactura = DtsolicitudOrdenPago.Rows[0]["NroFactura"].ToString();
+                SolicitudOrdenPagoCxP.GAPNroControl = DtsolicitudOrdenPago.Rows[0]["NroControl"].ToString();
+                SolicitudOrdenPagoCxP.GAPTipoPago = DtsolicitudOrdenPago.Rows[0]["TipoPago"].ToString();
+                SolicitudOrdenPagoCxP.GAPIdChequera = DtsolicitudOrdenPago.Rows[0]["IdChequera"].ToString();
+                SolicitudOrdenPagoCxP.GAPDescripcionFactura = DtsolicitudOrdenPago.Rows[0]["DescripcionFactura"].ToString();
+                SolicitudOrdenPagoCxP.GAPTienda = DtsolicitudOrdenPago.Rows[0]["Tienda"].ToString();
+                SolicitudOrdenPagoCxP.GAPIdProveedor = DtsolicitudOrdenPago.Rows[0]["IdProveedor"].ToString();
+                SolicitudOrdenPagoCxP.GAPProveedor = DtsolicitudOrdenPago.Rows[0]["VENDNAME"].ToString();
+                SolicitudOrdenPagoCxP.GrupoRubro_Id =Convert.ToInt32(DtsolicitudOrdenPago.Rows[0]["GrupoRubro_Id"]);
+                SolicitudOrdenPagoCxP.GrupoRubroDescripcion = DtsolicitudOrdenPago.Rows[0]["GrupoRubroDescripcion"].ToString();
+                SolicitudOrdenPagoCxP.Rubro_Id = DtsolicitudOrdenPago.Rows[0]["Rubro_Id"].ToString();
+                SolicitudOrdenPagoCxP.RubroDescripcion = DtsolicitudOrdenPago.Rows[0]["rubroDescripcion"].ToString();
+                SolicitudOrdenPagoCxP.DescripcionDocumento = DtsolicitudOrdenPago.Rows[0]["documento"].ToString();
+                SolicitudOrdenPagoCxP.DescripcionTipoPago = DtsolicitudOrdenPago.Rows[0]["formadepago"].ToString();
+                SolicitudOrdenPagoCxP.ObservacionRevisionCxP = DtsolicitudOrdenPago.Rows[0]["ObservacionRevisionCxP"].ToString();
+                SolicitudOrdenPagoCxP.CodigoMoneda = DtsolicitudOrdenPago.Rows[0]["CodigoMoneda"].ToString();
+                SolicitudOrdenPagoCxP.UsuarioRevisionCxP = DtsolicitudOrdenPago.Rows[0]["UsuarioRevisionCxP"].ToString();
+                SolicitudOrdenPagoCxP.FechaRevisionCxP = DtsolicitudOrdenPago.Rows[0]["FechaRevisionCxP"].ToString();
+                SolicitudOrdenPagoCxP.ObservacionRevisionCxP = DtsolicitudOrdenPago.Rows[0]["ObservacionRevisionCxP"].ToString();
+                SolicitudOrdenPagoCxP.Tipodocumento = Convert.ToInt32(DtsolicitudOrdenPago.Rows[0]["tipodocumento_Id"]);
+                SolicitudOrdenPagoCxP.GAPCodigoConcepto = Convert.ToInt32(DtsolicitudOrdenPago.Rows[0]["CodigoConcepto"]);
+                SolicitudOrdenPagoCxP.TipoPago = Convert.ToInt32(DtsolicitudOrdenPago.Rows[0]["formapago_Id"]);
+                SolicitudOrdenPagoCxP.GAPBaseImpIVAGeneral = Convert.ToDouble(DtsolicitudOrdenPago.Rows[0]["BaseImpIVARegular"]);
+                SolicitudOrdenPagoCxP.GAPBaseImpIVAReducido = Convert.ToDouble(DtsolicitudOrdenPago.Rows[0]["BaseImpIVAReducido"]);
+                SolicitudOrdenPagoCxP.GAPBaseImpIVAAdicional = Convert.ToDouble(DtsolicitudOrdenPago.Rows[0]["BaseImpIVAAdicional"]);
+                SolicitudOrdenPagoCxP.GAPMontoExento = Convert.ToDouble(DtsolicitudOrdenPago.Rows[0]["MontoExento"]);
+                SolicitudOrdenPagoCxP.Observaciones = DtsolicitudOrdenPago.Rows[0]["Observaciones"].ToString();
             }
-            else
-            {
-                Wrkf_Departamento objgruporubro = new Wrkf_Departamento();
-                lstgruporubro.Add(objgruporubro);
-            }
 
-            return lstgruporubro;
+            return SolicitudOrdenPagoCxP;
         }
 
         /// <summary>
-        /// Obtiene un listado de los grupos de rubros que tienen solamente las notas de créditos
+        /// Actualiza los datos del pago en la tabla del workflow
         /// </summary>
+        /// <param name="pcodigo"></param>
+        /// <param name="pgruporubro_id"></param>
+        /// <param name="prubro_id"></param>
+        /// <param name="psoportesfacturas"></param>
         /// <returns></returns>
-        public List<Wrkf_Departamento> lstGrupoRubrosNotasCreditosAproCxP()
-        {
-            List<Wrkf_Departamento> lstgruporubro = new List<Wrkf_Departamento>();
-
-            SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
-            Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-            });
-
-            DataTable DtGrupoRubrosConPagos = Sqlprovider.ExecuteStoredProcedure("workflow.PL_Sel_GrupoRubrosConNotasCreditosPorAprobarCxP", CommandType.StoredProcedure);
-
-            int total_registros = DtGrupoRubrosConPagos.Rows.Count;
-
-            if (total_registros > 0)
-            {
-                for (int i = 0; i < total_registros; i++)
-                {
-                    Wrkf_Departamento objgruporubro = new Wrkf_Departamento()
-                    {
-                        Departamento_Idx = Convert.ToInt32(DtGrupoRubrosConPagos.Rows[i]["Gruporubro_Id"]),
-                        Departamentox = Convert.ToString(DtGrupoRubrosConPagos.Rows[i]["Departamento"]),
-                        TotalRubrosx = Convert.ToInt32(DtGrupoRubrosConPagos.Rows[i]["TotalRubros"])
-                    };
-
-                    lstgruporubro.Add(objgruporubro);
-                }
-            }
-            else
-            {
-                Wrkf_Departamento objgruporubro = new Wrkf_Departamento();
-                lstgruporubro.Add(objgruporubro);
-            }
-
-            return lstgruporubro;
-        }
-
-        /// <summary>
-        /// Obtiene un listado de los rubros que tienen pagos pendientes por revisar por CxP
-        /// </summary>
-        /// <returns></returns>
-        public List<Wrkf_Rubro> lstRubrosPagosAsociados(int gruporubro_id)
-        {
-            List<Wrkf_Rubro> lstrubro = new List<Wrkf_Rubro>();
-
-            SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
-            Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                new SqlParameter("@pGruporubro_Id", gruporubro_id)
-            });
-
-            DataTable DtRubrosConPagos = Sqlprovider.ExecuteStoredProcedure("workflow.PL_Sel_RubrosConPagosPorAprobarCxP", CommandType.StoredProcedure);
-
-            int total_registros = DtRubrosConPagos.Rows.Count;
-
-            if (total_registros > 0)
-            {
-                for (int i = 0; i < total_registros; i++)
-                {
-                    Wrkf_Rubro objrubro = new Wrkf_Rubro()
-                    {
-                        Rubro_Idx = Convert.ToString(DtRubrosConPagos.Rows[i]["Rubro_Id"]),
-                        Descripcionx = Convert.ToString(DtRubrosConPagos.Rows[i]["Descripcion"]),
-                        Cantidad_Pagosx = Convert.ToInt32(DtRubrosConPagos.Rows[i]["CantidadPago"])
-                    };
-
-                    lstrubro.Add(objrubro);
-                }
-            }
-            else
-            {
-                Wrkf_Rubro objrubro = new Wrkf_Rubro();
-                lstrubro.Add(objrubro);
-            }
-
-            return lstrubro;
-        }
-
-        /// <summary>
-        /// Obtiene un listado de los rubros que tienen notas de créditos pendientes por revisar por CxP
-        /// </summary>
-        /// <returns></returns>
-        public List<Wrkf_Rubro> lstRubrosConNotasCreditosAsociados(int gruporubro_id)
-        {
-            List<Wrkf_Rubro> lstrubro = new List<Wrkf_Rubro>();
-
-            SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
-            Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                new SqlParameter("@pGruporubro_Id", gruporubro_id)
-            });
-
-            DataTable DtRubrosConPagos = Sqlprovider.ExecuteStoredProcedure("workflow.PL_Sel_RubrosConNotasCreditosPorAprobarCxP", CommandType.StoredProcedure);
-
-            int total_registros = DtRubrosConPagos.Rows.Count;
-
-            if (total_registros > 0)
-            {
-                for (int i = 0; i < total_registros; i++)
-                {
-                    Wrkf_Rubro objrubro = new Wrkf_Rubro()
-                    {
-                        Rubro_Idx = Convert.ToString(DtRubrosConPagos.Rows[i]["Rubro_Id"]),
-                        Descripcionx = Convert.ToString(DtRubrosConPagos.Rows[i]["Descripcion"]),
-                        Cantidad_Pagosx = Convert.ToInt32(DtRubrosConPagos.Rows[i]["CantidadPago"])
-                    };
-
-                    lstrubro.Add(objrubro);
-                }
-            }
-            else
-            {
-                Wrkf_Rubro objrubro = new Wrkf_Rubro();
-                lstrubro.Add(objrubro);
-            }
-
-            return lstrubro;
-        }
-
-        /// <summary>
-        /// El método lista los pagos asociados a un rubro especificado
-        /// </summary>
-        /// <param name="rubro_id"></param>
-        /// <returns></returns>
-        public List<Wrkf_ListaPagosPorRubroId> ListaPagosPorRubroId(string rubro_id, DateTime fechadesde, DateTime fechahasta)
-        {
-
-            List<Wrkf_ListaPagosPorRubroId> lstlistapagosporrubroid = new List<Wrkf_ListaPagosPorRubroId>();
-            double totalapagarx;
-            double totalglobalapagarx = 0;
-
-            SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
-            Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                new SqlParameter("@pRubro_Id", rubro_id),
-                new SqlParameter("@pfechapago_desde", fechadesde),
-                new SqlParameter("@pfechapago_hasta", fechahasta)
-            });
-
-            DataTable Dtlistapagosporrubroid = Sqlprovider.ExecuteStoredProcedure("workflow.PL_Sel_ListaPagosPorRubroId", CommandType.StoredProcedure);
-
-            int total_registros = Dtlistapagosporrubroid.Rows.Count;
-
-            if (total_registros > 0)
-            {
-                for (int i = 0; i < total_registros; i++)
-                {
-                    totalapagarx = Convert.ToDouble(Dtlistapagosporrubroid.Rows[i]["Total"]);
-                    //totaliza el total a pagar
-                    totalglobalapagarx = totalglobalapagarx + totalapagarx;
-
-                    Wrkf_ListaPagosPorRubroId objlistapagosporrubroid = new Wrkf_ListaPagosPorRubroId()
-                    {
-                        Solicitudordenpagodetalle_Idx = Convert.ToInt32(Dtlistapagosporrubroid.Rows[i]["Solicitudordenpagodetalle_Id"]),
-                        Solicitudordenpago_Idx = Convert.ToInt32(Dtlistapagosporrubroid.Rows[i]["Solicitudordenpago_Id"]),
-                        Documentox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["documento"]),
-                        Proveedorx = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Proveedor"]),
-                        Descripcionx = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Descripcion"]),
-                        Numerodocumentox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Numerodocumento"]),
-                        Totalx = totalapagarx.ToString("N", new CultureInfo("is-IS")),
-                        TotalGlobalAPagarx = totalglobalapagarx.ToString("N", new CultureInfo("is-IS")),
-                        DescripcionRubrox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["DescripcionRubro"]),
-                        FechaRegistrox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["FechaRegistro"]),
-                        FechaPagox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Fechapago"]),
-                        formadepagox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["formadepago"]),
-                        formapago_Idx = Convert.ToInt32(Dtlistapagosporrubroid.Rows[i]["formapago_Id"]),
-                        Observacionesx = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["TieneObservaciones"]),
-                        Chequerax = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Chekbkid"]),
-                        DocumentoRecibidox = Convert.ToBoolean(Dtlistapagosporrubroid.Rows[i]["DocumentoRecibido"]),
-                        TotalDocumentosx = Convert.ToInt32(Dtlistapagosporrubroid.Rows[i]["TotalDocumentos"]),
-                        ObservacionRechaSubContrax = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["ObservacionRechaSubContra"]),
-                        Curncyidx = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["curncyid"]),
-                        FechaDocumentox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["FechaDocumento"])
-                    };
-
-                    lstlistapagosporrubroid.Add(objlistapagosporrubroid);
-                }
-            }
-            else
-            {
-                Wrkf_ListaPagosPorRubroId objlistapagosporrubroid = new Wrkf_ListaPagosPorRubroId();
-                lstlistapagosporrubroid.Add(objlistapagosporrubroid);
-            }
-
-            return lstlistapagosporrubroid;
-        }
-
-        /// <summary>
-        /// El método lista las notas de creditos asociadas a un rubro especificado
-        /// </summary>
-        /// <param name="rubro_id"></param>
-        /// <returns></returns>
-        public List<Wrkf_ListaPagosPorRubroId> ListaNotasCreditoPorRubroId(string rubro_id, DateTime fechadesde, DateTime fechahasta)
-        {
-
-            List<Wrkf_ListaPagosPorRubroId> lstlistapagosporrubroid = new List<Wrkf_ListaPagosPorRubroId>();
-            double totalapagarx;
-            double totalglobalapagarx = 0;
-
-            SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
-            Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                new SqlParameter("@pRubro_Id", rubro_id),
-                new SqlParameter("@pfechapago_desde", fechadesde),
-                new SqlParameter("@pfechapago_hasta", fechahasta)
-            });
-
-            DataTable Dtlistapagosporrubroid = Sqlprovider.ExecuteStoredProcedure("workflow.PL_Sel_ListaNotaCreditoPorRubroId", CommandType.StoredProcedure);
-
-            int total_registros = Dtlistapagosporrubroid.Rows.Count;
-
-            if (total_registros > 0)
-            {
-                for (int i = 0; i < total_registros; i++)
-                {
-                    totalapagarx = Convert.ToDouble(Dtlistapagosporrubroid.Rows[i]["Total"]);
-                    //totaliza el total a pagar
-                    totalglobalapagarx = totalglobalapagarx + totalapagarx;
-
-                    Wrkf_ListaPagosPorRubroId objlistapagosporrubroid = new Wrkf_ListaPagosPorRubroId()
-                    {
-                        Solicitudordenpagodetalle_Idx = Convert.ToInt32(Dtlistapagosporrubroid.Rows[i]["Solicitudordenpagodetalle_Id"]),
-                        Solicitudordenpago_Idx = Convert.ToInt32(Dtlistapagosporrubroid.Rows[i]["Solicitudordenpago_Id"]),
-                        Documentox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["documento"]),
-                        Proveedorx = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Proveedor"]),
-                        Descripcionx = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Descripcion"]),
-                        Numerodocumentox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Numerodocumento"]),
-                        Totalx = totalapagarx.ToString("N", new CultureInfo("is-IS")),
-                        TotalGlobalAPagarx = totalglobalapagarx.ToString("N", new CultureInfo("is-IS")),
-                        DescripcionRubrox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["DescripcionRubro"]),
-                        FechaRegistrox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["FechaRegistro"]),
-                        FechaPagox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Fechapago"]),
-                        formadepagox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["formadepago"]),
-                        formapago_Idx = Convert.ToInt32(Dtlistapagosporrubroid.Rows[i]["formapago_Id"]),
-                        Observacionesx = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["TieneObservaciones"]),
-                        Chequerax = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Chekbkid"]),
-                        DocumentoRecibidox = Convert.ToBoolean(Dtlistapagosporrubroid.Rows[i]["DocumentoRecibido"]),
-                        TotalDocumentosx = Convert.ToInt32(Dtlistapagosporrubroid.Rows[i]["TotalDocumentos"]),
-                        Curncyidx = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["curncyid"]),
-                        FechaDocumentox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["FechaDocumento"])
-                    };
-
-                    lstlistapagosporrubroid.Add(objlistapagosporrubroid);
-                }
-            }
-            else
-            {
-                Wrkf_ListaPagosPorRubroId objlistapagosporrubroid = new Wrkf_ListaPagosPorRubroId();
-                lstlistapagosporrubroid.Add(objlistapagosporrubroid);
-            }
-
-            return lstlistapagosporrubroid;
-        }
-
-        /// <summary>
-        /// Actualiza forma de pago enla revisión de la solicitud del pago por CxP
-        /// </summary>
-        /// <param name="forma_pago_id"></param>
-        /// <param name="Solicitudordenpagodetalle_Id"></param>
-        /// <param name="Solicitudordenpago_Id"></param>
-        /// <returns></returns>
-        public Wrkf_RespuestaOperacion ActualizarFormaPagoRevisionCxP(int forma_pago_id, int Solicitudordenpagodetalle_Id, int Solicitudordenpago_Id)
+        public Wrkf_RespuestaOperacion ActualizarGrupoRubro(string pcodigo, int pgruporubro_id, string prubro_id, bool psoportesfacturas, string pusuario, string pobservacion)
         {
             Wrkf_RespuestaOperacion objRespuestaOperacion = new Wrkf_RespuestaOperacion();
 
             SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
             Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                new SqlParameter("@formapago_Id", forma_pago_id),
-                new SqlParameter("@Solicitudordenpagodetalle_Id", Solicitudordenpagodetalle_Id),
-                new SqlParameter("@Solicitudordenpago_Id", Solicitudordenpago_Id),
-                new SqlParameter("@CodigoError", SqlDbType.VarChar, 10),
-                new SqlParameter("@MensajeError", SqlDbType.VarChar, 200),
-                new SqlParameter("@Tipo", SqlDbType.VarChar, 20),
-                new SqlParameter("@Titulo", SqlDbType.VarChar, 50)
+                new SqlParameter("@pCodigo", pcodigo),
+                new SqlParameter("@pSoportesRecibido", psoportesfacturas),
+                new SqlParameter("@pGrupoRubro_Id", pgruporubro_id),
+                new SqlParameter("@pRubro_Id", prubro_id),
+                new SqlParameter("@pUsuarioRevisionCxP", pusuario),
+                new SqlParameter("@pObservacionRevisionCxP", pobservacion),
+                new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
+                new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
+                new SqlParameter("@pTipoError", SqlDbType.VarChar, 20),
+                new SqlParameter("@pTituloError", SqlDbType.VarChar, 60)
             });
 
-            Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[4].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[5].Direction = ParameterDirection.Output;
             Sqlprovider.Oparameters[6].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[7].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[8].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[9].Direction = ParameterDirection.Output;
 
             //optener los resultados del procedimiento almacenado
             //Dictionary<string, string> outparam; = new Dictionary<string, string>();
-            int Result = Sqlprovider.ExecuteStoredProcedureWithOutputParameter2("Workflow.sp_up_ActualizarFormaPagoRevisionCxP", CommandType.StoredProcedure, out Dictionary<string, string> outparam);
+            Sqlprovider.ExecuteStoredProcedureWithOutputParameter2("WorkFlow.PL_InsUpd_ActualizarGrupoRubro", CommandType.StoredProcedure, out Dictionary<string, string> outparam);
 
             //Obtiene El Error Generado Desde El Procedimiento Almacenado Workflow.sp_insup_solicitudordenpago.
-            if (!string.IsNullOrEmpty(outparam["@CodigoError"]))
+            if (!string.IsNullOrEmpty(outparam["@pCodigoError"]))
             {
-                objRespuestaOperacion.NumeroRegistroOrdenPagox = -1;
-                objRespuestaOperacion.NumeroRegistroDetallePagox = -1;
-                objRespuestaOperacion.RegistrosProcesadosx = 0;
-                objRespuestaOperacion.Codigox = outparam["@CodigoError"];
-                objRespuestaOperacion.Mensajex = outparam["@MensajeError"];
-                objRespuestaOperacion.Tipox = outparam["@Tipo"];
-                objRespuestaOperacion.Titulox = outparam["@Titulo"];
+                objRespuestaOperacion.Codigox = outparam["@pCodigoError"];
+                objRespuestaOperacion.Mensajex = outparam["@pMensajeError"];
+                objRespuestaOperacion.Tipox = outparam["@pTipoError"];
+                objRespuestaOperacion.Titulox = outparam["@pTituloError"];
             }
             else
             {
-                objRespuestaOperacion.RegistrosProcesadosx = Result;
                 objRespuestaOperacion.Codigox = string.Empty;
                 objRespuestaOperacion.Mensajex = string.Empty;
                 objRespuestaOperacion.Tipox = string.Empty;
@@ -480,6 +266,192 @@ namespace Intranet.Ado.DbContent
 
             return objRespuestaOperacion;
         }
+
+        /// <summary>
+        /// Actualiza los datos del pago en la tabla del workflow
+        /// </summary>
+        /// <param name="pcodigo"></param>
+        /// <param name="pgruporubro_id"></param>
+        /// <param name="prubro_id"></param>
+        /// <param name="psoportesfacturas"></param>
+        /// <returns></returns>
+        public Wrkf_RespuestaOperacion AprobarRechazarPagosCxP(string plistapagosaprobados, string plistapagosrechazados, string plistadopagossoportes, string pusuario, string pobservacion)
+        {
+            Wrkf_RespuestaOperacion objRespuestaOperacion = new Wrkf_RespuestaOperacion();
+
+            SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
+            Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
+                new SqlParameter("@plistadoaprobacion", plistapagosaprobados),
+                new SqlParameter("@plistadorechazo", plistapagosrechazados),
+                new SqlParameter("@plistadosoportes", plistadopagossoportes),
+                new SqlParameter("@pUsuario", pusuario),
+                new SqlParameter("@pObservacion", pobservacion),
+                new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
+                new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
+                new SqlParameter("@pTipoError", SqlDbType.VarChar, 20),
+                new SqlParameter("@pTituloError", SqlDbType.VarChar, 60)
+            });
+
+            Sqlprovider.Oparameters[5].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[6].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[7].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[8].Direction = ParameterDirection.Output;
+
+            //optener los resultados del procedimiento almacenado
+            //Dictionary<string, string> outparam; = new Dictionary<string, string>();
+            Sqlprovider.ExecuteStoredProcedureWithOutputParameter2("WorkFlow.PL_Up_AprobarRechazarPagosCxP", CommandType.StoredProcedure, out Dictionary<string, string> outparam);
+
+            //Obtiene El Error Generado Desde El Procedimiento Almacenado Workflow.sp_insup_solicitudordenpago.
+            if (!string.IsNullOrEmpty(outparam["@pCodigoError"]))
+            {
+                objRespuestaOperacion.Codigox = outparam["@pCodigoError"];
+                objRespuestaOperacion.Mensajex = outparam["@pMensajeError"];
+                objRespuestaOperacion.Tipox = outparam["@pTipoError"];
+                objRespuestaOperacion.Titulox = outparam["@pTituloError"];
+            }
+            else
+            {
+                objRespuestaOperacion.Codigox = string.Empty;
+                objRespuestaOperacion.Mensajex = string.Empty;
+                objRespuestaOperacion.Tipox = string.Empty;
+                objRespuestaOperacion.Titulox = string.Empty;
+            }
+
+            return objRespuestaOperacion;
+        }
+
+        ///// <summary>
+        ///// El método lista los pagos asociados a un rubro especificado
+        ///// </summary>
+        ///// <param name="rubro_id"></param>
+        ///// <returns></returns>
+        //public List<Wrkf_ListaPagosPorRubroId> ListaPagosPorRubroId(string rubro_id, DateTime fechadesde, DateTime fechahasta)
+        //{
+
+        //    List<Wrkf_ListaPagosPorRubroId> lstlistapagosporrubroid = new List<Wrkf_ListaPagosPorRubroId>();
+        //    double totalapagarx;
+        //    double totalglobalapagarx = 0;
+
+        //    SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
+        //    Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
+        //        new SqlParameter("@pRubro_Id", rubro_id),
+        //        new SqlParameter("@pfechapago_desde", fechadesde),
+        //        new SqlParameter("@pfechapago_hasta", fechahasta)
+        //    });
+
+        //    DataTable Dtlistapagosporrubroid = Sqlprovider.ExecuteStoredProcedure("workflow.PL_Sel_ListaPagosPorRubroId", CommandType.StoredProcedure);
+
+        //    int total_registros = Dtlistapagosporrubroid.Rows.Count;
+
+        //    if (total_registros > 0)
+        //    {
+        //        for (int i = 0; i < total_registros; i++)
+        //        {
+        //            totalapagarx = Convert.ToDouble(Dtlistapagosporrubroid.Rows[i]["Total"]);
+        //            //totaliza el total a pagar
+        //            totalglobalapagarx = totalglobalapagarx + totalapagarx;
+
+        //            Wrkf_ListaPagosPorRubroId objlistapagosporrubroid = new Wrkf_ListaPagosPorRubroId()
+        //            {
+        //                Solicitudordenpagodetalle_Idx = Convert.ToInt32(Dtlistapagosporrubroid.Rows[i]["Solicitudordenpagodetalle_Id"]),
+        //                Solicitudordenpago_Idx = Convert.ToInt32(Dtlistapagosporrubroid.Rows[i]["Solicitudordenpago_Id"]),
+        //                Documentox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["documento"]),
+        //                Proveedorx = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Proveedor"]),
+        //                Descripcionx = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Descripcion"]),
+        //                Numerodocumentox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Numerodocumento"]),
+        //                Totalx = totalapagarx.ToString("N", new CultureInfo("is-IS")),
+        //                TotalGlobalAPagarx = totalglobalapagarx.ToString("N", new CultureInfo("is-IS")),
+        //                DescripcionRubrox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["DescripcionRubro"]),
+        //                FechaRegistrox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["FechaRegistro"]),
+        //                FechaPagox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Fechapago"]),
+        //                formadepagox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["formadepago"]),
+        //                formapago_Idx = Convert.ToInt32(Dtlistapagosporrubroid.Rows[i]["formapago_Id"]),
+        //                Observacionesx = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["TieneObservaciones"]),
+        //                Chequerax = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Chekbkid"]),
+        //                DocumentoRecibidox = Convert.ToBoolean(Dtlistapagosporrubroid.Rows[i]["DocumentoRecibido"]),
+        //                TotalDocumentosx = Convert.ToInt32(Dtlistapagosporrubroid.Rows[i]["TotalDocumentos"]),
+        //                ObservacionRechaSubContrax = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["ObservacionRechaSubContra"]),
+        //                Curncyidx = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["curncyid"]),
+        //                FechaDocumentox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["FechaDocumento"])
+        //            };
+
+        //            lstlistapagosporrubroid.Add(objlistapagosporrubroid);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Wrkf_ListaPagosPorRubroId objlistapagosporrubroid = new Wrkf_ListaPagosPorRubroId();
+        //        lstlistapagosporrubroid.Add(objlistapagosporrubroid);
+        //    }
+
+        //    return lstlistapagosporrubroid;
+        //}
+
+        ///// <summary>
+        ///// El método lista las notas de creditos asociadas a un rubro especificado
+        ///// </summary>
+        ///// <param name="rubro_id"></param>
+        ///// <returns></returns>
+        //public List<Wrkf_ListaPagosPorRubroId> ListaNotasCreditoPorRubroId(string rubro_id, DateTime fechadesde, DateTime fechahasta)
+        //{
+
+        //    List<Wrkf_ListaPagosPorRubroId> lstlistapagosporrubroid = new List<Wrkf_ListaPagosPorRubroId>();
+        //    double totalapagarx;
+        //    double totalglobalapagarx = 0;
+
+        //    SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
+        //    Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
+        //        new SqlParameter("@pRubro_Id", rubro_id),
+        //        new SqlParameter("@pfechapago_desde", fechadesde),
+        //        new SqlParameter("@pfechapago_hasta", fechahasta)
+        //    });
+
+        //    DataTable Dtlistapagosporrubroid = Sqlprovider.ExecuteStoredProcedure("workflow.PL_Sel_ListaNotaCreditoPorRubroId", CommandType.StoredProcedure);
+
+        //    int total_registros = Dtlistapagosporrubroid.Rows.Count;
+
+        //    if (total_registros > 0)
+        //    {
+        //        for (int i = 0; i < total_registros; i++)
+        //        {
+        //            totalapagarx = Convert.ToDouble(Dtlistapagosporrubroid.Rows[i]["Total"]);
+        //            //totaliza el total a pagar
+        //            totalglobalapagarx = totalglobalapagarx + totalapagarx;
+
+        //            Wrkf_ListaPagosPorRubroId objlistapagosporrubroid = new Wrkf_ListaPagosPorRubroId()
+        //            {
+        //                Solicitudordenpagodetalle_Idx = Convert.ToInt32(Dtlistapagosporrubroid.Rows[i]["Solicitudordenpagodetalle_Id"]),
+        //                Solicitudordenpago_Idx = Convert.ToInt32(Dtlistapagosporrubroid.Rows[i]["Solicitudordenpago_Id"]),
+        //                Documentox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["documento"]),
+        //                Proveedorx = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Proveedor"]),
+        //                Descripcionx = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Descripcion"]),
+        //                Numerodocumentox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Numerodocumento"]),
+        //                Totalx = totalapagarx.ToString("N", new CultureInfo("is-IS")),
+        //                TotalGlobalAPagarx = totalglobalapagarx.ToString("N", new CultureInfo("is-IS")),
+        //                DescripcionRubrox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["DescripcionRubro"]),
+        //                FechaRegistrox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["FechaRegistro"]),
+        //                FechaPagox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Fechapago"]),
+        //                formadepagox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["formadepago"]),
+        //                formapago_Idx = Convert.ToInt32(Dtlistapagosporrubroid.Rows[i]["formapago_Id"]),
+        //                Observacionesx = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["TieneObservaciones"]),
+        //                Chequerax = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["Chekbkid"]),
+        //                DocumentoRecibidox = Convert.ToBoolean(Dtlistapagosporrubroid.Rows[i]["DocumentoRecibido"]),
+        //                TotalDocumentosx = Convert.ToInt32(Dtlistapagosporrubroid.Rows[i]["TotalDocumentos"]),
+        //                Curncyidx = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["curncyid"]),
+        //                FechaDocumentox = Convert.ToString(Dtlistapagosporrubroid.Rows[i]["FechaDocumento"])
+        //            };
+
+        //            lstlistapagosporrubroid.Add(objlistapagosporrubroid);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Wrkf_ListaPagosPorRubroId objlistapagosporrubroid = new Wrkf_ListaPagosPorRubroId();
+        //        lstlistapagosporrubroid.Add(objlistapagosporrubroid);
+        //    }
+
+        //    return lstlistapagosporrubroid;
+        //}
 
         /// <summary>
         /// Actualiza el número de chequera en la solicitud del pago

@@ -18,77 +18,32 @@ namespace Intranet.Ado.DbContent
         /// El método permite obtener un listado de las chequeras
         /// </summary>
         /// <returns></returns>
-        public List<Wrkf_Chequera> GetListadoChequera()
+        public Wrkf_Chequera GetChequera_Key(string pchequera_id)
         {
-            List<Wrkf_Chequera> lstChequera = new List<Wrkf_Chequera>();
+            Wrkf_Chequera objChequera = new Wrkf_Chequera();
 
             //Ejecutar el procedimiento almacenado
             SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
             Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
-                new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
-                new SqlParameter("@pTipo", SqlDbType.VarChar, 20),
-                new SqlParameter("@pTitulo", SqlDbType.VarChar, 30)
+                new SqlParameter("@pCHEKBKID", pchequera_id)
             });
 
-            Sqlprovider.Oparameters[0].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[1].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[2].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
-
             //Ejecuta el procedimiento almacenado
-            DataTable DtChequeraid = Sqlprovider.ExecuteStoredProcedureWithOutputParameter("WorkFlow.PL_Sel_ListadoChequera", 
-                                                                                            CommandType.StoredProcedure, 
-                                                                                            out Dictionary<string, string> outparam);
+            DataTable DtChequeraid = Sqlprovider.ExecuteStoredProcedure("BankTransfer.PL_Sel_CM00100_key", CommandType.StoredProcedure);
 
-            //verifica que el procedimiento almacenado al momento de ejecutar no tenga errores
-            if (!string.IsNullOrEmpty(outparam["@pCodigoError"]))
+            int total_registros = DtChequeraid.Rows.Count;
+
+            if (total_registros > 0)
             {
-                Wrkf_Chequera objChequera = new Wrkf_Chequera()
-                {
-                    Codigox = outparam["@pCodigoError"],
-                    Mensajex = outparam["@pMensajeError"],
-                    Tipox = outparam["@pTipo"],
-                    Titulox = outparam["@pTitulo"]
-                };
-
-                lstChequera.Add(objChequera);
-            }
-            else
-            {
-                int total_registros = DtChequeraid.Rows.Count;
-
-                if (total_registros > 0)
-                {
-                    for (int i = 0; i < total_registros; i++)
-                    {
-                        Wrkf_Chequera objChequera = new Wrkf_Chequera() 
-                        {
-                            ChequeraIdx = Convert.ToString(DtChequeraid.Rows[i]["ChequeraId"]),
-                            Titularcuentax = Convert.ToString(DtChequeraid.Rows[i]["Titularcuenta"]),
-                            Numerocuentax = Convert.ToString(DtChequeraid.Rows[i]["Numerocuenta"]),
-                            Codigobancox = Convert.ToString(DtChequeraid.Rows[i]["Codigobanco"]),
-                            Codigomonedax = Convert.ToString(DtChequeraid.Rows[i]["Codigomoneda"])
-                        };
-
-                        lstChequera.Add(objChequera);
-                    }
-                }
-                else
-                {
-                    Wrkf_Chequera objChequera = new Wrkf_Chequera()
-                    {
-                        Codigox = "CHK001",
-                        Mensajex = "No existen chequeras activas para mostrar",
-                        Tipox = "error",
-                        Titulox = "Listar Chequeras Para Asignar en la Revisión de CxP"
-                    };
-
-                    lstChequera.Add(objChequera);
-                }
+                objChequera.ChequeraIdx = DtChequeraid.Rows[0]["CHEKBKID"].ToString().Trim();
+                objChequera.Titularcuentax = DtChequeraid.Rows[0]["DSCRIPTN"].ToString().Trim();
+                objChequera.Numerocuentax = DtChequeraid.Rows[0]["CMUSRDF1"].ToString().Trim();
+                objChequera.Codigobancox = DtChequeraid.Rows[0]["BANKID"].ToString().Trim();
+                objChequera.Codigomonedax = DtChequeraid.Rows[0]["CURNCYID"].ToString().Trim();
+                objChequera.Inactivax = DtChequeraid.Rows[0]["INACTIVE"].ToString().Trim();
             }
 
-            return lstChequera;
+            return objChequera;
         }
 
         /// <summary>

@@ -20,14 +20,14 @@ namespace Intranet.Controllers
         {
             //Obtener una lista con las opciones de menu
             List<Wrkf_OpcionesMenuItem> lstopcionesmenuitem;
-            List<Wrkf_Departamento> lstgruporubro = new List<Wrkf_Departamento>();
-            List<Wrkf_Departamento> lstgruporubronotacreditos;
-            List<Wrkf_Departamento> lstgruporubro_Urgentes;
+            List<Wrkf_GrupoRubro> lstgruporubro = new List<Wrkf_GrupoRubro>();
+            List<Wrkf_GrupoRubro> lstgruporubronotacreditos;
+            List<Wrkf_GrupoRubro> lstgruporubro_Urgentes;
             Wrkf_DbOpcionesMenu objdbopcionesmenu = new Wrkf_DbOpcionesMenu();
             Wrkf_DbMensajeError objwrkfdbmensajeerror = new Wrkf_DbMensajeError();
             MensajeError objmensajeerror;
             Wrkf_DbSolicitudVP objsolicitudVP = new Wrkf_DbSolicitudVP();
-            Wrkf_Departamento objdepartamento = new Wrkf_Departamento();
+            Wrkf_GrupoRubro objdepartamento = new Wrkf_GrupoRubro();
 
             if (Session["sUsuario_Id"] == null)
             {
@@ -53,8 +53,8 @@ namespace Intranet.Controllers
                         ViewBag.TituloMnu = objmensajeerror.Titulox;
                     }
 
-                    //Obtener los grupo de rubros con los pagos asociados
-                    lstgruporubro = objsolicitudVP.LstGrupoRubroVP(false);
+                    ////Obtener los grupo de rubros con los pagos asociados
+                    //lstgruporubro = objsolicitudVP.LstGrupoRubroVP(false);
 
                     if (lstgruporubro.Count > 0)
                     {
@@ -74,47 +74,47 @@ namespace Intranet.Controllers
                         ViewBag.listagruporubrospagos = lstgruporubro;
                     }
 
-                    //obtener los grupo de rubros con las notas de creditos pendientes
-                    lstgruporubronotacreditos = objsolicitudVP.LstGrupoRubroVP(true);
+                    ////obtener los grupo de rubros con las notas de creditos pendientes
+                    //lstgruporubronotacreditos = objsolicitudVP.LstGrupoRubroVP(true);
 
-                    if (lstgruporubronotacreditos.Count > 0)
-                    {
-                        ViewBag.lstgruporubronotacreditos = lstgruporubronotacreditos;
-                    }
-                    else
-                    {
-                        objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("SOP006", "SOLIORPAGO");
+                    //if (lstgruporubronotacreditos.Count > 0)
+                    //{
+                    //    ViewBag.lstgruporubronotacreditos = lstgruporubronotacreditos;
+                    //}
+                    //else
+                    //{
+                    //    objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("SOP006", "SOLIORPAGO");
 
-                        objdepartamento.Codigox = objmensajeerror.Codigox;
-                        objdepartamento.Mensajex = objmensajeerror.Mensajex;
-                        objdepartamento.Tipox = "card card-info";
-                        objdepartamento.Titulox = objmensajeerror.Titulox;
+                    //    objdepartamento.Codigox = objmensajeerror.Codigox;
+                    //    objdepartamento.Mensajex = objmensajeerror.Mensajex;
+                    //    objdepartamento.Tipox = "card card-info";
+                    //    objdepartamento.Titulox = objmensajeerror.Titulox;
 
-                        lstgruporubronotacreditos.Add(objdepartamento);
+                    //    lstgruporubronotacreditos.Add(objdepartamento);
 
-                        ViewBag.lstgruporubronotacreditoscontralor = lstgruporubronotacreditos;
-                    }
+                    //    ViewBag.lstgruporubronotacreditoscontralor = lstgruporubronotacreditos;
+                    //}
 
-                    //obtener los grupo de rubros con pagos urgentes
-                    lstgruporubro_Urgentes = objsolicitudVP.LstGrupoRubroVP_Urgentes();
+                    ////obtener los grupo de rubros con pagos urgentes
+                    //lstgruporubro_Urgentes = objsolicitudVP.LstGrupoRubroVP_Urgentes();
 
-                    if (lstgruporubro_Urgentes.Count > 0)
-                    {
-                        ViewBag.lstgruporubrourgentes = lstgruporubro_Urgentes;
-                    }
-                    else
-                    {
-                        objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("SOP006", "SOLIORPAGO");
+                    //if (lstgruporubro_Urgentes.Count > 0)
+                    //{
+                    //    ViewBag.lstgruporubrourgentes = lstgruporubro_Urgentes;
+                    //}
+                    //else
+                    //{
+                    //    objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("SOP006", "SOLIORPAGO");
 
-                        objdepartamento.Codigox = objmensajeerror.Codigox;
-                        objdepartamento.Mensajex = objmensajeerror.Mensajex;
-                        objdepartamento.Tipox = "card card-info";
-                        objdepartamento.Titulox = objmensajeerror.Titulox;
+                    //    objdepartamento.Codigox = objmensajeerror.Codigox;
+                    //    objdepartamento.Mensajex = objmensajeerror.Mensajex;
+                    //    objdepartamento.Tipox = "card card-info";
+                    //    objdepartamento.Titulox = objmensajeerror.Titulox;
 
-                        lstgruporubro_Urgentes.Add(objdepartamento);
+                    //    lstgruporubro_Urgentes.Add(objdepartamento);
 
-                        ViewBag.lstgruporubrourgentes = lstgruporubro_Urgentes;
-                    }
+                    //    ViewBag.lstgruporubrourgentes = lstgruporubro_Urgentes;
+                    //}
                 }
                 catch (Exception ex)
                 {
@@ -138,125 +138,125 @@ namespace Intranet.Controllers
         /// Muestra una vista con el listado de los rubros con pagos pendientes por aprobar por contraloria
         /// </summary>
         /// <returns></returns>
-        public ActionResult ListaRubroVP(string grid)
-        {
-            //Obtener una lista con las opciones de menu
-            List<Wrkf_OpcionesMenuItem> lstopcionesmenuitem;
-            List<Wrkf_Rubro> lstrubro;
-            List<Wrkf_Rubro> lstrubronotacreditos = new List<Wrkf_Rubro>();
-            List<Wrkf_Rubro> lstrubrourgentes = new List<Wrkf_Rubro>();
-            Wrkf_DbOpcionesMenu objdbopcionesmenu = new Wrkf_DbOpcionesMenu();
-            Wrkf_DbMensajeError objwrkfdbmensajeerror = new Wrkf_DbMensajeError();
-            MensajeError objmensajeerror;
-            Wrkf_DbSolicitudVP objsolicitudVP = new Wrkf_DbSolicitudVP();
-            Wrkf_Rubro objrubro = new Wrkf_Rubro();
+        //public ActionResult ListaRubroVP(string grid)
+        //{
+        //    //Obtener una lista con las opciones de menu
+        //    List<Wrkf_OpcionesMenuItem> lstopcionesmenuitem;
+        //    List<Wrkf_Rubro> lstrubro;
+        //    List<Wrkf_Rubro> lstrubronotacreditos = new List<Wrkf_Rubro>();
+        //    List<Wrkf_Rubro> lstrubrourgentes = new List<Wrkf_Rubro>();
+        //    Wrkf_DbOpcionesMenu objdbopcionesmenu = new Wrkf_DbOpcionesMenu();
+        //    Wrkf_DbMensajeError objwrkfdbmensajeerror = new Wrkf_DbMensajeError();
+        //    MensajeError objmensajeerror;
+        //    Wrkf_DbSolicitudVP objsolicitudVP = new Wrkf_DbSolicitudVP();
+        //    Wrkf_Rubro objrubro = new Wrkf_Rubro();
 
-            if (Session["sUsuario_Id"] == null)
-            {
-                return RedirectToAction("CerrarSesion", "Wrkf_Login");
-            }
-            else
-            {
-                try
-                {
-                    int gruporubro_id = Convert.ToInt32(EncriptadorMD5.Decrypt(grid));
-                    lstopcionesmenuitem = objdbopcionesmenu.Fn_ListarOpcionesMenuPorRol(Session["sUsuario_Id"].ToString());
-                    ViewBag.grid = grid; //grupo del rubro encriptado
+        //    if (Session["sUsuario_Id"] == null)
+        //    {
+        //        return RedirectToAction("CerrarSesion", "Wrkf_Login");
+        //    }
+        //    else
+        //    {
+        //        try
+        //        {
+        //            int gruporubro_id = Convert.ToInt32(EncriptadorMD5.Decrypt(grid));
+        //            lstopcionesmenuitem = objdbopcionesmenu.Fn_ListarOpcionesMenuPorRol(Session["sUsuario_Id"].ToString());
+        //            ViewBag.grid = grid; //grupo del rubro encriptado
 
-                    //verificar si la lista tiene las opciones del menu del controlar para mostrar en la vista
-                    if (lstopcionesmenuitem.Count > 0)
-                    {
-                        ViewBag.listaropcionesmenu = lstopcionesmenuitem;
-                    }
-                    else
-                    {
-                        objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("MNU001", "MENUOPCION");
-                        ViewBag.CodigoMnu = objmensajeerror.Codigox;
-                        ViewBag.MensajeMnu = objmensajeerror.Mensajex;
-                        ViewBag.TipoMnu = objmensajeerror.Tipox;
-                        ViewBag.TituloMnu = objmensajeerror.Titulox;
-                    }
+        //            //verificar si la lista tiene las opciones del menu del controlar para mostrar en la vista
+        //            if (lstopcionesmenuitem.Count > 0)
+        //            {
+        //                ViewBag.listaropcionesmenu = lstopcionesmenuitem;
+        //            }
+        //            else
+        //            {
+        //                objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("MNU001", "MENUOPCION");
+        //                ViewBag.CodigoMnu = objmensajeerror.Codigox;
+        //                ViewBag.MensajeMnu = objmensajeerror.Mensajex;
+        //                ViewBag.TipoMnu = objmensajeerror.Tipox;
+        //                ViewBag.TituloMnu = objmensajeerror.Titulox;
+        //            }
 
-                    //Obtener los grupo de rubros con los pagos asociados
-                    lstrubro = objsolicitudVP.LstRubroVP(gruporubro_id, false);
+        //            //Obtener los grupo de rubros con los pagos asociados
+        //            lstrubro = objsolicitudVP.LstRubroVP(gruporubro_id, false);
 
-                    if (lstrubro.Count > 0)
-                    {
-                        ViewBag.listarubrospagos = lstrubro;
-                    }
-                    else
-                    {
-                        objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("SOP007", "SOLIORPAGO");
+        //            if (lstrubro.Count > 0)
+        //            {
+        //                ViewBag.listarubrospagos = lstrubro;
+        //            }
+        //            else
+        //            {
+        //                objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("SOP007", "SOLIORPAGO");
 
-                        objrubro.Codigox = objmensajeerror.Codigox;
-                        objrubro.Mensajex = objmensajeerror.Mensajex;
-                        objrubro.Tipox = objmensajeerror.Tipox;
-                        objrubro.Titulox = objmensajeerror.Titulox;
+        //                objrubro.Codigox = objmensajeerror.Codigox;
+        //                objrubro.Mensajex = objmensajeerror.Mensajex;
+        //                objrubro.Tipox = objmensajeerror.Tipox;
+        //                objrubro.Titulox = objmensajeerror.Titulox;
 
-                        lstrubro.Add(objrubro);
+        //                lstrubro.Add(objrubro);
 
-                        ViewBag.listarubrospagos = lstrubro;
-                    }
+        //                ViewBag.listarubrospagos = lstrubro;
+        //            }
 
-                    //obtener los grupo de rubros con las notas de creditos pendientes
-                    lstrubronotacreditos = objsolicitudVP.LstRubroVP(gruporubro_id, true);
+        //            //obtener los grupo de rubros con las notas de creditos pendientes
+        //            lstrubronotacreditos = objsolicitudVP.LstRubroVP(gruporubro_id, true);
 
-                    if (lstrubronotacreditos.Count > 0)
-                    {
-                        ViewBag.lstrubronotacreditos = lstrubronotacreditos;
-                    }
-                    else
-                    {
-                        objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("SOP006", "SOLIORPAGO");
+        //            if (lstrubronotacreditos.Count > 0)
+        //            {
+        //                ViewBag.lstrubronotacreditos = lstrubronotacreditos;
+        //            }
+        //            else
+        //            {
+        //                objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("SOP006", "SOLIORPAGO");
 
-                        objrubro.Codigox = objmensajeerror.Codigox;
-                        objrubro.Mensajex = objmensajeerror.Mensajex;
-                        objrubro.Tipox = "card card-info";
-                        objrubro.Titulox = objmensajeerror.Titulox;
+        //                objrubro.Codigox = objmensajeerror.Codigox;
+        //                objrubro.Mensajex = objmensajeerror.Mensajex;
+        //                objrubro.Tipox = "card card-info";
+        //                objrubro.Titulox = objmensajeerror.Titulox;
 
-                        lstrubronotacreditos.Add(objrubro);
+        //                lstrubronotacreditos.Add(objrubro);
 
-                        ViewBag.lstrubronotacreditos = lstrubronotacreditos;
-                    }
+        //                ViewBag.lstrubronotacreditos = lstrubronotacreditos;
+        //            }
 
-                    //obtener los rubros con pagos urgentes pendientes por aprobación del VP
-                    lstrubrourgentes = objsolicitudVP.LstRubroVP_Urgentes(gruporubro_id);
+        //            //obtener los rubros con pagos urgentes pendientes por aprobación del VP
+        //            lstrubrourgentes = objsolicitudVP.LstRubroVP_Urgentes(gruporubro_id);
 
-                    if (lstrubrourgentes.Count > 0)
-                    {
-                        ViewBag.lstrubrourgentes = lstrubrourgentes;
-                    }
-                    else
-                    {
-                        objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("SOP006", "SOLIORPAGO");
+        //            if (lstrubrourgentes.Count > 0)
+        //            {
+        //                ViewBag.lstrubrourgentes = lstrubrourgentes;
+        //            }
+        //            else
+        //            {
+        //                objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("SOP006", "SOLIORPAGO");
 
-                        objrubro.Codigox = objmensajeerror.Codigox;
-                        objrubro.Mensajex = objmensajeerror.Mensajex;
-                        objrubro.Tipox = "card card-info";
-                        objrubro.Titulox = objmensajeerror.Titulox;
+        //                objrubro.Codigox = objmensajeerror.Codigox;
+        //                objrubro.Mensajex = objmensajeerror.Mensajex;
+        //                objrubro.Tipox = "card card-info";
+        //                objrubro.Titulox = objmensajeerror.Titulox;
 
-                        lstrubrourgentes.Add(objrubro);
+        //                lstrubrourgentes.Add(objrubro);
 
-                        ViewBag.lstrubrourgentes = lstrubrourgentes;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("99999", "Exception");
-                    objrubro.Codigox = objmensajeerror.Codigox;
-                    objrubro.Mensajex = objmensajeerror.Mensajex;
-                    objrubro.Tipox = objmensajeerror.Tipox;
-                    objrubro.Titulox = objmensajeerror.Titulox;
-                    objwrkfdbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoVPController/ListaRubroVP");
+        //                ViewBag.lstrubrourgentes = lstrubrourgentes;
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("99999", "Exception");
+        //            objrubro.Codigox = objmensajeerror.Codigox;
+        //            objrubro.Mensajex = objmensajeerror.Mensajex;
+        //            objrubro.Tipox = objmensajeerror.Tipox;
+        //            objrubro.Titulox = objmensajeerror.Titulox;
+        //            objwrkfdbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoVPController/ListaRubroVP");
 
-                    lstrubronotacreditos.Add(objrubro);
+        //            lstrubronotacreditos.Add(objrubro);
 
-                    ViewBag.lstrubronotacreditos = lstrubronotacreditos;
-                }
-            }
+        //            ViewBag.lstrubronotacreditos = lstrubronotacreditos;
+        //        }
+        //    }
 
-            return View();
-        }
+        //    return View();
+        //}
 
         /// <summary>
         /// Muestra un listado delos pagospendientes de aprobación por contaloria

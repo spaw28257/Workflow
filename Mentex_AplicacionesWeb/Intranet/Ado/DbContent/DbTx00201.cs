@@ -22,25 +22,33 @@ namespace Intranet.Ado.DbContent
         }
 
         /// <summary>
-        /// Lista los detalles de impuestos para seleccionar el porcentaje de iva o retención
+        /// Lista los detalles de impuestos del proveedor
         /// </summary>
         /// <returns></returns>
-        public List<Tx00201> ListarDetalleImpuesto()
+        public List<Tx00201> ListaPlanImpuesto_filter_TaxSchedule(string pTaxScheduleID)
         {
             List<Tx00201> lstdetalleimpuesto = new List<Tx00201>();
 
-            //el procedimiento no recibe parametros 
+            //Ejecutar el procedimiento almacenado
             SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
             Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
+                new SqlParameter("@pTaxScheduleID", pTaxScheduleID),
+                new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
+                new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
+                new SqlParameter("@pTipoError", SqlDbType.VarChar, 20),
+                new SqlParameter("@pTituloError", SqlDbType.VarChar, 60)
             });
 
-            string sqlQuery = "select TAXDTLID, TXDTLDSC, TXDTLPCT from TX00201 order by TAXDTLID";
+            Sqlprovider.Oparameters[1].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[2].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[4].Direction = ParameterDirection.Output;
 
-            //optener los resultados de la consulta SQL
-            DataTable DtDetalleImpuesto = Sqlprovider.ExecuteStoredProcedure(sqlQuery, CommandType.Text);
+            //optener los resultados del procedimiento almacenado
+            DataTable DtPlanImpuesto = Sqlprovider.ExecuteStoredProcedureWithOutputParameter("WorkFlow.PL_Sel_ListaPlanImpuesto_filter_TaxSchedule", CommandType.StoredProcedure, out Dictionary<string, string> outparam);
 
             //verifica el procedimiento genero algun resultado
-            int total_registros = DtDetalleImpuesto.Rows.Count;
+            int total_registros = DtPlanImpuesto.Rows.Count;
 
             if (total_registros > 0)
             {
@@ -49,9 +57,9 @@ namespace Intranet.Ado.DbContent
                 {
                     Tx00201 objtx00201 = new Tx00201()
                     {
-                        Taxdtlid = DtDetalleImpuesto.Rows[i]["TAXDTLID"].ToString(),
-                        Txdtldsc = DtDetalleImpuesto.Rows[i]["TXDTLDSC"].ToString(),
-                        Txdtlpct = Convert.ToDouble(DtDetalleImpuesto.Rows[i]["TXDTLPCT"])
+                        Taxdtlid = DtPlanImpuesto.Rows[i]["TAXDTLID"].ToString(),
+                        Txdtldsc = DtPlanImpuesto.Rows[i]["TXDTLDSC"].ToString(),
+                        Txdtlpct = Convert.ToDouble(DtPlanImpuesto.Rows[i]["TXDTLPCT"])
                     };
 
                     lstdetalleimpuesto.Add(objtx00201);

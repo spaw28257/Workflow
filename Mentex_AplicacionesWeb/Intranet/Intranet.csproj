@@ -587,16 +587,18 @@
     <Content Include="Global.asax" />
     <Content Include="Scripts\Parametros.js" />
     <Content Include="Scripts\SolicitudOrdenPago.js" />
+    <Content Include="Scripts\UtilidadesVarias.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Ado\DbContent\DbTx00201.cs" />
+    <Compile Include="Ado\DbContent\GestionPago_DatMtxConcepto.cs" />
     <Compile Include="Ado\DbContent\GestionPago_DbDiaFeriado.cs" />
     <Compile Include="Ado\DbContent\GestionPago_DbMtxPlantilla.cs" />
     <Compile Include="Ado\DbContent\IntegradorVentas_DbMtxTienda.cs" />
     <Compile Include="Ado\DbContent\Wrkf_DbCalcularMontoSolicitud.cs" />
     <Compile Include="Ado\DbContent\Wrkf_DbChequera.cs" />
-    <Compile Include="Ado\DbContent\Wrkf_DbDepartamento.cs" />
+    <Compile Include="Ado\DbContent\Wrkf_DatGrupoRubro.cs" />
     <Compile Include="Ado\DbContent\Wrkf_DbMensajeError.cs" />
     <Compile Include="Ado\DbContent\Wrkf_DbMoneda.cs" />
     <Compile Include="Ado\DbContent\Wrkf_DbOpcionesMenu.cs" />
@@ -604,7 +606,7 @@
     <Compile Include="Ado\DbContent\Wrkf_DbProveedor.cs" />
     <Compile Include="Ado\DbContent\Wrkf_DbProvision.cs" />
     <Compile Include="Ado\DbContent\Wrkf_DbReporte.cs" />
-    <Compile Include="Ado\DbContent\Wrkf_DbRubro.cs" />
+    <Compile Include="Ado\DbContent\Wrkf_DatRubro.cs" />
     <Compile Include="Ado\DbContent\Wrkf_DbSolicitudContralor.cs" />
     <Compile Include="Ado\DbContent\Wrkf_DbSolicitudOrdenPago.cs" />
     <Compile Include="Ado\DbContent\Wrkf_DbSolicitudOrdenPagoCxP.cs" />
@@ -622,7 +624,7 @@
     <Compile Include="Controllers\Wrkf_MtxTiendaController.cs" />
     <Compile Include="Controllers\Wrkf_PlantillaController.cs" />
     <Compile Include="Controllers\Wrkf_ProveedorController.cs" />
-    <Compile Include="Controllers\Wrkf_DepartamentoController.cs" />
+    <Compile Include="Controllers\Wrkf_GrupoRubroController.cs" />
     <Compile Include="Controllers\Wrkf_FormaPagoController.cs" />
     <Compile Include="Controllers\Wrkf_LoginController.cs" />
     <Compile Include="Controllers\Wrkf_MonedaController.cs" />
@@ -642,6 +644,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Enumerador.cs" />
+    <Compile Include="Models\GestionPago_EntMtxConcepto.cs" />
     <Compile Include="Models\GestionPago_MtxPlantilla.cs" />
     <Compile Include="Models\GestioPago_MtxDiaFeriado.cs" />
     <Compile Include="Models\IntegradorVentas_MtxTienda.cs" />
@@ -649,7 +652,7 @@
     <Compile Include="Models\Tx00201.cs" />
     <Compile Include="Models\Wrkf_CalcularMontos.cs" />
     <Compile Include="Models\Wrkf_Chequera.cs" />
-    <Compile Include="Models\Wrkf_Departamento.cs" />
+    <Compile Include="Models\Wrkf_GrupoRubro.cs" />
     <Compile Include="Models\Wrkf_DiaIFSemana.cs" />
     <Compile Include="Models\Wrkf_FormaPago.cs" />
     <Compile Include="Models\Wrkf_ListaPagosPorRubroId.cs" />
@@ -757,6 +760,8 @@
     <Content Include="Views\Wrkf_Reporte\SolicitudesAnuladas.cshtml" />
     <Content Include="Views\Wrkf_Usuario\ListadoUsuario.cshtml" />
     <Content Include="Views\Wrkf_Plantilla\Index.cshtml" />
+    <Content Include="Views\Wrkf_SolicitudOrdenPagoCxP\Index.cshtml" />
+    <Content Include="Views\Wrkf_SolicitudOrdenPagoCxP\ListadoAprobacionRechazoPagoCxP.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -767,7 +772,6 @@
   <ItemGroup>
     <Folder Include="Adminlte\img\icono_menu\" />
     <Folder Include="App_Data\" />
-    <Folder Include="Soportes\" />
     <Folder Include="Views\ConvertExtension\" />
     <Folder Include="Views\Proveedor\" />
     <Folder Include="Views\Tx00201\" />
@@ -778,6 +782,9 @@
     <Folder Include="Views\Wrkf_MtxTienda\" />
     <Folder Include="Views\Wrkf_Rubro\" />
     <Folder Include="Views\Wrkf_TipoDocumento\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

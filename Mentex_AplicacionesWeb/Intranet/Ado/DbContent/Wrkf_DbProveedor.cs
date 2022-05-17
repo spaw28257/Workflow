@@ -27,11 +27,20 @@ namespace Intranet.Ado.DbContent
 
             SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
             Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
+                new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
+                new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
+                new SqlParameter("@pTipoError", SqlDbType.VarChar, 20),
+                new SqlParameter("@pTituloError", SqlDbType.VarChar, 60)
             });
 
-            string sqlQuery = "select vendorid, vendname, txrgnnum, vndclsid from dbo.pm00200 order by vendname";
+            Sqlprovider.Oparameters[0].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[1].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[2].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
 
-            DataTable DtListadoProveedor = Sqlprovider.ExecuteStoredProcedure(sqlQuery, CommandType.Text);
+            string vSqlProcedureName = "WorkFlow.PL_Sel_Proveedor_All";
+
+            DataTable DtListadoProveedor = Sqlprovider.ExecuteStoredProcedureWithOutputParameter(vSqlProcedureName, CommandType.StoredProcedure, out Dictionary<string, string> outparam);
 
             int total_registros = DtListadoProveedor.Rows.Count;
 
@@ -41,10 +50,8 @@ namespace Intranet.Ado.DbContent
                 {
                     Wrkf_Proveedores objProveedor = new Wrkf_Proveedores()
                     {
-                        Vendorid = Convert.ToString(DtListadoProveedor.Rows[i]["vendorid"]).Trim(),
-                        Vendname = Convert.ToString(DtListadoProveedor.Rows[i]["vendname"]).Trim(),
-                        Txrgnnum = Convert.ToString(DtListadoProveedor.Rows[i]["txrgnnum"]).Trim(),
-                        Vndclsid = Convert.ToString(DtListadoProveedor.Rows[i]["vndclsid"]).Trim()
+                        Vendorid = Convert.ToString(DtListadoProveedor.Rows[i]["VENDORID"]).Trim(),
+                        Vendname = Convert.ToString(DtListadoProveedor.Rows[i]["VENDNAME"]).Trim()
                     };
 
                     lstProveedor.Add(objProveedor);
@@ -65,86 +72,38 @@ namespace Intranet.Ado.DbContent
         /// <param name="vndclsid"></param>
         /// <param name="curncyid"></param>
         /// <returns></returns>
-        public List<Wrkf_Proveedores> GetListadoProveedorPorId(string vendorid)
+        public List<Wrkf_Proveedores> GetListadoProveedorPorId(string pVendorid)
         {
             List<Wrkf_Proveedores> lstProveedor = new List<Wrkf_Proveedores>();
 
             SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
             Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                new SqlParameter("@vendorid", vendorid)
+                new SqlParameter("@pVENDORID", pVendorid)
             });
 
-            string sqlQuery = "select vendorid, vendname, txrgnnum, vndclsid from dbo.pm00200 where vendorid = @vendorid order by vendname";
+            string vSqlProcedureName = "GestionPago.PL_Sel_PM00200_key";
 
-            DataTable DtListadoProveedor = Sqlprovider.ExecuteStoredProcedure(sqlQuery, CommandType.Text);
+            DataTable DtListadoProveedor = Sqlprovider.ExecuteStoredProcedure(vSqlProcedureName, CommandType.StoredProcedure);
 
             int total_registros = DtListadoProveedor.Rows.Count;
 
             if (total_registros > 0)
             {
-                for (int i = 0; i < total_registros; i++)
+                Wrkf_Proveedores objProveedorModel = new Wrkf_Proveedores()
                 {
-                    Wrkf_Proveedores objProveedor = new Wrkf_Proveedores()
-                    {
-                        Vendorid = Convert.ToString(DtListadoProveedor.Rows[i]["vendorid"]).Trim(),
-                        Vendname = Convert.ToString(DtListadoProveedor.Rows[i]["vendname"]).Trim(),
-                        Txrgnnum = Convert.ToString(DtListadoProveedor.Rows[i]["txrgnnum"]).Trim(),
-                        Vndclsid = Convert.ToString(DtListadoProveedor.Rows[i]["vndclsid"]).Trim()
-                    };
+                    Vendorid = Convert.ToString(DtListadoProveedor.Rows[0]["VENDORID"]).Trim(),
+                    Vendname = Convert.ToString(DtListadoProveedor.Rows[0]["VENDNAME"]).Trim(),
+                    Txrgnnum = Convert.ToString(DtListadoProveedor.Rows[0]["TXRGNNUM"]).Trim(),
+                    Vndclsid = Convert.ToString(DtListadoProveedor.Rows[0]["VNDCLSID"]).Trim(),
+                    Vtaxschid = Convert.ToString(DtListadoProveedor.Rows[0]["TAXSCHID"]).Trim()
+                };
 
-                    lstProveedor.Add(objProveedor);
-                }
+                lstProveedor.Add(objProveedorModel);
             }
             else
             {
-                Wrkf_Proveedores objProveedor = new Wrkf_Proveedores();
-                lstProveedor.Add(objProveedor);
-            }
-
-            return lstProveedor;
-        }
-
-        /// <summary>
-        /// El método retorna una lista con los proveedores que coincidan con el nombre especificado
-        /// </summary>
-        /// <param name="vndclsid"></param>
-        /// <param name="vendname"></param>
-        /// <param name="curncyid"></param>
-        /// <returns></returns>
-        public List<Wrkf_Proveedores> GetListadoProveedorPorNombre(string vendname)
-        {
-            List<Wrkf_Proveedores> lstProveedor = new List<Wrkf_Proveedores>();
-
-            SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
-            Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                new SqlParameter("@vendname", vendname)
-            });
-
-            string SqlQuery = "	select vendorid, vendname, txrgnnum, vndclsid from dbo.pm00200 where ltrim(rtrim(vendname)) like '%' + @vendname + '%'";
-
-            DataTable DtListadoProveedor = Sqlprovider.ExecuteStoredProcedure(SqlQuery, CommandType.Text);
-
-            int total_registros = DtListadoProveedor.Rows.Count;
-
-            if (total_registros > 0)
-            {
-                for (int i = 0; i < total_registros; i++)
-                {
-                    Wrkf_Proveedores objProveedor = new Wrkf_Proveedores()
-                    {
-                        Vendorid = Convert.ToString(DtListadoProveedor.Rows[i]["vendorid"]).Trim(),
-                        Vendname = Convert.ToString(DtListadoProveedor.Rows[i]["vendname"]).Trim(),
-                        Txrgnnum = Convert.ToString(DtListadoProveedor.Rows[i]["txrgnnum"]).Trim(),
-                        Vndclsid = Convert.ToString(DtListadoProveedor.Rows[i]["vndclsid"]).Trim()
-                    };
-
-                    lstProveedor.Add(objProveedor);
-                }
-            }
-            else
-            {
-                Wrkf_Proveedores objProveedor = new Wrkf_Proveedores();
-                lstProveedor.Add(objProveedor);
+                Wrkf_Proveedores objProveedorModel = new Wrkf_Proveedores();
+                lstProveedor.Add(objProveedorModel);
             }
 
             return lstProveedor;

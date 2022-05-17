@@ -82,6 +82,7 @@ namespace Intranet.Ado.DbContent
             {
                 gestionPago_MtxPlantillas.Codigo = DtPlantilla.Rows[0]["Codigo"].ToString().Trim();
                 gestionPago_MtxPlantillas.Nombre = DtPlantilla.Rows[0]["nombre"].ToString().Trim();
+                gestionPago_MtxPlantillas.IdChequera = DtPlantilla.Rows[0]["IdChequera"].ToString().Trim();
             }
             else
             {

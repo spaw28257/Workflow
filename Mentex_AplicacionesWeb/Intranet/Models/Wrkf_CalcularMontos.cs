@@ -7,28 +7,25 @@ namespace Intranet.Models
 {
     public class Wrkf_CalcularMontos : MensajeError
     {
-        private string porcentajeiva;
-        private string montoiva;
-        private string porcentajeretencion;
-        private string montoretencion;
-        private string subtotal;
-        private string total;
+        private double vporcentajeiva;
+        private double vmontoiva;
+        private double vporcentajeretencion;
+        private double vmontoretencion;
+        private double vtotalapagar;
 
         public Wrkf_CalcularMontos()
         {
-            this.Porcentajeiva = "0,00";
-            this.Montoiva = "0,00";
-            this.Porcentajeretencion = "0,00";
-            this.Montoretencion = "0,00";
-            this.Subtotal = "0,00";
-            this.Total = "0,00";
+            vporcentajeiva = 0.00;
+            vmontoiva = 0.00;
+            vporcentajeretencion = 0.00;
+            vmontoretencion = 0.00;
+            vtotalapagar = 0.00;
         }
 
-        public string Porcentajeiva { get => porcentajeiva; set => porcentajeiva = value; }
-        public string Montoiva { get => montoiva; set => montoiva = value; }
-        public string Porcentajeretencion { get => porcentajeretencion; set => porcentajeretencion = value; }
-        public string Montoretencion { get => montoretencion; set => montoretencion = value; }
-        public string Subtotal { get => subtotal; set => subtotal = value; }
-        public string Total { get => total; set => total = value; }
+        public double Porcentajeiva { get => vporcentajeiva; set => vporcentajeiva = value; }
+        public double Montoiva { get => vmontoiva; set => vmontoiva = value; }
+        public double Porcentajeretencion { get => vporcentajeretencion; set => vporcentajeretencion = value; }
+        public double Montoretencion { get => vmontoretencion; set => vmontoretencion = value; }
+        public double Totalapagar { get => vtotalapagar; set => vtotalapagar = value; }
     }
 }

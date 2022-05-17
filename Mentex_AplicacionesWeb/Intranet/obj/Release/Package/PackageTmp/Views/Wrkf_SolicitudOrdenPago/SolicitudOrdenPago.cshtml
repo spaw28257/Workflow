@@ -47,9 +47,6 @@
                     <a href="#" onclick="LoadPrincipal()" class="nav-link"><i class="fas fa-newspaper"></i>&nbsp;Crear Solicitud</a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="#" onclick="AnularSolicitudOrdenPago()" class="nav-link"><i class="fas fa-trash"></i>&nbsp;Anular Solicitud Completa</a>
-                </li>
-                <li class="nav-item d-none d-sm-inline-block">
                     <a href="@Url.Action("CerrarSesion", "Wrkf_Login")" class="nav-link"><i class="fas fa-lock"></i>&nbsp;Cerrar Sesión</a>
                 </li>
             </ul>
@@ -109,20 +106,8 @@
                             <div class="card card-primary">
                                 <div class="card-header" style="background-color: #82293E;">
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-12">
                                             <h3 class="card-title" id="numordpago">Solicitud de Orden de Pago Manual</h3>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <label for="chkCalculaIva">Calcular I.V.A</label>
-                                                    <input type="checkbox" name="chkCalculaIva" id="chkCalculaIva" class="form-check" value="1" checked />
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label for="chkRealizarRetencion">Realizar Retención</label>
-                                                    <input type="checkbox" name="chkRealizarRetencion" id="chkRealizarRetencion" class="form-check" value="1" checked />
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -131,28 +116,112 @@
                                 <form enctype="multipart/form-data">
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-md-2">
+                                            <div class="col-md-12">
+                                                <input type="hidden" name="txtcodigoSolicitud"
+                                                       id="txtcodigoSolicitud" value=""
+                                                       style="background-color: oldlace;" readonly class="form-control" />
+                                            </div>
+                                        </div>
+                                        <h4><u>Datos de la Plantilla</u></h4>
+                                        <!--Datos del Plantilla---------------------------------------------------------------------------------------->
+                                        <div class="row">
+                                            <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="txtCodigoPlantilla">
-                                                        <a href="#" data-toggle="modal" 
+                                                        <a href="#" data-toggle="modal"
                                                            data-target="#modal-plantillas" style="cursor:pointer; color:blue;" onclick="ListarPlantillasPagoNofrecuente()">
                                                             Código Plantilla &nbsp; <i class="fas fa-search"></i>
                                                         </a>
                                                     </label>
-                                                    <input type="text" id="txtCodigoPlantilla" name="txtCodigoPlantilla" 
+                                                    <input type="text" id="txtCodigoPlantilla" name="txtCodigoPlantilla"
                                                            class="form-control" style="background-color: oldlace;" />
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="txtNombrePlantilla">Nombre Plantilla</label>
-                                                    <input type="text" id="txtNombrePlantilla" name="txtNombrePlantilla" class="form-control" 
+                                                    <input type="text" id="txtNombrePlantilla" name="txtNombrePlantilla" class="form-control"
                                                            style="background-color: oldlace;" readonly />
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label for="cboTipoDocumento">Tipo de Documento</label>
+                                                    <label for="cbogruporubrodesc">
+                                                        <a href="#" data-toggle="modal" data-target="#modal-lg3" style="cursor:pointer; color:blue;">
+                                                            <u style="cursor:pointer" title="Despliega una lista con los grupos de rubro">Grupo del Rubro</u>
+                                                            &nbsp; <i class="fas fa-search" onclick="GetGrupoRubros_All()"></i>
+                                                        </a>
+                                                    </label>
+                                                    <input type="text" name="cbogruporubrodesc" id="cbogruporubrodesc" value="" class="form-control"
+                                                           readonly style="cursor: pointer; background-color: oldlace;" data-toggle="modal" data-target="#modal-lg3" />
+                                                    <input type="hidden" name="cbogruporubro" id="cbogruporubro" value="" class="form-control" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="cborubrodesc">
+                                                        <a href="#" data-toggle="modal" data-target="#modal-lg4" style="cursor:pointer; color:blue;">
+                                                            <u style="cursor:pointer" title="Despliega una lista con los rubros">Rubro</u>
+                                                            &nbsp; <i class="fas fa-search" onclick="GetRubros_All()"></i>
+                                                        </a>
+                                                    </label>
+                                                    <input type="text" name="cborubrodesc" id="cborubrodesc" value="" class="form-control"
+                                                           readonly style="cursor: pointer; background-color: oldlace;" data-toggle="modal" data-target="#modal-lg4" />
+                                                    <input type="hidden" name="cborubro" id="cborubro" value="" class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!------------------------------------------------------------------------------------------------------------->
+                                        <!--Datos del Proveedor---------------------------------------------------------------------------------------->
+                                        <h4><u>Datos del Proveedor</u></h4>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="txtProveedorId">
+                                                        <a href="#" data-toggle="modal" data-target="#modal-lg" style="cursor:pointer; color:blue;" onclick="GetListadoProveedoresPorClaseId()">
+                                                            <u style="cursor:pointer" title="Despliega una lista con los proveedores">Proveedor Id</u>
+                                                            &nbsp; <i class="fas fa-search"></i>
+                                                        </a>
+                                                    </label>
+                                                    <input type="text" class="form-control" id="txtProveedorId" name="txtProveedorId" style="background-color: oldlace;" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="txtrif">
+                                                        R.I.F
+                                                    </label>
+                                                    <input type="text" class="form-control" id="txtrif" style="background-color: oldlace;" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="txtproveedor">
+                                                        Proveedor
+                                                    </label>
+                                                    <input type="text" class="form-control" id="txtproveedor" name="txtproveedor" style="background-color: oldlace;" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="txtTaxScheduleID">
+                                                        <a href="#" data-toggle="modal" data-target="#modal-plan-impuesto-iva" style="cursor:pointer; color:blue;"
+                                                           onclick="ListarDetalleImpuestoIVACompra()">
+                                                            Plan de Impuesto
+                                                            &nbsp; <i class="fas fa-search"></i>
+                                                        </a>
+                                                    </label>
+                                                    <input type="text" class="form-control" id="txtTaxScheduleID" name="txtTaxScheduleID" style="background-color: oldlace;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!------------------------------------------------------------------------------------------------------------->
+                                        <!--Datos del documento---------------------------------------------------------------------------------------->
+                                        <h4><u>Datos del Documento</u></h4>
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="cboTipoDocumento">Tipo</label>
                                                     <select name="cboTipoDocumento" id="cboTipoDocumento" class="form-control" style="background-color: oldlace;">
                                                         <option value="">--Seleccione Tipo de Documento--</option>
                                                         @foreach (var listatipodocumento in ViewBag.listatipodocumento)
@@ -164,102 +233,55 @@
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <label for="cbomoneda">Moneda</label>
-                                                    <select name="cbomoneda" id="cbomoneda" class="form-control" style="background-color: oldlace;">
+                                                    <label for="cboTipoDocumento">Concepto</label>
+                                                    <select name="cboConcepto" id="cboConcepto" class="form-control" style="background-color: oldlace;">
+                                                        <option value="">--Seleccione Concepto--</option>
+                                                        @foreach (var listaconcepto in ViewBag.listaconceptos)
+                                                        {
+                                                            <option value="@listaconcepto.Codigo">@listaconcepto.Descripcion</option>
+                                                        }
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <label for="cboporcentajeretencion">Porcentaje de Retención</label>
-                                                    <select name="cboporcentajeretencion" id="cboporcentajeretencion" class="form-control"
-                                                            style="background-color: oldlace;" onchange="NoAplicaRetencion()">
-                                                        <option value="0">--No Aplica--</option>
-                                                        <option value="75" selected>75 % de Retención</option>
-                                                        <option value="100">100 % de Retención</option>
-                                                    </select>
+                                                    <label for="cbomoneda">Moneda</label>
+                                                    <input type="text" class="form-control" id="cbomoneda" name="cbomoneda" style="background-color: oldlace;" readonly />
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label for="cbogruporubrodesc">
-                                                        <a href="#" data-toggle="modal" data-target="#modal-lg3" style="cursor:pointer; color:blue;" onclick="GetDepartamentos()">
-                                                            <u style="cursor:pointer" title="Despliega una lista con los grupos de rubro">Grupo del Rubro</u>
-                                                        </a>
-                                                    </label>
-                                                    <input type="text" name="cbogruporubrodesc" id="cbogruporubrodesc" value="" class="form-control"
-                                                           readonly onclick="GetDepartamentos()" style="cursor:pointer" data-toggle="modal" data-target="#modal-lg3" />
-                                                    <input type="hidden" name="cbogruporubro" id="cbogruporubro" value="" class="form-control" />
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <input type="hidden" name="hddSolicitudOrdenPago_Id" id="hddSolicitudOrdenPago_Id" value="-1" />
-                                                    <input type="hidden" name="hddSolicitudOrdenPagoDetalle_Id" id="hddSolicitudOrdenPagoDetalle_Id" value="-1" />
-                                                    <label for="cborubrodesc">
-                                                        <a href="#" data-toggle="modal" data-target="#modal-lg4" style="cursor:pointer; color:blue;" onclick="GetRubros()">
-                                                            <u style="cursor:pointer" title="Despliega una lista con los rubros">Rubro</u>
-                                                        </a>
-                                                    </label>
-                                                    <input type="text" name="cborubrodesc" id="cborubrodesc" value="" class="form-control"
-                                                           readonly onclick="GetRubros()" style="cursor:pointer" data-toggle="modal" data-target="#modal-lg4" />
-                                                    <input type="hidden" name="cborubro" id="cborubro" value="" class="form-control" />
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label for="txtfechacreacion">Fecha Documento</label>
-                                                    <input type="date" class="form-control" id="txtfecdocumento" style="background-color: oldlace;" />
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label for="txtfechacreacion">Fecha Pago</label>
-                                                    <input type="date" class="form-control" id="txtfecpago" style="background-color: oldlace;" />
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label for="txtrif">
-                                                        <a href="#" data-toggle="modal" data-target="#modal-lg" style="cursor:pointer; color:blue;" onclick="GetListadoProveedoresPorClaseId()">
-                                                            <u style="cursor:pointer" title="Despliega una lista con los proveedores">R.I.F</u>
-                                                        </a>
-                                                    </label>
-                                                    <input type="text" class="form-control" id="txtrif" style="background-color: oldlace;" />
-                                                    <input type="hidden" name="hddidproveedor" id="hddidproveedor" />
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label for="txtproveedor">
-                                                        <a href="#" data-toggle="modal" data-target="#modal-lg" style="cursor:pointer; color:blue;" onclick="GetListadoProveedoresPorClaseId()">
-                                                            <u style="cursor:pointer" title="Despliega una lista con los proveedores">Proveedor</u>
-                                                        </a>
-                                                    </label>
-                                                    <input type="text" class="form-control" id="txtproveedor" name="txtproveedor" style="background-color: oldlace;" />
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="txtdescripcion">Descripción</label>
                                                     <input type="text" class="form-control" id="txtdescripcion" style="background-color: oldlace;" />
                                                 </div>
                                             </div>
-                                            <div class="col-md-3">
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <label for="txtnumerodocumento"> Número de Documento </label>
+                                                    <label for="txtnumerodocumento"> N° Documento </label>
                                                     <input type="text" class="form-control" id="txtnumerodocumento" style="background-color: oldlace;" />
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="txtnumcontrol"> N° Control </label>
+                                                    <input type="text" class="form-control" id="txtnumcontrol" style="background-color: oldlace;" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="txtfechacreacion">Fecha Doc.</label>
+                                                    <input type="date" class="form-control" id="txtfecdocumento" style="background-color: oldlace;" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="txtfechacreacion">Fecha Pago</label>
+                                                    <input type="date" class="form-control" id="txtfecpago" style="background-color: oldlace;" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="cboformapago">Forma de Pago</label>
                                                     <select name="cboformapago" id="cboformapago" style="background-color: oldlace;" class="form-control">
@@ -271,57 +293,51 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="txtmontodocumento">Monto Excento</label>
+                                                    <input type="text" class="form-control" id="txtmontodocumento" style="text-align: right; font-weight: bold;
+                                                        background-color: oldlace;" value="0,00" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!------------------------------------------------------------------------------------------------------------->
+
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="txtBaseIvaGE">Base Imponible IVA General</label>
+                                                    <input type="text" class="form-control" id="txtBaseIvaGE" style="text-align: right; font-weight: bold; background-color: oldlace;" value="0,00">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="txtBaseIvaRe">Base Imponible IVA Reducido</label>
+                                                    <input type="text" class="form-control" id="txtBaseIvaRe" style="text-align: right; font-weight: bold; background-color: oldlace;" value="0,00">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="txtBaseIvaAd">Base Imponible IVA Adicional</label>
+                                                    <input type="text" class="form-control" id="txtBaseIvaAd" style="text-align: right; font-weight: bold; background-color: oldlace;" value="0,00">
+                                                </div>
+                                            </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="txtpreciounitario">Monto del Documento</label>
-                                                    <input type="text" class="form-control" id="txtpreciounitario" style="text-align: right; font-weight: bold;
-                                                        background-color: oldlace;" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="txttotaliva">Total I.V.A</label>
-                                                    <input type="text" class="form-control" id="txttotaliva" style="text-align: right; font-weight: bold;" readonly="readonly">
-                                                    <input type="hidden" class="form-control" id="txtporcentajeiva" style="text-align: right; font-weight: bold;" readonly="readonly">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="txttotalretenido">Total Retenido</label>
-                                                    <input type="text" class="form-control" id="txttotalretenido" style="text-align: right; font-weight: bold;" readonly="readonly">
-                                                    <input type="hidden" class="form-control" id="txtporcentajeretencion" style="text-align: right; font-weight: bold;" readonly="readonly">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="txtsubtotal">Sub Total a Pagar</label>
-                                                    <input type="text" class="form-control" id="txtsubtotal" style="text-align: right; font-weight: bold;" readonly="readonly">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="form-group">
                                                     <label for="txttotal">Total a Pagar</label>
-                                                    <input type="text" class="form-control" id="txttotal" style="text-align: right; font-weight: bold;" readonly="readonly">
+                                                    <input type="text" class="form-control" id="txttotal" style="text-align: right; font-weight: bold; background-color: oldlace;" readonly="readonly" value="0,00">
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="row">
-                                            <div class="col-md-12">
+                                            <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="fileAdjuntarArchivo">Adjuntar Soportes de Pago</label>
-                                                    <input id="fileAdjuntarArchivo" name="fileAdjuntarArchivo" type="file" multiple class="form-control">
+                                                    <input id="fileAdjuntarArchivo" name="fileAdjuntarArchivo" type="file" multiple class="form-control" style="background-color: oldlace;">
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-12">
+                                            <div class="col-md-8">
                                                 <div class="form-group">
                                                     <label for="txtobservaciones">Observaciones</label>
                                                     <textarea name="txtobservaciones" id="txtobservaciones" class="form-control" rows="1" cols="80" style="background-color: oldlace;"></textarea>
@@ -333,44 +349,24 @@
                                         <div class="card-footer">
                                             <div class="container-fluid">
                                                 <div class="row">
-                                                    <div class="col-md-2" style="text-align:center">
+                                                    <div class="col-md-4">
                                                         <button type="button" name="btnBuscarOrdenPago" id="btnBuscarOrdenPago"
                                                                 class="btn btn-default" data-toggle="modal" data-target="#modal-lg1" onclick="GetSolicitudOrdenPagoTodas()"
                                                                 style="width: 100%; font-weight: bold; font-family: sans-serif;">
                                                             <i class="fas fa-search"></i>&nbsp;Buscar
                                                         </button>
                                                     </div>
-                                                    <div class="col-md-2" style="text-align:center">
-                                                        <buttont type="button" name="btndetalleordenpago" id="btndetalleordenpago"
-                                                                 class="btn btn-default" data-toggle="modal" data-target="#modal-lg2"
-                                                                 onclick="GetSolicitudOrdenPagoDetalle('false', '0')"
-                                                                 style="width: 100%; font-weight: bold; font-family: sans-serif;">
-                                                            <i class="fas fa-list"></i>&nbsp;Detalle
-                                                        </buttont>
-                                                    </div>
-                                                    <div class="col-md-2" style="text-align:center">
+                                                    <div class="col-md-4">
                                                         <button type="button" name="btnVerSoportes" id="btnVerSoportes"
                                                                 class="btn btn-default" onclick="Descargarsoporte('@Url.Action("DescargarSoporte", "Wrk_SolicitudOrdenPagoSoporte")')"
                                                                 style="width: 100%; font-weight: bold; font-family: sans-serif;">
                                                             <i class="fas fa-file-archive"></i>&nbsp;Soportes
                                                         </button>
                                                     </div>
-                                                    <div class="col-md-2" style="text-align:center">
-                                                        <button type="button" name="btncalcular" id="btncalcular"
-                                                                class="btn btn-primary" style="width: 100%; font-weight: bold; font-family:sans-serif;">
-                                                            <i class="fas fa-calculator"></i>&nbsp;Calcular
-                                                        </button>
-                                                    </div>
-                                                    <div class="col-md-2" style="text-align:center">
+                                                    <div class="col-md-4">
                                                         <button type="button" name="btnagregar" id="btnagregar"
                                                                 class="btn btn-default" style="width: 100%; font-weight: bold; font-family: sans-serif;">
                                                             <i class="fas fa-save"></i>&nbsp;Guardar
-                                                        </button>
-                                                    </div>
-                                                    <div class="col-md-2" style="text-align:center">
-                                                        <button type="button" name="btnenviacxp" id="btnenviacxp"
-                                                                class="btn btn-success" style="width: 100%; font-weight: bold; font-family: sans-serif;">
-                                                            <i class="fas fa-envelope"></i>&nbsp;Enviar a CXP
                                                         </button>
                                                     </div>
                                                 </div>
@@ -391,7 +387,7 @@
                 </div>
                 <!--Lista los proveedores por el rubro seleccionado-->
                 <div class="modal fade" id="modal-lg">
-                    <div class="modal-dialog modal-xl">
+                    <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header color-mentex">
                                 <h4 class="modal-title">Listado de Proveedores</h4>
@@ -400,27 +396,18 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <table class="table table-head-fixed text-nowrap table-bordered">
+                                <table class="table table-head-fixed text-nowrap table-bordered" id="table-proveedores">
                                     <thead>
-                                        <tr>
-                                            <th colspan="2">
-                                                <input type="text" name="txtbuscarproveedor" id="txtbuscarproveedor" class="form-control" placeholder="Proveedor" />
-                                            </th>
-                                            <th>
-                                                <input type="button" name="btnvolveramostrar" id="btnvolveramostrar"
-                                                       value="Buscar" class="btn btn-default" onclick="GetListadoProveedorPorNombre()" />
-                                                &nbsp;&nbsp;
-                                                <input type="button" name="btnquitarfiltro" id="btnquitarfiltro"
-                                                       value="Quitar Filtro" class="btn btn-warning" onclick="GetListadoProveedoresPorClaseId()" />
-                                            </th>
-                                        </tr>
                                         <tr>
                                             <th>Proveedor ID</th>
                                             <th>Proveedor</th>
-                                            <th>R.I.F</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="DetalleProveedor"></tbody>
+                                    <tfoot>
+                                        <tr style="background-color:beige;">
+                                            <th colspan="2" style="text-align: left; font-weight:bold; font-size:12px; font-family:'Arial';">&nbsp;</th>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                             <div class="modal-footer justify-content-between">
@@ -434,7 +421,7 @@
                 <!-- /.modal -->
                 <!--Listado de plantillas-->
                 <div class="modal fade" id="modal-plantillas">
-                    <div class="modal-dialog modal-xl">
+                    <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header color-mentex">
                                 <h4 class="modal-title">Listado de Plantillas</h4>
@@ -448,16 +435,47 @@
                                         <tr class="cabecera-tabla">
                                             <th style="text-align:center; font-weight:bold;">Código</th>
                                             <th style="text-align:center; font-weight:bold;">Nombre</th>
-                                            <th style="text-align:center; font-weight:bold;">Código SubGrupo</th>
-                                            <th style="text-align:center; font-weight:bold;">Frecuencia</th>
-                                            <th style="text-align:center; font-weight:bold;">Sensibilidad</th>
-                                            <th style="text-align:center; font-weight:bold;">Estatus</th>
-                                            <th style="text-align:center; font-weight:bold;">Id Clase Proveedor</th>
                                         </tr>
                                     </thead>
                                     <tfoot>
                                         <tr style="background-color:beige;">
-                                            <th colspan="7" style="text-align: left; font-weight:bold; font-size:12px; font-family:'Arial';">&nbsp;</th>
+                                            <th colspan="2" style="text-align: left; font-weight:bold; font-size:12px; font-family:'Arial';">&nbsp;</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+                <!------------------------->
+                <!--Listado de plan de impuestos compra IVA-->
+                <div class="modal fade" id="modal-plan-impuesto-iva">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header color-mentex">
+                                <h4 class="modal-title">Listado de Plan de Impuesto</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <table id="table-plan-impuesto-iva" class="table table-bordered table-hover" style="width:100%;">
+                                    <thead>
+                                        <tr class="cabecera-tabla">
+                                            <th style="text-align:center; font-weight:bold;">Código</th>
+                                            <th style="text-align:center; font-weight:bold;">Nombre</th>
+                                            <th style="text-align:center; font-weight:bold;">Porcentaje Retención</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr style="background-color:beige;">
+                                            <th colspan="3" style="text-align: left; font-weight:bold; font-size:12px; font-family:'Arial';">&nbsp;</th>
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -474,7 +492,7 @@
                 <!------------------------->
 
                 <div class="modal fade" id="modal-lg1">
-                    <div class="modal-dialog modal-lg">
+                    <div class="modal-dialog modal-xl">
                         <div class="modal-content">
                             <div class="modal-header color-mentex">
                                 <h4 class="modal-title">Solicitudes de Ordenes de Pagos</h4>
@@ -483,16 +501,19 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <table class="table table-head-fixed text-nowrap table-bordered">
+                                <table class="table table-bordered table-hover" style="width:100%;" id="table-solicitudes-pago">
                                     <thead>
                                         <tr>
-                                            <th>N° Orden de Pago</th>
-                                            <th>Fecha de Registro</th>
-                                            <th>Usuario</th>
-                                            <th>Moneda</th>
+                                            <th class="text-center">Acciones</th>
+                                            <th class="text-center">N° Pago</th>
+                                            <th class="text-center">Código Plantilla</th>
+                                            <th class="text-center">Id Proveedor</th>
+                                            <th class="text-center">Proveedor</th>
+                                            <th class="text-center">Factura</th>
+                                            <th class="text-center">Monto</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="SolicitudOrdenPago"></tbody>
+                                    <tbody></tbody>
                                 </table>
                             </div>
                             <div class="modal-footer justify-content-between">
@@ -503,39 +524,7 @@
                     </div>
                     <!-- /.modal-dialog -->
                 </div>
-                <!-- /.modal -->
-                <!--Lista el detalle de la solicitud de la orden de pago-->
-                <div class="modal fade" id="modal-lg2">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header color-mentex">
-                                <h4 class="modal-title">Detalle de la Orden de Pago</h4>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <table class="table table-head-fixed text-nowrap table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Rif</th>
-                                            <th>Proveedor</th>
-                                            <th>Numerodocumento</th>
-                                            <th>Total a Pagar</th>
-                                            <th>Anular</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="DetalleOrdenPago"></tbody>
-                                </table>
-                            </div>
-                            <div class="modal-footer justify-content-between">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                        <!-- /.modal-content -->
-                    </div>
-                    <!-- /.modal-dialog -->
-                </div>
+
                 <!-- /.modal -->
                 <!--Lista de los grupos de rubros-->
                 <div class="modal fade" id="modal-lg3">
@@ -548,25 +537,18 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <table class="table table-head-fixed text-nowrap table-bordered">
+                                <table class="table table-bordered table-hover" style="width:100%;" id="table-gruporubro">
                                     <thead>
                                         <tr>
-                                            <th>
-                                                <input type="text" name="txtbuscargruporubro" id="txtbuscargruporubro" class="form-control" placeholder="Buscar Grupo Rubro" />
-                                            </th>
-                                            <th style="text-align:center; vertical-align:middle;">
-                                                <input type="button" name="btnvolveramostrar2" id="btnvolveramostrar2"
-                                                       value="Buscar" class="btn btn-default" onclick="GetDepartamentosPorNombre()" />
-                                                &nbsp;&nbsp;
-                                                <input type="button" name="btnquitarfiltro2" id="btnquitarfiltro2"
-                                                       value="Quitar Filtro" class="btn btn-warning" onclick="GetDepartamentos()" />
-                                            </th>
-                                        </tr>
-                                        <tr>
-                                            <th colspan="2">Grupo Rubro</th>
+                                            <th>Grupo Rubro Id</th>
+                                            <th>Grupo Rubro</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="DetalleGruporubro"></tbody>
+                                    <tfoot>
+                                        <tr style="background-color:beige;">
+                                            <th colspan="2" style="text-align: left; font-weight:bold; font-size:12px; font-family:'Arial';">&nbsp;</th>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                             <div class="modal-footer justify-content-between">
@@ -589,25 +571,18 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <table class="table table-head-fixed text-nowrap table-bordered">
+                                <table class="table table-bordered table-hover" style="width:100%;" id="table-rubro">
                                     <thead>
                                         <tr>
-                                            <th style="vertical-align:middle">
-                                                <input type="text" name="txtbuscarrubrodescrip" id="txtbuscarrubrodescrip" class="form-control" placeholder="Buscar Rubro" />
-                                            </th>
-                                            <th style="text-align:center; vertical-align:middle">
-                                                <input type="button" name="btnvolveramostrar3" id="btnvolveramostrar3"
-                                                       value="Buscar" class="btn btn-default" onclick="GetRubroPorNombreDepartamento()" />
-                                                &nbsp;&nbsp;
-                                                <input type="button" name="btnquitarfiltro3" id="btnquitarfiltro3"
-                                                       value="Quitar Filtro" class="btn btn-warning" onclick="GetRubros()" />
-                                            </th>
-                                        </tr>
-                                        <tr>
-                                            <th colspan="2">Rubros</th>
+                                            <th>Rubro Id</th>
+                                            <th>Rubros</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="DetalleRubro"></tbody>
+                                    <tfoot>
+                                        <tr style="background-color:beige;">
+                                            <th colspan="2" style="text-align: left; font-weight:bold; font-size:12px; font-family:'Arial';">&nbsp;</th>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                             <div class="modal-footer justify-content-between">
@@ -648,6 +623,28 @@
                     <!-- /.modal-dialog -->
                 </div>
                 <!-- /.modal -->
+                <!--Mensajes de Error-->
+                <div class="modal fade" id="modal-lista-errores">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header color-mentex">
+                                <h4 class="modal-title" id="TituloMensaje">Mensaje de Errores</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" id="divMensajesError"></div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+                <!------------------------->
+
             </section>
             <!-- Main content -->
             <!-- /.content -->
@@ -700,6 +697,8 @@
 
     <script src="~/Adminlte/plugins/sweetalert2/sweetalert.min.js"></script>
     <script src="~/Adminlte/plugins/maskMoney/jquery.maskMoney.min.js"></script>
+    <script src="~/Scripts/UtilidadesVarias.js"></script>
+    <script src="~/Scripts/SolicitudOrdenPago.js"></script>
     <script>
         $("#btnagregar").click(function () {
             AddItemSolicitudPago();
@@ -707,10 +706,6 @@
 
         $("#btncalcular").click(function () {
             GetCalcularMontos();
-        });
-
-        $("#btnenviacxp").click(function () {
-            EnviarOrdenPagoCXP();
         });
 
         //funcion para ejecutar al momento de la carga del formulario
@@ -729,333 +724,79 @@
                     if (fecha_actual[0].Codigox == "") {
                         if (total_fecha_actual > 0) {
                             document.getElementById("txtfecdocumento").value = fecha_actual[0].Fecha_actual;
+                            document.getElementById("txtfecpago").value = fecha_actual[0].Fecha_actual;
+
+                            //inicializar componentes
+                            BorrarCampos();
+
                         }
                     } else {
                         swal(fecha_actual[0].Codigox + " " + fecha_actual[0].Mensajex, fecha_actual[0].Titulox, fecha_actual[0].Tipox);
                     }
                 },
-                error: function (ex) {
-                    var r = jQuery.parseJSON(response.responseText);
-                    alert("Message: " + r.Message);
-                    alert("StackTrace: " + r.StackTrace);
-                    alert("ExceptionType: " + r.ExceptionType);
-                }
+                 error: function (jqXHR, exception) {
+                     var msg = '';
+                     if (jqXHR.status === 0) {
+                         msg = 'Not connect.\n Verify Network.';
+                         swal(msg, 'Error', 'error');
+                     } else if (jqXHR.status == 404) {
+                         msg = 'Requested page not found. [404]';
+                         swal(msg, 'Error', 'error');
+                     } else if (jqXHR.status == 500) {
+                         msg = 'Internal Server Error [500].';
+                         swal(msg, 'Error', 'error');
+                     } else if (exception === 'parsererror') {
+                         msg = 'Requested JSON parse failed.';
+                         swal(msg, 'Error', 'error');
+                     } else if (exception === 'timeout') {
+                         msg = 'Time out error.';
+                         swal(msg, 'Error', 'error');
+                     } else if (exception === 'abort') {
+                         msg = 'Ajax request aborted.';
+                         swal(msg, 'Error', 'error');
+                     } else {
+                         msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                         swal(msg, 'Error', 'error');
+                     }
+                 }
              });
 
             //cargar las monedas de operación
             GetMoneda(0);
-
-            //inicializar componentes
-            $("#chkCalculaIva").prop("checked", true);
-            $("#chkRealizarRetencion").prop("checked", true);
-            $("#cboTipoDocumento").val("");
-            $("#cbomoneda").val("");
-            $("#cboporcentajeretencion").val("75");
-            $("#cbogruporubro").val("");
-            $("#cborubro").val("");
-            $("#cbogruporubrodesc").val("");
-            $("#cborubrodesc").val("");
-            document.getElementById('txtfecpago').value = "";
-            document.getElementById('txtfecdocumento').value = "";
-            $("#txtrif").val("");
-            $("#txtproveedor").val("");
-            $("#txtdescripcion").val("");
-            $("#txtnumerodocumento").val("");
-            $("#txtpreciounitario").val("0,00");
-            $("#txtporcentajeiva").val("0,00");
-            $("#txttotaliva").val("0,00");
-            $("#txtporcentajeretencion").val("0,00");
-            $("#txttotalretenido").val("0,00");
-            $("#txtsubtotal").val("0,00");
-            $("#txttotal").val("0,00");
-            $("#hddSolicitudOrdenPago_Id").val("-1");
-            $("#hddSolicitudOrdenPagoDetalle_Id").val("-1");
-            $("#numordpago").html("");
-            $("#numordpago").html("Solicitud de Orden de Pago Manual Número");
-            var fileInput = document.getElementById('fileAdjuntarArchivo');
-            fileInput.value = "";
-            $("#cboformapago").val("0");
-            $("#txtobservaciones").val("");
         }
 
-        //Agregar el Item del formulario al momento de registrar la solicitud de orden de pago
-        function AddItemSolicitudPago() {
-            var codigo = "";
-            var mensaje = "";
-            var titulo = "";
-            var tipo = "";
-            var requerido = false;
-            var cantidad = 100;
-            var anticipo = 0;
-
-
-            var preciounitario = $("#txtpreciounitario").val().replaceAll(".", "");
-            preciounitario = preciounitario.replaceAll(",", "");
-
-            var porcentajeiva = $("#txtporcentajeiva").val().replaceAll(".", "");
-            porcentajeiva = porcentajeiva.replaceAll(",", ".");
-
-            var totaliva = $("#txttotaliva").val().replaceAll(".", "");
-            totaliva = totaliva.replaceAll(",", "");
-
-            var porcentajeretencion = $("#txtporcentajeretencion").val().replaceAll(".", "");
-            porcentajeretencion = porcentajeretencion.replaceAll(",", "");
-
-            var totalretenido = $("#txttotalretenido").val().replaceAll(".", "");
-            var totalretenido = totalretenido.replaceAll(",", "");
-
-            var subtotal = $("#txtsubtotal").val().replace(".", "");
-            subtotal = subtotal.replaceAll(",", "");
-
-            var total = $("#txttotal").val().replaceAll(".", "");
-            total = total.replaceAll(",", "");
-
-
-            //Validar campos requeridos
-            if (requerido == false) {
-                if ($("#cboTipoDocumento").val() == "") {
-                    mensaje = "Seleccione el tipo de documento";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-                if ($("#txtpreciounitario").val() == "0,00") {
-                    mensaje = "Debe especificar el monto del documento";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-                if ($("#cbomoneda").val() == "") {
-                    mensaje = "Seleccione la moneda de operación";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-                if ($("#cbogruporubro").val() == "") {
-                    mensaje = "Seleccione el grupo del rubro";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-                if ($("#cborubro").val() == "") {
-                    mensaje = "Seleccione el rubro";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-                if (document.getElementById('txtfecdocumento').value == "") {
-                    mensaje = "La fecha de documento para la solicitud de orden de pago es requerida";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-
-                if (document.getElementById('txtfecpago').value == "") {
-                    mensaje = "La fecha de pago para la solicitud de orden de pago es requerida";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-                if ($("#txtproveedor").val() == "") {
-                    mensaje = "El proveedor es requerido";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-                if ($("#txtdescripcion").val() == "") {
-                    mensaje = "La descripción es requerida";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-                if (($("#cboTipoDocumento").val() != '3') && ($("#cboTipoDocumento").val() != '4')) {
-                    if ($("#txtnumerodocumento").val() == "") {
-                        mensaje = "El número del documento, factura o nota de credito es requerido";
-                        titulo = "Información";
-                        tipo = "error";
-                        requerido = true;
-                    }
-                }
-            }
-
-            if (requerido == false) {
-                if ($("#cboformapago").val() == "0") {
-                    mensaje = "La forma de pago es requerida";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            if (requerido == false) {
-                if ($("#cboTipoDocumento").val() != '4') {
-                    if (parseInt(preciounitario) <= 0) {
-                        mensaje = "El monto a pagar debe ser un valor mayor a cero";
-                        titulo = "Información";
-                        tipo = "error";
-                        requerido = true;
-                    }
-                }
-            }
-
-            if (requerido == false) {
-                if ($('#chkCalculaIva').is(":checked")) {
-                    if ($("#txtporcentajeiva").val() == "") {
-                        mensaje = "El porcentaje del I.V.A es requerido";
-                        titulo = "Información";
-                        tipo = "error";
-                        requerido = true;
-                    }
-                }
-            }
-
-            if (requerido == false) {
-                if (parseInt(total) == 0) {
-                    mensaje = "El Total no puede ser cero";
-                    titulo = "Información";
-                    tipo = "error";
-                    requerido = true;
-                }
-            }
-
-            //si existe al mensaje se muestra por pantalla
-            if (mensaje.length > 0) {
-                swal(mensaje, titulo, tipo);
-            } else {
-
-                //verifica si el checkbox para calcular iva
-                if ($('#chkCalculaIva').is(":checked")) {
-                    var calculariva = true;
-                } else {
-                    var calculariva = false;
-                }
-
-                //verifica si el checkbox para calcular si tiene retensión esta activo
-                if ($('#chkRealizarRetencion').is(":checked")) {
-                    var calcularretension = true;
-                } else {
-                    var calcularretension = false;
-                }
-
-                var parametros = [
-                    $("#cbomoneda").val(), //[0]
-                    $("#cborubro").val(), //[1]
-                    $("#txtfecdocumento").val(), //[2]
-                    $("#txtfecpago").val(), //[3]
-                    $("#hddidproveedor").val(), //[4]
-                    $("#txtproveedor").val(), //[5]
-                    $("#txtdescripcion").val(), //[6]
-                    $("#txtnumerodocumento").val(), //[7]
-                    cantidad, //[8]
-                    preciounitario, //[9]
-                    anticipo, //[10]
-                    subtotal, //[11]
-                    total, //[12]
-                    $("#hddSolicitudOrdenPago_Id").val(), //[13]
-                    $("#hddSolicitudOrdenPagoDetalle_Id").val(), //[14]
-                    $("#cboTipoDocumento").val(), //[15]
-                    calculariva, //[16]
-                    calcularretension, //[17]
-                    porcentajeiva, //[18]
-                    totaliva, //[19]
-                    porcentajeretencion, //[20]
-                    totalretenido, //[21]
-                    $("#cbogruporubro").val(), //[22]
-                    $("#cboformapago").val(), //[23]
-                    $("#txtobservaciones").val() //[24]
-                ];
-
-                $.ajax({
-                    type: 'POST',
-                    url: 'AddItemPago',
-                    dataType: 'json',
-                    data: { "Item": parametros },
-                    success: function (data) {
-
-                        if (data[0].Codigox.length > 0) {
-                            swal(data[0].Codigox + " " + data[0].Mensajex, data[0].Titulox, data[0].Tipox);
-                        } else {
-                            swal("La solicitud de orden de pago se registro con exito", "Información", "info");
-                            $("#hddSolicitudOrdenPago_Id").val(data[0].NumeroRegistroOrdenPagox);
-                            $("#hddSolicitudOrdenPagoDetalle_Id").val("-1");
-                            $("#numordpago").html("");
-                            $("#numordpago").html("Solicitud de Orden de Pago Manual Número: " + data[0].NumeroRegistroOrdenPagox);
-
-                            //si existen soportes de pago los registra
-                            var fileInput = document.getElementById('fileAdjuntarArchivo');
-                            if (fileInput.files.length > 0) {
-                                SubirSoportesPagos(data[0].NumeroRegistroDetallePagox);
-                            }
-
-                            //borrar los campos para ingresar el nuevo pago
-                            $("#chkCalculaIva").prop("checked", true);
-                            $("#chkRealizarRetencion").prop("checked", true);
-                            $("#cboTipoDocumento").val("");
-                            $("#cboporcentajeretencion").val("75");
-                            $("#cbogruporubro").val("");
-                            $("#cbogruporubrodesc").val("");
-                            $("#cborubro").val("");
-                            $("#cborubrodesc").val("");
-                            document.getElementById('txtfecdocumento').value = "";
-                            document.getElementById('txtfecpago').value = "";
-                            $("#txtrif").val("");
-                            $("#hddidproveedor").val("");
-                            $("#txtproveedor").val("");
-                            $("#txtdescripcion").val("");
-                            $("#txtnumerodocumento").val("");
-                            $("#txtpreciounitario").val("0,00");
-                            $("#txtporcentajeiva").val("0,00");
-                            $("#txttotaliva").val("0,00");
-                            $("#txtporcentajeretencion").val("0,00");
-                            $("#txttotalretenido").val("0,00");
-                            $("#txtsubtotal").val("0,00");
-                            $("#txttotal").val("0,00");
-                            fileInput.value = "";
-                            $("#cboformapago").val("0");
-                            $("#txtobservaciones").val("");
-                        }
-                    },
-                    error: function (ex) {
-                        var r = jQuery.parseJSON(response.responseText);
-                        alert("Message: " + r.Message);
-                        alert("StackTrace: " + r.StackTrace);
-                        alert("ExceptionType: " + r.ExceptionType);
-                    }
-                });
-            }
-
-            return;
+        //Borrar los campos del formulario
+        function BorrarCampos() {
+            $("#txtCodigoPlantilla").val("");
+            $("#txtNombrePlantilla").val("");
+            $("#cbogruporubrodesc").val("");
+            $("#cbogruporubro").val("");
+            $("#cborubrodesc").val("");
+            $("#cborubro").val("");
+            $("#txtProveedorId").val("");
+            $("#txtrif").val("");
+            $("#txtproveedor").val("");
+            $("#txtTaxScheduleID").val("");
+            $("#cboTipoDocumento").val("");
+            $("#cboConcepto").val("");
+            $("#cbomoneda").val("");
+            $("#txtdescripcion").val("");
+            $("#txtnumerodocumento").val("");
+            $("#txtnumcontrol").val("");
+            $("#cboformapago").val("0");
+            $("#txtmontodocumento").val("0,00");
+            $("#txtBaseIvaGE").val("0,00");
+            $("#txtBaseIvaRe").val("0,00");
+            $("#txtBaseIvaAd").val("0,00");
+            $("#txttotal").val("0,00");
+            var fileInput = document.getElementById('fileAdjuntarArchivo');
+            fileInput.value = "";
+            $("#txtobservaciones").val("");
         }
 
         //function para listar todas las solicitudes de las ordenes de pago
         function GetSolicitudOrdenPagoTodas() {
+            var total_elemento = 0;
             var parametros = {};
 
             $.ajax({
@@ -1064,283 +805,216 @@
                 dataType: 'json',
                 data: parametros,
                 success: function (data) {
-                    var arrOrdenPago = [];
-                    var total_elemento = 0;
-                    var filastablas = "";
+                    total_elemento = data.ListadoSolicitudPago.length;
+                    if (data.ListadoSolicitudPago[0].Codigox == "") {
+                        if (total_elemento > 0) {
 
-                    arrOrdenPago = data;
-                    total_elemento = arrOrdenPago.length;
-
-                    if (total_elemento > 0) {
-
-                        if (arrOrdenPago[0].Codigox == "") {
-                            for (x = 0; x < total_elemento; x++) {
-                                filastablas += '<tr data-dismiss="modal" style="cursor:pointer;" onclick="GetSolicitudOrdenPagoCabecera(' + arrOrdenPago[x].Solicitudordenpago_Idx + ')">'
-                                    + '<td>' + arrOrdenPago[x].Solicitudordenpago_Idx + '</td>'
-                                    + '<td>' + arrOrdenPago[x].FechaRegx + '</td>'
-                                    + '<td>' + arrOrdenPago[x].Usuarioregistrox + '</td>'
-                                    + '<td>' + arrOrdenPago[x].curncyidx + '</td>'
-                                    + '</tr>';
-                            }
-                            $("#SolicitudOrdenPago").html(filastablas);
-                        } else {
-                            $("#SolicitudOrdenPago").html("");
-                            swal(arrOrdenPago[0].Codigox + ' ' + arrOrdenPago[0].Mensajex, arrOrdenPago[0].Titulox, arrOrdenPago[0].Tipox);
+                            $("#table-solicitudes-pago").DataTable({
+                                "destroy": true,
+                                "paging": true,
+                                "lengthChange": true,
+                                "searching": true,
+                                "ordering": true,
+                                "info": true,
+                                "autoWidth": true,
+                                "responsive": true,
+                                data: data.ListadoSolicitudPago,
+                                columns: [
+                                    {
+                                        "data": "Codigo", "render": function (data) {
+                                            var pCodigo = "'" + data + "'";
+                                            var strHtml = '<div class="text-center">';
+                                            strHtml += '<a href="#" onclick="AnularSolicitudOrdenPago(' + pCodigo + ')" ';
+                                            strHtml += 'style = "color:black;" > <i class="fas fa-eraser" title="Anular la Solicitud de Pago"></i></a > ';
+                                            strHtml += '</div>';
+                                            return strHtml;
+                                        }
+                                    },
+                                    {
+                                        "data": "Codigo", "render": function (data) {
+                                            var pCodigo = "'" + data + "'";
+                                            return '<a href="#" onclick="GetDetalleOrden(' + pCodigo + ')" data-dismiss="modal" title="Ver el detalle del pago">' + data + '</a>';
+                                        }
+                                    },
+                                    {
+                                        "data": "GAPCodigoPlantilla"
+                                    },
+                                    {
+                                        "data": "GAPIdProveedor"
+                                    },
+                                    {
+                                        "data": "GAPProveedor"
+                                    },
+                                    {
+                                        "data": "GAPNroFactura"
+                                    },
+                                    {
+                                        "data": "GAPMonto", "render": function (data) {
+                                            return number_format(parseFloat(data), 2, ',', '.');
+                                        }
+                                    }
+                                ]
+                            });
                         }
                     }
                     else {
-                        $("#SolicitudOrdenPago").html("");
-                        swal(arrOrdenPago[0].Codigox + ' ' + arrOrdenPago[0].Mensajex, arrOrdenPago[0].Titulox, arrOrdenPago[0].Tipox);
+                        swal(data.ListadoSolicitudPago[0].Codigox + " " + data.ListadoSolicitudPago[0].Mensajex, data.ListadoSolicitudPago[0].Titulox, data.ListadoSolicitudPago[0].Tipox);
                     }
                 },
-                error: function (ex) {
-                    var r = jQuery.parseJSON(response.responseText);
-                    alert("Message: " + r.Message);
-                    alert("StackTrace: " + r.StackTrace);
-                    alert("ExceptionType: " + r.ExceptionType);
+                error: function (jqXHR, exception) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                        swal(msg, 'Error', 'error');
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                        swal(msg, 'Error', 'error');
+                    }
+                }
+            });
+        }
+
+        //obtiene el detalle de la solicitud de orden de pago
+        function GetDetalleOrden(pcodigo) {
+
+            var parametros = { "pCodigo": pcodigo };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetDetalleOrdenPagoPorRevisarCxP", "Wrkf_SolicitudOrdenPagoCxP")',
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+
+                    //Especificar el detalle del pago
+                    $("#txtcodigoSolicitud").val(data.DetallePago.Codigo);
+                    $("#txtCodigoPlantilla").val(data.DetallePago.GAPCodigoPlantilla);
+                    $("#txtNombrePlantilla").val(data.DetallePago.GAPDescripcionPlantilla);
+                    $("#cbogruporubro").val(data.DetallePago.GrupoRubro_Id);
+                    $("#cbogruporubrodesc").val(data.DetallePago.GrupoRubroDescripcion);
+                    $("#cborubro").val(data.DetallePago.Rubro_Id);
+                    $("#cborubrodesc").val(data.DetallePago.RubroDescripcion);
+
+                    $("#txtProveedorId").val(data.DetallePago.GAPIdProveedor);
+                    $("#txtrif").val(data.DetallePago.GAPRIF);
+                    $("#txtproveedor").val(data.DetallePago.GAPProveedor);
+                    $("#txtTaxScheduleID").val(data.DetallePago.PlanImpuesto);
+
+                    $("#cboTipoDocumento").val(data.DetallePago.Tipodocumento);
+                    $("#cboConcepto").val(data.DetallePago.GAPCodigoConcepto);
+                    $("#cbomoneda").val(data.DetallePago.CodigoMoneda);
+                    $("#txtdescripcion").val(data.DetallePago.GAPDescripcionFactura);
+
+                    $("#txtnumerodocumento").val(data.DetallePago.GAPNroFactura);
+                    $("#txtnumcontrol").val(data.DetallePago.GAPNroControl);
+                    document.getElementById("txtfecdocumento").value = ConvertirFechaEnYyyymmdd(data.DetallePago.GAPFechaFactura);
+                    document.getElementById("txtfecpago").value = ConvertirFechaEnYyyymmdd(data.DetallePago.GAPFechaPago);
+                    $("#cboformapago").val(data.DetallePago.TipoPago);
+                    $("#txtmontodocumento").val(number_format(parseFloat(data.DetallePago.GAPMontoExento), 2, ',', '.'));
+                    $("#txtBaseIvaGE").val(number_format(parseFloat(data.DetallePago.GAPBaseImpIVAGeneral), 2, ',', '.'));
+                    $("#txtBaseIvaRe").val(number_format(parseFloat(data.DetallePago.GAPBaseImpIVAReducido), 2, ',', '.'));
+                    $("#txtBaseIvaAd").val(number_format(parseFloat(data.DetallePago.GAPBaseImpIVAAdicional), 2, ',', '.'));
+                    $("#txttotal").val(number_format(parseFloat(data.DetallePago.GAPMonto), 2, ',', '.'));
+                    $("#txtobservaciones").val(data.DetallePago.Observaciones);
+                },
+                error: function (jqXHR, exception) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                        swal(msg, 'Error', 'error');
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                        swal(msg, 'Error', 'error');
+                    }
                 }
             });
             return;
-        }
-
-        //function para listar la cabecera de la solicitud de la orden de pago por campo clave
-        function GetSolicitudOrdenPagoCabecera(solicitud_orden_pago_id = 0) {
-
-            if (solicitud_orden_pago_id == 0) {
-                var parametros = { "solicitud_orden_pago_id": $("#hddSolicitudOrdenPago_Id").val() };
-            } else {
-                var parametros = { "solicitud_orden_pago_id": solicitud_orden_pago_id };
-            }
-
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("GetSolicitudOrdenPagoPorId", "Wrkf_SolicitudOrdenPago")',
-                dataType: 'json',
-                data: parametros,
-                success: function (data) {
-                    var arrCabeceraOrdenPago = [];
-                    var total_elemento = 0;
-
-                    arrCabeceraOrdenPago = data;
-                    total_elemento = arrCabeceraOrdenPago.length;
-
-                    if (arrCabeceraOrdenPago[0].Codigox == "") {
-                        if (total_elemento > 0) {
-                            $("#hddSolicitudOrdenPago_Id").val(arrCabeceraOrdenPago[0].Solicitudordenpago_Idx);
-                            $("#numordpago").html("");
-                            $("#numordpago").html("Solicitud de Orden de Pago Manual Número: " + arrCabeceraOrdenPago[0].Solicitudordenpago_Idx);
-
-                            document.getElementById("txtfecdocumento").value = arrCabeceraOrdenPago[0].FechaRegx;
-
-                            //Selecciona la moneda
-                            GetMoneda(arrCabeceraOrdenPago[0].curncyidx);
-
-                            //obtiene la primera fila del detalle de la orden de pago
-                            GetSolicitudOrdenPagoDetalle(true, 0);
-                        }
-                    } else {
-                        swal(arrOrdenPago[0].Codigox + ' ' + arrOrdenPago[0].Mensajex, arrOrdenPago[0].Titulox, arrOrdenPago[0].Tipox);
-                    }
-                },
-                error: function (ex) {
-                    var r = jQuery.parseJSON(response.responseText);
-                    alert("Message: " + r.Message);
-                    alert("StackTrace: " + r.StackTrace);
-                    alert("ExceptionType: " + r.ExceptionType);
-                }
-            });
-            return;
 
         }
-
-        //funcion para listar el detalle de la orden de solicitud de pago si el valor del parametros primera_fila es true solo obtiene
-        //el primer registro del detalle de la solicitud de orden de pago
-        function GetSolicitudOrdenPagoDetalle(primera_fila, index) {
-            var parametros = { "solicitud_orden_pago_id": $("#hddSolicitudOrdenPago_Id").val() };
-
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("GetDetalleOrdenPagoPorId", "Wrkf_SolicitudOrdenPago")',
-                dataType: 'json',
-                data: parametros,
-                success: function (data) {
-                    var arrDetalleOrdenPago = [];
-                    var total_elemento = 0;
-                    var detalles = "";
-                    var param = "";
-
-                    arrDetalleOrdenPago = data;
-                    total_elemento = arrDetalleOrdenPago.length;
-
-                    if (arrDetalleOrdenPago[0].Codigox == "") {
-
-                        if (total_elemento > 0) {
-                            //muestra los datos del primer registro del detalle
-                            if (primera_fila == true) {
-
-                                $("#hddSolicitudOrdenPagoDetalle_Id").val(arrDetalleOrdenPago[index].Solicitudordenpagodetalle_Idx);
-
-                                //calcular iva
-                                if (arrDetalleOrdenPago[index].Calculaivax == true) {
-                                    $("#chkCalculaIva").prop("checked", true);
-                                } else {
-                                    $("#chkCalculaIva").prop("checked", false);
-                                }
-
-                                //calcular retencion
-                                if (arrDetalleOrdenPago[index].Realizaretencionx == true) {
-                                    $("#chkRealizarRetencion").prop("checked", true);
-                                } else {
-                                    $("#chkRealizarRetencion").prop("checked", false);
-                                }
-
-                                //tipo de documento
-                                $("#cboTipoDocumento").val(arrDetalleOrdenPago[index].TipoDocumentox);
-                                $("#cboporcentajeretencion").val(arrDetalleOrdenPago[index].Porcentajeretencionx.replaceAll(",00", ""));
-                                document.getElementById("txtfecpago").value = arrDetalleOrdenPago[index].FechaPagx;
-                                document.getElementById("txtfecdocumento").value = arrDetalleOrdenPago[index].FechaDocux;
-
-                                //Selecciona el departamento o el grupo del rubro
-                                GetDepartamentosPorId(arrDetalleOrdenPago[index].Gruporubro_Idx);
-
-                                //Selecciona el rubro
-                                GetRubroPorId(arrDetalleOrdenPago[index].Rubro_Idx, arrDetalleOrdenPago[index].Gruporubro_Idx);
-
-                                $("#txtrif").val(arrDetalleOrdenPago[index].Rifx);
-                                $("#hddidproveedor").val(arrDetalleOrdenPago[index].IdProveedorx);
-                                $("#txtproveedor").val(arrDetalleOrdenPago[index].Proveedorx);
-                                $("#txtdescripcion").val(arrDetalleOrdenPago[index].Descripcionx);
-                                $("#txtnumerodocumento").val(arrDetalleOrdenPago[index].Numerodocumentox);
-                                $("#txtpreciounitario").val(arrDetalleOrdenPago[index].Preciounitariox);
-                                $("#txtporcentajeiva").val(arrDetalleOrdenPago[index].Porcentajeivax);
-                                $("#txttotaliva").val(arrDetalleOrdenPago[index].Montoivax);
-                                $("#txtporcentajeretencion").val(arrDetalleOrdenPago[index].Porcentajeretencionx);
-                                $("#txttotalretenido").val(arrDetalleOrdenPago[index].Totalretenidox);
-                                $("#txtsubtotal").val(arrDetalleOrdenPago[index].Subtotalx);
-                                $("#txttotal").val(arrDetalleOrdenPago[index].Totalx);
-                                $("#cboformapago").val(arrDetalleOrdenPago[index].Formapago_Idx);
-                                $("#txtobservaciones").val(arrDetalleOrdenPago[index].Observacionesx);
-                            } else {
-                                if (arrDetalleOrdenPago[0].Codigox == "") {
-                                    for (x = 0; x < total_elemento; x++) {
-                                        param = true + "," + x;
-                                        paramanular = "'" + arrDetalleOrdenPago[x].Solicitudordenpagodetalle_Idx + "',";
-                                        paramanular += "'" + arrDetalleOrdenPago[x].Solicitudordenpago_Idx + "',";
-
-                                        detalles += '<tr onclick="GetSolicitudOrdenPagoDetalle(' + param + ')" style="cursor:pointer;" data-dismiss="modal">'
-                                            + '<td>' + arrDetalleOrdenPago[x].Rifx + '</td>'
-                                            + '<td>' + arrDetalleOrdenPago[x].Proveedorx + '</td>'
-                                            + '<td>' + arrDetalleOrdenPago[x].Numerodocumentox + '</td>'
-                                            + '<td style="text-align: right;">' + arrDetalleOrdenPago[x].Totalx + '</td>'
-                                            + '<td style="text-align: center;"><img src="../Adminlte/img/anular_16x16.png" onclick="AnularPagoSolicitud(' + paramanular + ')" /></td>'
-                                            + '</tr>';
-                                    }
-                                    $("#DetalleOrdenPago").html(detalles);
-                                } else {
-                                    swal(arrDetalleOrdenPago[0].Codigox + ' ' + arrDetalleOrdenPago[0].Mensajex, arrDetalleOrdenPago[0].Titulox, arrDetalleOrdenPago[0].Tipox);
-                                }
-                            }
-                        }
-                        else {
-                            swal(arrDetalleOrdenPago[0].Codigox + ' ' + arrDetalleOrdenPago[0].Mensajex, arrDetalleOrdenPago[0].Titulox, arrDetalleOrdenPago[0].Tipox);
-                        }
-                    } else {
-                        swal(arrDetalleOrdenPago[0].Codigox + ' ' + arrDetalleOrdenPago[0].Mensajex, arrDetalleOrdenPago[0].Titulox, arrDetalleOrdenPago[0].Tipox);
-                    }
-                },
-                error: function (ex) {
-                    var r = jQuery.parseJSON(response.responseText);
-                    alert("Message: " + r.Message);
-                    alert("StackTrace: " + r.StackTrace);
-                    alert("ExceptionType: " + r.ExceptionType);
-                }
-            });
-        }
-
-        //Anular un pago especifico de la solicitud
-        function AnularPagoSolicitud(Solicitudordenpagodetalle_Id, Solicitudordenpago_Id) {
-
-            var parametros = { "Solicitudordenpagodetalle_Id": Solicitudordenpagodetalle_Id, "Solicitudordenpago_Id": Solicitudordenpago_Id };
-
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("AnularPagoEspecificoSolicitud", "Wrkf_SolicitudOrdenPago")',
-                dataType: 'json',
-                data: parametros,
-                success: function (data) {
-
-                    if (data.Codigox.length > 0) {
-                        swal(data.Codigox + " " + data.Mensajex, data.Titulox, data.Tipox);
-                    }
-                },
-                error: function (ex) {
-                    var r = jQuery.parseJSON(response.responseText);
-                    alert("Message: " + r.Message);
-                    alert("StackTrace: " + r.StackTrace);
-                    alert("ExceptionType: " + r.ExceptionType);
-                }
-            });
-        }
-
-        //function GetSeleccionarDetalle(arrDetalleOrdenPago, posicion) {
-        //    alert(arrDetalleOrdenPago[posicion].Proveedorx);
-        //}
 
         function GetCalcularMontos() {
+
             //el precio unitario sean especificados
-            if ($("#txtpreciounitario").val() !== "") {
+            if ($("#txtmontodocumento").val() !== "") {
 
-                //verifica si el checkbox para calcular iva
-                if ($('#chkCalculaIva').is(":checked")) {
-                    var calculariva = true;
-                } else {
-                    var calculariva = false;
-                }
+                var vMontoDocumento = $("#txtmontodocumento").val().replaceAll(".", "");
+                var vBaseIvaGE = $("#txtBaseIvaGE").val().replaceAll(".", "");
+                var vBaseIvaRe = $("#txtBaseIvaRe").val().replaceAll(".", "");
+                var vBaseIvaAd = $("#txtBaseIvaAd").val().replaceAll(".", "");
 
-                //verifica si el checkbox para calcular si tiene retensión esta activo
-                if ($('#chkRealizarRetencion').is(":checked")) {
-                    var calcularretension = true;
-                } else {
-                    var calcularretension = false;
-                }
-
-                var preciounitario = $("#txtpreciounitario").val().replaceAll(".", "");
-                preciounitario = preciounitario.replaceAll(",", "");
+                var vPlanImpuesto = $("#txtTaxScheduleID").val().trim();
 
                 var parametros = {
-                    "calculariva": calculariva,
-                    "calcularretencion": calcularretension,
-                    "cantidad": 100,
-                    "preciounitario": preciounitario,
-                    "anticipo": 0,
-                    "porcentajeretencion": $("#cboporcentajeretencion").val()
+                    "pMontoDocumento": vMontoDocumento,
+                    "pBaseIvaGe": vBaseIvaGE,
+                    "pBaseIvaRe": vBaseIvaRe,
+                    "pBaseIvaAd": vBaseIvaAd,
+                    "pPlanImpuesto": vPlanImpuesto
                 };
 
                 $.ajax({
                     type: 'POST',
-                    url: 'GetCalcularMontos',
+                    url: '@Url.Action("GetCalcularMontos", "Wrkf_SolicitudOrdenPago")',
                     dataType: 'json',
                     data: parametros,
                     success: function (data) {
-                        var arrMontos = [];
-                        arrMontos = data;
-
-                        if (arrMontos[0].Codigox != "") {
-                            swal(arrMontos[0].Codigox + " " + arrMontos[0].Mensajex, arrMontos[0].Titulox, arrMontos[0].Tipox);
-                        } else {
-                            $("#txtporcentajeiva").val(arrMontos[0].Porcentajeiva);
-                            $("#txttotaliva").val(arrMontos[0].Montoiva);
-                            $("#txtporcentajeretencion").val(arrMontos[0].Porcentajeretencion);
-                            $("#txttotalretenido").val(arrMontos[0].Montoretencion);
-                            $("#txtsubtotal").val(arrMontos[0].Subtotal);
-                            $("#txttotal").val(arrMontos[0].Total);
-                        }
+                        var vTotalPagar = number_format(parseFloat(data[0].Totalapagar), 2, ',', '.');
+                        $("#txttotal").val(vTotalPagar);
                     },
-                    error: function (ex) {
-                        var r = jQuery.parseJSON(response.responseText);
-                        alert("Message: " + r.Message);
-                        alert("StackTrace: " + r.StackTrace);
-                        alert("ExceptionType: " + r.ExceptionType);
+                    error: function (jqXHR, exception) {
+                        var msg = '';
+                        if (jqXHR.status === 0) {
+                            msg = 'Not connect.\n Verify Network.';
+                            swal(msg, 'Error', 'error');
+                        } else if (jqXHR.status == 404) {
+                            msg = 'Requested page not found. [404]';
+                            swal(msg, 'Error', 'error');
+                        } else if (jqXHR.status == 500) {
+                            msg = 'Internal Server Error [500].';
+                            swal(msg, 'Error', 'error');
+                        } else if (exception === 'parsererror') {
+                            msg = 'Requested JSON parse failed.';
+                            swal(msg, 'Error', 'error');
+                        } else if (exception === 'timeout') {
+                            msg = 'Time out error.';
+                            swal(msg, 'Error', 'error');
+                        } else if (exception === 'abort') {
+                            msg = 'Ajax request aborted.';
+                            swal(msg, 'Error', 'error');
+                        } else {
+                            msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                            swal(msg, 'Error', 'error');
+                        }
                     }
                 });
             }
@@ -1352,114 +1026,144 @@
         //La función muestra un listado de los proveedores por clase ID
         function GetListadoProveedoresPorClaseId() {
 
-            //borra el campo de busqueda del proveedor
-            $("#txtbuscarproveedor").val("");
+            var total_elemento = 0;
+            var parametros = {};
 
-                var total_elemento = 0;
-                var parametros = {};
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ListadoProveedores_todos", "Wrkf_Proveedor")',
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+                    total_elemento = data.ListadoProveedores.length;
+                    if (data.ListadoProveedores[0].Codigox == "") {
+                        if (total_elemento > 0) {
 
-                $.ajax({
-                    type: 'POST',
-                    url: 'GetProveedoresPorClaseId',
-                    dataType: 'json',
-                    data: parametros,
-                    success: function (data) {
-                        var proveedoresporclaseid = [];
-                        proveedoresporclaseid = data;
-                        var detalles = '';
-                        total_elemento = proveedoresporclaseid.length;
-
-                        if (proveedoresporclaseid[0].Codigox == "") {
-                            if (total_elemento > 0) {
-                                for (x = 0; x < total_elemento; x++) {
-                                    var param = "'" + proveedoresporclaseid[x].Vendorid + "', '" + proveedoresporclaseid[x].Txrgnnum + "','" + proveedoresporclaseid[x].Vendname + "'";
-                                    detalles += '<tr data-dismiss="modal" onclick="SeleccionarProveedorRif(' + param + ')" style="cursor:pointer;">'
-                                        + '<td>' + proveedoresporclaseid[x].Vendorid + '</td>'
-                                        + '<td>' + proveedoresporclaseid[x].Vendname + '</td>'
-                                        + '<td>' + proveedoresporclaseid[x].Txrgnnum + '</td>'
-                                        + '</tr>';
-                                }
-                                $("#DetalleProveedor").html("");
-                                $("#DetalleProveedor").html(detalles);
-                            }
+                            $("#table-proveedores").DataTable({
+                                "destroy": true,
+                                "paging": true,
+                                "lengthChange": true,
+                                "searching": true,
+                                "ordering": true,
+                                "info": true,
+                                "autoWidth": true,
+                                "responsive": true,
+                                data: data.ListadoProveedores,
+                                columns: [
+                                    {
+                                        "data": "Vendorid", "render": function (data) {
+                                            var pVendorid = "'" + data + "'";
+                                            return '<a href="#" onclick="SeleccionarProveedorId(' + pVendorid + ')" data-dismiss="modal">' + data + '</a>';
+                                        }
+                                    },
+                                    {
+                                        "data": "Vendname"
+                                    }
+                                ]
+                            });
                         }
-                        else {
-                            swal(proveedoresporclaseid[0].Codigox + " " + proveedoresporclaseid[0].Mensajex, proveedoresporclaseid[0].Titulox, proveedoresporclaseid[0].Tipox);
-                        }
-                    },
-                    error: function (ex) {
-                        var r = jQuery.parseJSON(response.responseText);
-                        alert("Message: " + r.Message);
-                        alert("StackTrace: " + r.StackTrace);
-                        alert("ExceptionType: " + r.ExceptionType);
                     }
-                });
+                    else {
+                        swal(data.ListadoProveedores[0].Codigox + " " + data.ListadoProveedores[0].Mensajex, data.ListadoProveedores[0].Titulox, data.ListadoProveedores[0].Tipox);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                        swal(msg, 'Error', 'error');
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                        swal(msg, 'Error', 'error');
+                    }
+                }
+            });
+
         }
 
-        //La funcion muestra un listado de los proveedores por nombre
-        function GetListadoProveedorPorNombre() {
-                var total_elemento = 0;
-                var parametros = {
-                    "vendname": $("#txtbuscarproveedor").val()
-                };
+        //Selecciona los datos del proveedor por IDProveedor
+        function SeleccionarProveedorId(pIdproveedor) {
 
-                $.ajax({
-                    type: 'POST',
-                    url: '@Url.Action("GetListadoProveedorPorNombre", "Wrkf_SolicitudOrdenPago")',
-                    content: "application/json; charset=utf-8",
-                    dataType: 'json',
-                    data: parametros,
-                    success: function (data) {
-                        var proveedorespornombre = [];
-                        proveedorespornombre = data;
-                        var detalles = '';
-                        total_elemento = proveedorespornombre.length;
+            var total_elemento = 0;
+            var parametros = { "pVendorid": pIdproveedor};
 
-                        if (proveedorespornombre[0].Codigox == "") {
-                            if (total_elemento > 0) {
-                                for (x = 0; x < total_elemento; x++) {
-                                    var param = "'" + proveedorespornombre[x].Vendorid + "','" + proveedorespornombre[x].Txrgnnum + "','" + proveedorespornombre[x].Vendname + "'";
-                                    detalles += '<tr data-dismiss="modal" onclick="SeleccionarProveedorRif(' + param + ')" style="cursor:pointer;">'
-                                        + '<td>' + proveedorespornombre[x].Vendorid + '</td>'
-                                        + '<td>' + proveedorespornombre[x].Vendname + '</td>'
-                                        + '<td>' + proveedorespornombre[x].Txrgnnum + '</td>'
-                                        + '</tr>';
-                                }
-                                $("#DetalleProveedor").html("");
-                                $("#DetalleProveedor").html(detalles);
-                            } else {
-                                swal("No se encontrarón registros para mostrar", "Listado de Proveedores", "error");
-                            }
-                        } else {
-                            swal(proveedorespornombre[0].Codigox + " " + proveedorespornombre[0].Mensajex, proveedorespornombre[0].Titulox, proveedorespornombre[0].Tipox);
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetListadoProveedorPorId", "Wrkf_Proveedor")',
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+                    total_elemento = data.ListadoProveedores.length;
+
+                    if (data.ListadoProveedores[0].Codigox == "") {
+
+                        if (total_elemento > 0) {
+                            $("#txtProveedorId").val(data.ListadoProveedores[0].Vendorid);
+                            $("#txtrif").val(data.ListadoProveedores[0].Txrgnnum);
+                            $("#txtproveedor").val(data.ListadoProveedores[0].Vendname);
+                            $("#txtTaxScheduleID").val(data.ListadoProveedores[0].Vtaxschid);
                         }
-                    },
-                    error: function (ex) {
-                        var r = jQuery.parseJSON(response.responseText);
-                        alert("Message: " + r.Message);
-                        alert("StackTrace: " + r.StackTrace);
-                        alert("ExceptionType: " + r.ExceptionType);
                     }
-                });
-        }
+                    else {
+                        swal(data.ListadoProveedores[0].Codigox + " " + data.ListadoProveedores[0].Mensajex, data.ListadoProveedores[0].Titulox, data.ListadoProveedores[0].Tipox);
+                    }
 
-        function SeleccionarProveedorRif(pIdproveedor, rif, proveedor) {
-            $("#hddidproveedor").val(pIdproveedor);
-            $("#txtrif").val(rif);
-            $("#txtproveedor").val(proveedor);
+                },
+                error: function (jqXHR, exception) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                        swal(msg, 'Error', 'error');
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                        swal(msg, 'Error', 'error');
+                    }
+                }
+            });
         }
 
         //subir los soportes de pago
-        function SubirSoportesPagos(NumeroRegistroDetallePago) {
+        function SubirSoportesPagos(pCodigo, pCodigoItem, pFechaPago) {
             var formData = new FormData();
             var fileInput = document.getElementById('fileAdjuntarArchivo');
             for (i = 0; i < fileInput.files.length; i++) {
                 formData.append(fileInput.files[i].name, fileInput.files[i]);
             }
 
-            formData.append("directorio", $("#txtproveedor").val());
-            formData.append("numero_solicitud", $("#hddSolicitudOrdenPago_Id").val());
-            formData.append("numero_solicitud_det_id", NumeroRegistroDetallePago);
+            formData.append("CodigoPlantilla", $("#txtCodigoPlantilla").val());
+            formData.append("CodigoPago", pCodigo);
+            formData.append("CodigoItemPago", pCodigoItem);
+            formData.append("FechaPagoItem", pFechaPago);
 
             var xhr = new XMLHttpRequest();
             xhr.open('POST', '@Url.Action("UploadSoportesPago", "Wrkf_SolicitudOrdenPago")');
@@ -1501,31 +1205,6 @@
                                 },
                                 {
                                     "data": "Nombre"
-                                },
-                                {
-                                    "data": "CodigoSubgrupo", "render": function (data) {
-                                        return '<div style="text-align:center;">' + data + '</div>';
-                                    }
-                                },
-                                {
-                                    "data": "Frecuencia", "render": function (data) {
-                                        return '<div style="text-align:center;">' + data + '</div>';
-                                    }
-                                },
-                                {
-                                    "data": "Sensibilidad", "render": function (data) {
-                                        return '<div style="text-align:center;">' + data + '</div>';
-                                    }
-                                },
-                                {
-                                    "data": "Estatus", "render": function (data) {
-                                        return '<div style="text-align:center;">' + data + '</div>';
-                                    }
-                                },
-                                {
-                                    "data": "IdClaseProveedor", "render": function (data) {
-                                        return '<div style="text-align:center;">' + data + '</div>';
-                                    }
                                 }
                             ]
                         });
@@ -1567,7 +1246,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: '@Url.Action("SeleccionarPlantillaPorCodigo", "Wrkf_SolicitudOrdenPagoPlantilla")',
+                url: '@Url.Action("SeleccionarPlantillaPorCodigo", "Wrkf_Plantilla")',
                 content: "application/json; charset=utf-8",
                 dataType: 'json',
                 data: parametros,
@@ -1577,6 +1256,9 @@
                     } else {
                         $("#txtCodigoPlantilla").val(data.Codigo);
                         $("#txtNombrePlantilla").val(data.Nombre);
+
+                        //seleccionar el código de la moneda
+                        SeleccionarCodigoMoneda(data.IdChequera);
                     }
                 },
                 error: function (jqXHR, exception) {
@@ -1608,70 +1290,136 @@
         }
         /**************************************************/
 
-        //lista los rubros segun el departamento o grupo de rubros
-        function GetRubros() {
-            //borra el campo de busqueda del rubro
-            $("#txtbuscarrubrodescrip").val("");
-
-            if ($("#cbogruporubro").val() == "") {
-                swal("El grupo del rubro es requerido", "Información", "info");
-            } else {
-                var parametros = { "Departamento_Id": $("#cbogruporubro").val() };
-
-                 $.ajax({
-                    type: 'POST',
-                    url: '@Url.Action("GetRubros", "Wrkf_Rubro")',
-                    content: "application/json; charset=utf-8",
-                    dataType: 'json',
-                    data: parametros,
-                    success: function (data) {
-                        var rubros = [];
-                        rubros = data;
-                        var total_rubros = rubros.length;
-                        var detalles = ''
-                        if (total_rubros > 0) {
-                            for (x = 0; x < total_rubros; x++) {
-                                var param = "'" + rubros[x].Rubro_Idx + "','" + rubros[x].Descripcionx + "'";
-                                detalles += '<tr data-dismiss="modal" onclick="SeleccionarRubro(' + param + ')" style="cursor:pointer;">'
-                                    + '<td colspan="2">' + rubros[x].Descripcionx + '</td>'
-                                    + '</tr>';
-                            }
-                            $("#DetalleRubro").html(detalles);
-                        }
-                    },
-                    error: function (ex) {
-                        var r = jQuery.parseJSON(response.responseText);
-                        alert("Message: " + r.Message);
-                        alert("StackTrace: " + r.StackTrace);
-                        alert("ExceptionType: " + r.ExceptionType);
-                    }
-                 });
-            }
-        }
-
-        function SeleccionarRubro(Rubro_Id, Rubro) {
-            $("#cborubrodesc").val(Rubro);
-            $("#cborubro").val(Rubro_Id);
-        }
-
-        //selecciona los datos del rubro por Rubro_Id y Departamento_Id
-        function GetRubroPorId(Rubro_Id, Departamento_Id) {
-            var parametros = { "Rubro_Id": Rubro_Id, "Departamento_Id": Departamento_Id };
+        //Obtiene el código de la moneda segun el codigo de la plantilla y el código de la chequera
+        function SeleccionarCodigoMoneda(pChequeraId) {
+            var parametros = {
+                "pchequera_id": pChequeraId
+            };
 
             $.ajax({
                 type: 'POST',
-                url: '@Url.Action("GetRubroPorId", "Wrkf_Rubro")',
+                url: '@Url.Action("GetChequera_Key", "Wrkf_Chequera")',
                 content: "application/json; charset=utf-8",
                 dataType: 'json',
                 data: parametros,
                 success: function (data) {
-                    var rubros = [];
-                    rubros = data;
-                    var total_rubros = rubros.length;
-
-                    if (total_rubros > 0) {
-                        SeleccionarRubro(rubros[0].Rubro_Idx, rubros[0].Descripcionx);
+                    if (data.chequera.Codigox.length > 0) {
+                        swal(data.chequera.Codigox + ' ' + data.chequera.Mensajex, data.chequera.Titulox, data.chequera.Tipox);
+                    } else {
+                        $("#cbomoneda").val(data.chequera.Codigomonedax);
                     }
+                },
+                error: function (jqXHR, exception) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                        swal(msg, 'Error', 'error');
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                        swal(msg, 'Error', 'error');
+                    }
+                }
+            });
+        }
+
+        //lista los rubros segun el departamento o grupo de rubros
+        function GetRubros_All() {
+
+            var parametros = {
+                "pGrupoRubro_Id": $("#cbogruporubro").val()
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetRubros_All", "Wrkf_Rubro")',
+                content: "application/json; charset=utf-8",
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+
+                    if (data.ListadoRubro[0].Codigox.length > 0) {
+                        swal(data.ListadoRubro[0].Codigox + ' ' + data.ListadoRubro[0].Mensajex, data.ListadoRubro[0].Titulox, data.ListadoRubro[0].Tipox);
+                    } else {
+                        $("#table-rubro").DataTable({
+                            "destroy": true,
+                            "paging": true,
+                            "lengthChange": true,
+                            "searching": true,
+                            "ordering": true,
+                            "info": true,
+                            "autoWidth": true,
+                            "responsive": true,
+                            data: data.ListadoRubro,
+                            columns: [
+                                {
+                                    "data": "Rubro_Id", "render": function (data) {
+                                        var pRubro_Id = "'" + data + "'";
+                                        return '<a href="#" onclick="GetRubroPorId(' + pRubro_Id + ')" data-dismiss="modal">' + data + '</a>';
+                                    }
+                                },
+                                {
+                                    "data": "Descripcion"
+                                }
+                            ]
+                        });
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                        swal(msg, 'Error', 'error');
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                        swal(msg, 'Error', 'error');
+                    }
+                }
+            });
+        }
+
+        //selecciona los datos del rubro por Rubro_Id y Departamento_Id
+        function GetRubroPorId(pRubro_Id) {
+            var parametros = { "pGrupoRubro_Id": $("#cbogruporubro").val(), "pRubro_Id": pRubro_Id,  };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetRubros_Key", "Wrkf_Rubro")',
+                content: "application/json; charset=utf-8",
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+                    $("#cborubrodesc").val(data.DatosRubro.Descripcion);
+                    $("#cborubro").val(data.DatosRubro.Rubro_Id);
                 },
                 error: function (ex) {
                     var r = jQuery.parseJSON(response.responseText);
@@ -1682,144 +1430,108 @@
             });
         }
 
-        //selecciona los datos del rubro por descripcion y Departamento_Id
-        function GetRubroPorNombreDepartamento() {
-
-            if ($("#cbogruporubro").val() == "") {
-                swal("El grupo del rubro es requerido", "Información", "info");
-            } else {
-                var parametros = { "Descripcion": $("#txtbuscarrubrodescrip").val(), "Departamento_Id": $("#cbogruporubro").val() };
-
-                 $.ajax({
-                    type: 'POST',
-                    url: '@Url.Action("GetRubroPorNombreDepartamento", "Wrkf_Rubro")',
-                    content: "application/json; charset=utf-8",
-                    dataType: 'json',
-                    data: parametros,
-                    success: function (data) {
-                        var rubros = [];
-                        rubros = data;
-                        var total_rubros = rubros.length;
-                        var detalles = ''
-                        if (total_rubros > 0) {
-                            for (x = 0; x < total_rubros; x++) {
-                                var param = "'" + rubros[x].Rubro_Idx + "','" + rubros[x].Descripcionx + "'";
-                                detalles += '<tr data-dismiss="modal" onclick="SeleccionarRubro(' + param + ')" style="cursor:pointer;">'
-                                    + '<td colspan="2">' + rubros[x].Descripcionx + '</td>'
-                                    + '</tr>';
-                            }
-                            $("#DetalleRubro").html(detalles);
-                        }
-                    },
-                    error: function (ex) {
-                        var r = jQuery.parseJSON(response.responseText);
-                        alert("Message: " + r.Message);
-                        alert("StackTrace: " + r.StackTrace);
-                        alert("ExceptionType: " + r.ExceptionType);
-                    }
-                 });
-            }
-        }
-
-        //Funcion para listar los departamentos o grupos de rubros
-        function GetDepartamentos() {
-
-            //borrar el campo de busqueda del departamento
-            $("#txtbuscargruporubro").val("");
-
-             $.ajax({
+        //Funcion para listar los grupos de rubros
+        function GetGrupoRubros_All() {
+            $.ajax({
                 type: 'POST',
-                url: '@Url.Action("GetDepartamentos", "Wrkf_Departamento")',
+                url: '@Url.Action("GetGrupoRubros_All", "Wrkf_GrupoRubro")',
                 content: "application/json; charset=utf-8",
                 dataType: 'json',
                 success: function (data) {
-                    var departamentos = [];
-                    departamentos = data;
-                    var total_departamento = departamentos.length;
-                    var detalles = '';
-                    if (total_departamento > 0) {
-                        for (x = 0; x < total_departamento; x++) {
-                            var param = "'" + departamentos[x].Departamento_Idx + "','" + departamentos[x].Departamentox + "'";
-                            detalles += '<tr data-dismiss="modal" onclick="SeleccionarDepartamento(' + param + ')" style="cursor:pointer;">'
-                                + '<td colspan="2">' + departamentos[x].Departamentox + '</td>'
-                                + '</tr>';
-                        }
-                        $("#DetalleGruporubro").html(detalles);
+
+                    if (data.ListadoGrupoRubro[0].Codigox.length > 0) {
+                        swal(data.ListadoGrupoRubro[0].Codigox + ' ' + data.ListadoGrupoRubro[0].Mensajex, data.ListadoGrupoRubro[0].Titulox, data.ListadoGrupoRubro[0].Tipox);
+                    } else {
+                        $("#table-gruporubro").DataTable({
+                            "destroy": true,
+                            "paging": true,
+                            "lengthChange": true,
+                            "searching": true,
+                            "ordering": true,
+                            "info": true,
+                            "autoWidth": true,
+                            "responsive": true,
+                            data: data.ListadoGrupoRubro,
+                            columns: [
+                                {
+                                    "data": "GrupoRubro_Id", "render": function (data) {
+                                        var pGrupoRubro = "'" + data + "'";
+                                        return '<a href="#" onclick="GetGrupoRubroPorId(' + pGrupoRubro + ')" data-dismiss="modal">' + data + '</a>';
+                                    }
+                                },
+                                {
+                                    "data": "Descripcion"
+                                }
+                            ]
+                        });
                     }
                 },
-                error: function (ex) {
-                    var r = jQuery.parseJSON(response.responseText);
-                    alert("Message: " + r.Message);
-                    alert("StackTrace: " + r.StackTrace);
-                    alert("ExceptionType: " + r.ExceptionType);
-                }
-             });
-        }
-
-        //Funcion para listar los departamentos o grupos de rubros por nombre
-        function GetDepartamentosPorNombre() {
-
-            var parametros = { "departamento": $("#txtbuscargruporubro").val() };
-
-             $.ajax({
-                type: 'POST',
-                url: '@Url.Action("GetDepartamentosPorNombre", "Wrkf_Departamento")',
-                content: "application/json; charset=utf-8",
-                data: parametros,
-                dataType: 'json',
-                success: function (data) {
-                    var departamentos = [];
-                    departamentos = data;
-                    var total_departamento = departamentos.length;
-                    var detalles = '';
-                    if (total_departamento > 0) {
-                        for (x = 0; x < total_departamento; x++) {
-                            var param = "'" + departamentos[x].Departamento_Idx + "','" + departamentos[x].Departamentox + "'";
-                            detalles += '<tr data-dismiss="modal" onclick="SeleccionarDepartamento(' + param + ')" style="cursor:pointer;">'
-                                + '<td colspan="2">' + departamentos[x].Departamentox + '</td>'
-                                + '</tr>';
-                        }
-                        $("#DetalleGruporubro").html(detalles);
+                error: function (jqXHR, exception) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                        swal(msg, 'Error', 'error');
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                        swal(msg, 'Error', 'error');
                     }
-                },
-                error: function (ex) {
-                    var r = jQuery.parseJSON(response.responseText);
-                    alert("Message: " + r.Message);
-                    alert("StackTrace: " + r.StackTrace);
-                    alert("ExceptionType: " + r.ExceptionType);
                 }
-             });
+            });
         }
 
-        //asigna los datos del departamento o grupo de rubro a los campos de la vista
-        function SeleccionarDepartamento(Departamento_Id, Departamento) {
-            $("#cbogruporubro").val(Departamento_Id);
-            $("#cbogruporubrodesc").val(Departamento);
-        }
-
-        //Selecciona los datos del grupo de rubro o departamento
-        function GetDepartamentosPorId(Departamento_Id) {
-            var parametros = { "Departamento_Id": Departamento_Id };
+        //Selecciona los datos del grupo de rubro
+        function GetGrupoRubroPorId(pGrupoRubro_Id) {
+            var parametros = { "pGrupoRubro_Id": pGrupoRubro_Id };
              $.ajax({
                 type: 'POST',
-                url: '@Url.Action("GetDepartamentosPorId", "Wrkf_Departamento")',
+                url: '@Url.Action("GetGrupoRubroPorId", "Wrkf_GrupoRubro")',
                 content: "application/json; charset=utf-8",
                 dataType: 'json',
                 data: parametros,
-                success: function (data) {
-                    var departamentos = [];
-                    departamentos = data;
-                    var total_departamento = departamentos.length;
-                    if (total_departamento > 0) {
-                        SeleccionarDepartamento(departamentos[0].Departamento_Idx, departamentos[0].Departamentox);
-                    }
+                 success: function (data) {
+                     $("#cbogruporubro").val(data.GrupoRubro.GrupoRubro_Id);
+                     $("#cbogruporubrodesc").val(data.GrupoRubro.Descripcion);
                 },
-                error: function (ex) {
-                    var r = jQuery.parseJSON(response.responseText);
-                    alert("Message: " + r.Message);
-                    alert("StackTrace: " + r.StackTrace);
-                    alert("ExceptionType: " + r.ExceptionType);
-                }
+                error: function (jqXHR, exception) {
+                    var msg = '';
+                     if (jqXHR.status === 0) {
+                         msg = 'Not connect.\n Verify Network.';
+                         swal(msg, 'Error', 'error');
+                     } else if (jqXHR.status == 404) {
+                         msg = 'Requested page not found. [404]';
+                         swal(msg, 'Error', 'error');
+                     } else if (jqXHR.status == 500) {
+                         msg = 'Internal Server Error [500].';
+                         swal(msg, 'Error', 'error');
+                     } else if (exception === 'parsererror') {
+                         msg = 'Requested JSON parse failed.';
+                         swal(msg, 'Error', 'error');
+                     } else if (exception === 'timeout') {
+                         msg = 'Time out error.';
+                         swal(msg, 'Error', 'error');
+                     } else if (exception === 'abort') {
+                         msg = 'Ajax request aborted.';
+                         swal(msg, 'Error', 'error');
+                     } else {
+                         msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                         swal(msg, 'Error', 'error');
+                     }
+                 }
              });
         }
 
@@ -1860,52 +1572,8 @@
             });
         }
 
-        //envia la solicitud de la orden de pago aCXP
-        function EnviarOrdenPagoCXP() {
-            if ($("#hddSolicitudOrdenPago_Id").val() == "-1") {
-                swal("Debe seleccionar una solicitud para realizar el envio a cuentas por pagar", "Información", "info");
-            } else {
-                swal({
-                    title: "Enviar a Cuentas Por Pagar",
-                    text: "Despues que la solicitud de la orden de pago se envia a cuentas por pagar no permitira cambios en los datos ¿Desea Continuar...?",
-                    icon: "warning",
-                    buttons: true,
-                    successMode: true,
-                })
-                .then((willDelete) => {
-                    if (willDelete) {
-                            var parametros = { "Solicitudordenpago_Id": $("#hddSolicitudOrdenPago_Id").val() };
-                            $.ajax({
-                                type: 'POST',
-                                url: '@Url.Action("EnviaraCXP", "Wrkf_SolicitudOrdenPago")',
-                                content: "application/json; charset=utf-8",
-                                dataType: 'json',
-                                data: parametros,
-                                success: function (data) {
-
-                                    if (data.Codigox.length > 0) {
-                                        swal(data.Codigox + " " + data.Mensajex, data.Titulox, data.Tipox);
-                                    } else {
-                                        swal("La solicitud de orden de pago fue enviada a Cuentas por Pagar para su revisión", "Información", "info");
-                                        //imprimir el detalle de la solicitud de la orden de pago
-                                        ImprimirSolicitudOrdenPago($("#hddSolicitudOrdenPago_Id").val());
-                                        LoadPrincipal();
-                                    }
-                                },
-                                error: function (ex) {
-                                    var r = jQuery.parseJSON(response.responseText);
-                                    alert("Message: " + r.Message);
-                                    alert("StackTrace: " + r.StackTrace);
-                                    alert("ExceptionType: " + r.ExceptionType);
-                                }
-                            });
-                    }
-                });
-            }
-        }
-
         //La funcion anula la solicitud de orden de pago seleccionada
-        function AnularSolicitudOrdenPago() {
+        function AnularSolicitudOrdenPago(pCodigo) {
             var mensaje = "";
 
             if ($("#hddSolicitudOrdenPago_Id").val() == "-1") {
@@ -1923,7 +1591,7 @@
                 })
                 .then((willDelete) => {
                     if (willDelete) {
-                            var parametros = { "Solicitudordenpago_Id": $("#hddSolicitudOrdenPago_Id").val() };
+                        var parametros = { "pCodigo": pCodigo };
                             $.ajax({
                                 type: 'POST',
                                 url: '@Url.Action("AnularSolicitudOrdenPago", "Wrkf_SolicitudOrdenPago")',
@@ -1935,7 +1603,7 @@
                                         swal(data.Codigox + " " + data.Mensajex, data.Titulox, data.Tipox);
                                     } else {
                                         swal("La solicitud de orden de pago fue anulada", "Información", "info");
-                                        LoadPrincipal();
+                                        GetSolicitudOrdenPagoTodas();
                                     }
                                 },
                                 error: function (ex) {
@@ -1950,30 +1618,16 @@
             }
         }
 
-        //tilda o destilda el checkbox de calcular la retención si en la lista desplegable selecciona no aplica
-        function NoAplicaRetencion() {
-            if ($("#cboporcentajeretencion").val() == '0') {
-                if ($('#chkRealizarRetencion').is(":checked")) {
-                    $("#chkRealizarRetencion").prop("checked", false);
-                }
-            } else {
-                $("#chkRealizarRetencion").prop("checked", true);
-            }
-        }
-
         //Coloca en cero los campos calculados
         function ColocarCeroCamposCalculados() {
-            $("#txtporcentajeiva").val("0,00");
-            $("#txttotaliva").val("0,00");
-            $("#txtporcentajeretencion").val("0,00");
-            $("#txttotalretenido").val("0,00");
-            $("#txtsubtotal").val("0,00");
+            $("#txtBaseIvaGE").val("0,00");
+            $("#txtBaseIvaRe").val("0,00");
             $("#txttotal").val("0,00");
         }
 
         //descargar soporte de la solicitud
         function Descargarsoporte(url) {
-            var urldescarga = url + '?Solicitudordenpago_Id=' + $("#hddSolicitudOrdenPago_Id").val() + '&Solicitudordenpagodetalle_Id=' + $("#hddSolicitudOrdenPagoDetalle_Id").val();
+            var urldescarga = url + '?pCodigo=' + $("#txtcodigoSolicitud").val();
             window.open(urldescarga, "_blank", "directories=no,location=no,menubar=no,status=no,titlebar=no,toolbar=no,scrollbars=yes,resizable=no,top=500,left=500,width=500,height=500");
         }
 
@@ -1989,21 +1643,82 @@
             window.open(url, '_blank', 'toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=' + screenWidth + ',height=' + screenHeight);
         }
 
-        var inputPreciounitario = document.getElementById("txtpreciounitario");
-        // Execute a function when the user releases a key on the keyboard
-        inputPreciounitario.addEventListener("keyup", function (event) {
-            // Number 13 is the "Enter" key on the keyboard
-            if (event.keyCode === 13) {
-                // Cancel the default action, if needed
-                event.preventDefault();
-                // Trigger the button element with a click
-                GetCalcularMontos();
-            }
-        });
 
-        var inputPreciounitario = document.getElementById("txtCodigoPlantilla");
+    //Listar el Plan de Inpuesto del IVA para la Compra
+        function ListarDetalleImpuestoIVACompra() {
+            var parametros = { "TaxScheduleID": $("#txtTaxScheduleID").val() };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ListarDetalleImpuesto", "Tx00201")',
+                content: "application/json; charset=utf-8",
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+                    if (data[0].Codigox.length > 0) {
+                        swal(data[0].Codigox + ' ' + data[0].Mensajex, data[0].Titulox, data[0].Tipox);
+                    } else {
+                        $("#table-plan-impuesto-iva").DataTable({
+                            "destroy": true,
+                            "paging": true,
+                            "lengthChange": true,
+                            "searching": true,
+                            "ordering": true,
+                            "info": true,
+                            "autoWidth": true,
+                            "responsive": true,
+                            data: data,
+                            columns: [
+                                {
+                                    "data": "Taxdtlid", "render": function (data) {
+                                        return '<a href="#" onclick="SeleccionarImpuesto(' + data + ')" data-dismiss="modal">' + data + '</a>';
+                                    }
+                                },
+                                {
+                                    "data": "Txdtldsc", "render": function (data) {
+                                        return '<div style="text-align:center;">' + data + '</div>';
+                                    }
+                                },
+                                {
+                                    "data": "Txdtlpct", "render": function (data) {
+                                        return '<div style="text-align:center;">' + data + ' % </div>';
+                                    }
+                                }
+                            ]
+                        });
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                        swal(msg, 'Error', 'error');
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                        swal(msg, 'Error', 'error');
+                    }
+                }
+            });
+        }
+
+        var vInputCodigoPlantilla = document.getElementById("txtCodigoPlantilla");
         // Execute a function when the user releases a key on the keyboard
-        inputPreciounitario.addEventListener("keyup", function (event) {
+        vInputCodigoPlantilla.addEventListener("keyup", function (event) {
             // Number 13 is the "Enter" key on the keyboard
             if (event.keyCode === 13) {
                 // Cancel the default action, if needed
@@ -2013,7 +1728,61 @@
             }
         });
 
-        $("#txtpreciounitario").maskMoney({ thousands: '.', decimal: ',', allowZero: true });
+        var vInputMontoDocumento = document.getElementById("txtmontodocumento");
+        // Execute a function when the user releases a key on the keyboard
+        vInputMontoDocumento.addEventListener("keyup", function (event) {
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                // Trigger the button element with a click
+                GetCalcularMontos();
+                document.getElementById("txtBaseIvaGE").focus();
+            }
+        });
+
+        var vInputBaseIvaGE = document.getElementById("txtBaseIvaGE");
+        // Execute a function when the user releases a key on the keyboard
+        vInputBaseIvaGE.addEventListener("keyup", function (event) {
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                // Trigger the button element with a click
+                GetCalcularMontos();
+                document.getElementById("txtBaseIvaRe").focus();
+            }
+        });
+
+        var vInputBaseIvaRe = document.getElementById("txtBaseIvaRe");
+        // Execute a function when the user releases a key on the keyboard
+        vInputBaseIvaRe.addEventListener("keyup", function (event) {
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                // Trigger the button element with a click
+                GetCalcularMontos();
+                document.getElementById("txtBaseIvaAd").focus();
+            }
+        });
+
+        var vInputBaseIvaAd = document.getElementById("txtBaseIvaAd");
+        // Execute a function when the user releases a key on the keyboard
+        vInputBaseIvaAd.addEventListener("keyup", function (event) {
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                // Trigger the button element with a click
+                GetCalcularMontos();
+            }
+        });
+
+        $("#txtmontodocumento").maskMoney({ thousands: '.', decimal: ',', allowZero: true });
+        $("#txtBaseIvaGE").maskMoney({ thousands: '.', decimal: ',', allowZero: true });
+        $("#txtBaseIvaRe").maskMoney({ thousands: '.', decimal: ',', allowZero: true });
+        $("#txtBaseIvaAd").maskMoney({ thousands: '.', decimal: ',', allowZero: true });
 
     </script>
 </body>

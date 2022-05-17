@@ -104,3 +104,9 @@
 .color-link {
     color:black;
 }
+
+.mensajes-error {
+    color: red;
+    font-family: Arial;
+    font-size: 12px;
+}

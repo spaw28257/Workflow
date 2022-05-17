@@ -7,8 +7,8 @@ namespace Intranet.Models
 {
     public class Wrkf_RespuestaOperacion : MensajeError
     {
-        private int NumeroRegistroOrdenPago;
-        private int NumeroRegistroDetallePago;
+        private Int64 NumeroRegistroOrdenPago;
+        private Int64 NumeroRegistroDetallePago;
         private int RegistrosProcesados;
         private bool RespuestaSioNo;
         private string Observaciones;
@@ -22,8 +22,8 @@ namespace Intranet.Models
             Observaciones = "";
         }
 
-        public int NumeroRegistroOrdenPagox { get => NumeroRegistroOrdenPago; set => NumeroRegistroOrdenPago = value; }
-        public int NumeroRegistroDetallePagox { get => NumeroRegistroDetallePago; set => NumeroRegistroDetallePago = value; }
+        public Int64 NumeroRegistroOrdenPagox { get => NumeroRegistroOrdenPago; set => NumeroRegistroOrdenPago = value; }
+        public Int64 NumeroRegistroDetallePagox { get => NumeroRegistroDetallePago; set => NumeroRegistroDetallePago = value; }
         public int RegistrosProcesadosx { get => RegistrosProcesados; set => RegistrosProcesados = value; }
         public bool RespuestaSioNox { get => RespuestaSioNo; set => RespuestaSioNo = value; }
         public string Observacionesx { get => Observaciones; set => Observaciones = value; }

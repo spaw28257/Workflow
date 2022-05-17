@@ -132,12 +132,12 @@ namespace Intranet.Utilities
         /// </summary>
         /// <param name="fecha"></param>
         /// <returns></returns>
-        public bool VerificarSabadoDomingo(string fecha)
+        public bool VerificarSabadoDomingo(DateTime fecha)
         {
             bool retornar = false;
 
             //indica que el dia es domingo
-            if (Convert.ToDateTime(fecha).DayOfWeek == DayOfWeek.Saturday)
+            if (fecha.DayOfWeek == DayOfWeek.Saturday)
             {
                 retornar = true;
             }
@@ -152,7 +152,7 @@ namespace Intranet.Utilities
         }
 
         /// <summary>
-        /// Obtiene la fecha posterior a 5 días de la fecha actual
+        /// Obtiene la fecha posterior a 15 días de la fecha actual
         /// </summary>
         /// <param name="fecha"></param>
         /// <returns></returns>
@@ -196,6 +196,18 @@ namespace Intranet.Utilities
             }
 
             return value;
+        }
+
+        /// <summary>
+        /// Compara dos fechas para saber si la fecha desde es mayor a la fecha hasta
+        /// </summary>
+        /// <param name="pFechaDesde"></param>
+        /// <param name="pFechaHasta"></param>
+        /// <returns></returns>
+        public int CompararFechas(DateTime pFechaDesde, DateTime pFechaHasta)
+        {
+            int result = DateTime.Compare(pFechaDesde, pFechaHasta);
+            return result;
         }
     }
 }

@@ -12,45 +12,43 @@ namespace Intranet.Controllers
 {
     public class Wrk_SolicitudOrdenPagoSoporteController : Controller
     {
-        // GET: Wrk_SolicitudOrdenPagoSoporte
         /// <summary>
-        /// Lista los soportes para ser descargados para su revisión
+        /// Lee el directorio que contiene los soportes asociados al pago 
         /// </summary>
-        /// <param name="Solicitudordenpago_Id"></param>
-        /// <param name="Solicitudordenpagodetalle_Id"></param>
+        /// <param name="pCodigo"></param>
         /// <returns></returns>
-        public ActionResult DescargarSoporte(int Solicitudordenpago_Id, int Solicitudordenpagodetalle_Id)
+        public ActionResult DescargarSoporte(string pCodigo)
         {
-            List<Wrkf_SolicitudOrdenPagoSoporte> lstSoportePago = new List<Wrkf_SolicitudOrdenPagoSoporte>();
-            Wrkf_DbSolicitudOrdenPagoSoporte objsolicitudordenpago = new Wrkf_DbSolicitudOrdenPagoSoporte();
-            Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
-            MensajeError objmensajeerror;
-            Wrkf_SolicitudOrdenPagoSoporte wrkf_solicitudordenpagosoporte = new Wrkf_SolicitudOrdenPagoSoporte();
+            /*buscamos los datos del pago*/
+            Wrkf_DbSolicitudOrdenPagoCxP Objwrkf_DbSolicitudOrdenPagoCxP = new Wrkf_DbSolicitudOrdenPagoCxP();
+            Wrkf_SolicitudOrdenPago Objwrkf_SolicitudOrdenPago;
+            Objwrkf_SolicitudOrdenPago = Objwrkf_DbSolicitudOrdenPagoCxP.GetDetalleOrdenPagoPorRevisarCxP(pCodigo);
 
-            if (Session["sUsuario_Id"] == null)
+            Wrkf_DbParametros wrkf_dbparametros = new Wrkf_DbParametros();
+            Wrkf_Parametros wrkf_parametros;
+            ConvertExtension ObjConvertExtension = new ConvertExtension();
+
+            //obtener la ruta donde se guardan los soportes digitales del pago
+            wrkf_parametros = wrkf_dbparametros.SeleccionarParametroCodigo("RUTSOP", Session["sUsuario_Id"].ToString().Trim().ToUpper());
+            string ruta = wrkf_parametros.ValorAlfaNumerico1.Trim();
+            string vPlantilla = Objwrkf_SolicitudOrdenPago.GAPCodigoPlantilla;
+            string vCodigoItemPago = Objwrkf_SolicitudOrdenPago.GAPCodigoItem;
+            string vFechaPagoItem = ObjConvertExtension.FormatoFechayyyyMMdd(Convert.ToDateTime(Objwrkf_SolicitudOrdenPago.GAPFechaPago)).ToString();
+            string vRuta2 = vPlantilla + "\\" + vFechaPagoItem + "\\" + vCodigoItemPago;
+
+            var pathCarpeta = System.IO.Path.Combine(ruta, vRuta2);
+
+            if (System.IO.Directory.Exists(pathCarpeta))
             {
-                return RedirectToAction("CerrarSesion", "Wrkf_Login");
+                var listaArchivos = System.IO.Directory.GetFiles(pathCarpeta);
+
+                ViewBag.listaArchivos = listaArchivos;
+                ViewBag.Ruta = pathCarpeta;
             }
             else
             {
-                try
-                {
-                    lstSoportePago = objsolicitudordenpago.GetListarSoportes(Solicitudordenpago_Id, Solicitudordenpagodetalle_Id);
-                }
-                catch (Exception ex)
-                {
-
-                    objmensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
-                    wrkf_solicitudordenpagosoporte.Codigox = objmensajeerror.Codigox;
-                    wrkf_solicitudordenpagosoporte.Mensajex = objmensajeerror.Mensajex;
-                    wrkf_solicitudordenpagosoporte.Tipox = objmensajeerror.Tipox;
-                    wrkf_solicitudordenpagosoporte.Titulox = objmensajeerror.Titulox;
-                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrk_SolicitudOrdenPagoSoporteController/DescargarSoporte");
-
-                    lstSoportePago.Add(wrkf_solicitudordenpagosoporte);
-                }
-
-                ViewBag.listadosoporte = lstSoportePago;
+                ViewBag.listaArchivos = new string[0];
+                ViewBag.Ruta = pathCarpeta;
             }
 
             return View();
@@ -76,7 +74,15 @@ namespace Intranet.Controllers
             {
                 try
                 {
-                    return File(rutadescarga, archivo);
+                    string contentType = MimeMapping.GetMimeMapping(rutadescarga);
+                    var cd = new System.Net.Mime.ContentDisposition
+                    {
+                        FileName = archivo,
+                        Inline = true,
+                    };
+                    Response.AppendHeader("Content-Disposition", cd.ToString());
+
+                    return File(rutadescarga, archivo, contentType);
                 }
                 catch (Exception ex)
                 { 

@@ -11,6 +11,7 @@ namespace Intranet.Models
         private string vendname; //Nombre del proveedor
         private string txrgnnum; //rif del proveedor
         private string vndclsid; //Clase del proveedor
+        private string vtaxschid; //TaxScheduleID
 
         public Wrkf_Proveedores()
         {
@@ -18,11 +19,13 @@ namespace Intranet.Models
             this.vendname = "";
             this.txrgnnum = "";
             this.vndclsid = "";
+            this.vtaxschid = "";
         }
 
         public string Vendorid { get => vendorid; set => vendorid = value; }
         public string Vendname { get => vendname; set => vendname = value; }
         public string Txrgnnum { get => txrgnnum; set => txrgnnum = value; }
         public string Vndclsid { get => vndclsid; set => vndclsid = value; }
+        public string Vtaxschid { get => vtaxschid; set => vtaxschid = value; }
     }
 }

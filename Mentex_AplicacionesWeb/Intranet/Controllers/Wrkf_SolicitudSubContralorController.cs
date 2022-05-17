@@ -41,12 +41,12 @@ namespace Intranet.Controllers
 
                     //Obtener los grupo de rubros con los pagos asociados
                     Wrkf_DbSolicitudSubContralor objsolicitudsubcontralor = new Wrkf_DbSolicitudSubContralor();
-                    List<Wrkf_Departamento> lstgruporubro = objsolicitudsubcontralor.lstGrupoRubroSubContralor();
-                    ViewBag.listagruporubrospagos = lstgruporubro;
+                    //List<Wrkf_GrupoRubro> lstgruporubro = objsolicitudsubcontralor.lstGrupoRubroSubContralor();
+                    //ViewBag.listagruporubrospagos = lstgruporubro;
 
                     //obtener los grupo de rubros con las notas de creditos pendientes
-                    List<Wrkf_Departamento> lstgruporubronotacreditossubcont = objsolicitudsubcontralor.lstGrupoRubroNotasCreditoSubContralor();
-                    ViewBag.listagruporubronotacreditosubcontr = lstgruporubronotacreditossubcont;
+                    //List<Wrkf_GrupoRubro> lstgruporubronotacreditossubcont = objsolicitudsubcontralor.lstGrupoRubroNotasCreditoSubContralor();
+                    //ViewBag.listagruporubronotacreditosubcontr = lstgruporubronotacreditossubcont;
                 }
                 catch (Exception ex)
                 {
@@ -66,49 +66,49 @@ namespace Intranet.Controllers
         /// Muestra una vista con el listado de rubros con los pagos asociados para la revición de SubContraloria.
         /// </summary>
         /// <returns></returns>
-        public ActionResult ListarRubrosPagosSubContraloria(int gruporubro_id)
-        {
-            MensajeError mensajeerror;
-            Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
-            Wrkf_RespuestaOperacion objRespuestaOperacion = new Wrkf_RespuestaOperacion();
+        //public ActionResult ListarRubrosPagosSubContraloria(int gruporubro_id)
+        //{
+        //    MensajeError mensajeerror;
+        //    Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
+        //    Wrkf_RespuestaOperacion objRespuestaOperacion = new Wrkf_RespuestaOperacion();
 
-            //Verificar que la sesión de usuario este activa
-            if (Session["sUsuario_Id"] == null)
-            {
-                return RedirectToAction("CerrarSesion", "Wrkf_Login");
-            }
-            else
-            {
-                try
-                {
-                    //Obtener una lista con las opciones de menu
-                    List<Wrkf_OpcionesMenuItem> lstopcionesmenuitem;
-                    Wrkf_DbOpcionesMenu objdbopcionesmenu = new Wrkf_DbOpcionesMenu();
-                    lstopcionesmenuitem = objdbopcionesmenu.Fn_ListarOpcionesMenuPorRol(Session["sUsuario_Id"].ToString());
-                    ViewBag.listaropcionesmenu = lstopcionesmenuitem;
+        //    //Verificar que la sesión de usuario este activa
+        //    if (Session["sUsuario_Id"] == null)
+        //    {
+        //        return RedirectToAction("CerrarSesion", "Wrkf_Login");
+        //    }
+        //    else
+        //    {
+        //        try
+        //        {
+        //            //Obtener una lista con las opciones de menu
+        //            List<Wrkf_OpcionesMenuItem> lstopcionesmenuitem;
+        //            Wrkf_DbOpcionesMenu objdbopcionesmenu = new Wrkf_DbOpcionesMenu();
+        //            lstopcionesmenuitem = objdbopcionesmenu.Fn_ListarOpcionesMenuPorRol(Session["sUsuario_Id"].ToString());
+        //            ViewBag.listaropcionesmenu = lstopcionesmenuitem;
 
-                    //Obtener los rubros con los pagos asociados
-                    Wrkf_DbSolicitudSubContralor objsolicitudsubcontralor = new Wrkf_DbSolicitudSubContralor();
-                    List<Wrkf_Rubro> lstrubro = objsolicitudsubcontralor.lstRubrosSubContraloria(gruporubro_id);
-                    ViewBag.listarubrospagos = lstrubro;
+        //            //Obtener los rubros con los pagos asociados
+        //            Wrkf_DbSolicitudSubContralor objsolicitudsubcontralor = new Wrkf_DbSolicitudSubContralor();
+        //            List<Wrkf_Rubro> lstrubro = objsolicitudsubcontralor.lstRubrosSubContraloria(gruporubro_id);
+        //            ViewBag.listarubrospagos = lstrubro;
 
-                    //Obtener los rubros con notas de creditos
-                    List<Wrkf_Rubro> lstrubronotascreditosubcontr = objsolicitudsubcontralor.lstRubrosNotasCreditosSubContraloria(gruporubro_id);
-                    ViewBag.listarubronotacreditos = lstrubronotascreditosubcontr;
-                }
-                catch (Exception ex)
-                {
-                    mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
-                    objRespuestaOperacion.Codigox = mensajeerror.Codigox;
-                    objRespuestaOperacion.Mensajex = mensajeerror.Mensajex;
-                    objRespuestaOperacion.Tipox = mensajeerror.Tipox;
-                    objRespuestaOperacion.Titulox = mensajeerror.Titulox;
-                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudSubContralorController/ListarRubrosPagosSubContraloria");
-                }
-            }
+        //            //Obtener los rubros con notas de creditos
+        //            List<Wrkf_Rubro> lstrubronotascreditosubcontr = objsolicitudsubcontralor.lstRubrosNotasCreditosSubContraloria(gruporubro_id);
+        //            ViewBag.listarubronotacreditos = lstrubronotascreditosubcontr;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
+        //            objRespuestaOperacion.Codigox = mensajeerror.Codigox;
+        //            objRespuestaOperacion.Mensajex = mensajeerror.Mensajex;
+        //            objRespuestaOperacion.Tipox = mensajeerror.Tipox;
+        //            objRespuestaOperacion.Titulox = mensajeerror.Titulox;
+        //            wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudSubContralorController/ListarRubrosPagosSubContraloria");
+        //        }
+        //    }
 
-            return View();
-        }
+        //    return View();
+        //}
 
         /// <summary>
         /// Muestra una vista con el listado de la solicitud de pago verifica si el tipo de documento es una nota de credito

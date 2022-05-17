@@ -297,36 +297,7 @@ namespace Intranet.Controllers
             return View();
         }
 
-        /// <summary>
-        /// Obtiene los datos de la plantilla por código
-        /// </summary>
-        /// <param name="codigo"></param>
-        /// <returns></returns>
-        public JsonResult SeleccionarPlantillaPorCodigo(string codigo)
-        {
-            GestionPago_DbMtxPlantilla gestionpago_dbmtxplantilla = new GestionPago_DbMtxPlantilla();
-            GestionPago_MtxPlantilla gestionpago_mtxplantilla = new GestionPago_MtxPlantilla();
-            Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
-            MensajeError objMensajeError;
 
-            try
-            {
-                gestionpago_mtxplantilla = gestionpago_dbmtxplantilla.SeleccionarPlantillaPorCodigo(codigo);
-            }
-            catch (Exception ex)
-            {
-                objMensajeError = wrkf_dbmensajeerror.GetObtenerMensajeError("EXC999", "EXCEPCION");
-
-                gestionpago_mtxplantilla.Codigox = objMensajeError.Codigox;
-                gestionpago_mtxplantilla.Mensajex = objMensajeError.Mensajex;
-                gestionpago_mtxplantilla.Tipox = objMensajeError.Tipox;
-                gestionpago_mtxplantilla.Titulox = objMensajeError.Titulox;
-
-                wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Session["sUsuario_Id"].ToString(), "Wrkf_SolicitudOrdenPagoPlantilla/SeleccionarPlantillaPorCodigo");
-            }
-
-            return Json(gestionpago_mtxplantilla, JsonRequestBehavior.AllowGet);
-        }
 
         /// <summary>
         /// Obtiene los datos de la plantilla por código
@@ -366,7 +337,6 @@ namespace Intranet.Controllers
         [HttpPost]
         public JsonResult UploadSoportesPago()
         {
-            Wrkf_DbSolicitudOrdenPago objsolicitudordenpago = new Wrkf_DbSolicitudOrdenPago();
             Wrkf_DbParametros wrkf_dbparametros = new Wrkf_DbParametros();
             Wrkf_Parametros wrkf_parametros = new Wrkf_Parametros();
 
@@ -398,18 +368,6 @@ namespace Intranet.Controllers
 
                     //guardar los soportes
                     file.SaveAs(@ruta + "\\" + fileName);
-
-                    //si el archivo se guardo en el directorio se guardan los datos en la base de datos
-                    if (System.IO.File.Exists(@ruta + "\\" + fileName))
-                    {
-                        Wrkf_SolicitudOrdenPagoSoporte objsolicitudpagosoporte = new Wrkf_SolicitudOrdenPagoSoporte();
-                        objsolicitudpagosoporte.Solicitudordenpago_Idx = Convert.ToInt32(numero_solicitud);
-                        objsolicitudpagosoporte.Solicitudordenpagodetalle_Idx = 0;
-                        objsolicitudpagosoporte.RutaDirectoriox = @ruta + "\\";
-                        objsolicitudpagosoporte.NombreArchivox = fileName;
-                        Wrkf_RespuestaOperacion objrespuestaoperacion = new Wrkf_RespuestaOperacion();
-                        objrespuestaoperacion = objsolicitudordenpago.AddSoporteSolicitudOrdenPago(objsolicitudpagosoporte);
-                    }
                 }
             }
             catch (Exception e)

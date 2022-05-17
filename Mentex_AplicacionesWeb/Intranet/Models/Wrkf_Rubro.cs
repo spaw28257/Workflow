@@ -10,37 +10,25 @@ namespace Intranet.Models
         /// <summary>
         /// Atributos de la clase
         /// </summary>
-        private string RubroEncript_Id;
-        private string Rubro_Id;
-        private string Descripcion;
-        private int Cantidad_Pagos;
-        private string GruporubroEncript_Id;
+        private string vRubro_IdEncript;
+        private string vRubro_Id;
+        private string vDescripcion;
+        private int vGrupoRubro_Id;
+        private int vTotalRubros;
 
-        /// <summary>
-        /// Constructor de la clase
-        /// </summary>
         public Wrkf_Rubro()
         {
-            RubroEncript_Id = "";
-            Rubro_Id = "";
-            Descripcion = "";
-            Cantidad_Pagos = 0;
-            GruporubroEncript_Id = "";
+            vRubro_IdEncript = "";
+            vRubro_Id = "";
+            vDescripcion = "";
+            vGrupoRubro_Id = 0;
+            vTotalRubros = 0;
         }
 
-        /// <summary>
-        /// Propiedades de la clase
-        /// </summary>
-        
-        public string RubroEncript_Idx { get => RubroEncript_Id; set => RubroEncript_Id = value; }
-        public string Rubro_Idx { get => Rubro_Id; set => Rubro_Id = value; }
-        public string Descripcionx { get => Descripcion; set => Descripcion = value; }
-
-        /// <summary>
-        /// Especifica la cantidad de pagos asociados al rubro se utiliza para la interfaz de la revisión de CxP
-        /// </summary>
-        public int Cantidad_Pagosx { get => Cantidad_Pagos; set => Cantidad_Pagos = value; }
-
-        public string GruporubroEncript_Idx { get => GruporubroEncript_Id; set => GruporubroEncript_Id = value; }
+        public string Rubro_IdEncript { get => vRubro_IdEncript; set => vRubro_IdEncript = value; }
+        public string Rubro_Id { get => vRubro_Id; set => vRubro_Id = value; }
+        public string Descripcion { get => vDescripcion; set => vDescripcion = value; }
+        public int GrupoRubro_Id { get => vGrupoRubro_Id; set => vGrupoRubro_Id = value; }
+        public int TotalRubros { get => vTotalRubros; set => vTotalRubros = value; }
     }
 }

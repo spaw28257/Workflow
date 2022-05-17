@@ -11,35 +11,41 @@ namespace Intranet.Controllers
     public class Wrkf_ChequeraController : Controller
     {
         //Listar las chequeras
-        public JsonResult ListarChequera()
+        public JsonResult GetChequera_Key(string pchequera_id)
         {
-            List<Wrkf_Chequera> lstchequeras = new List<Wrkf_Chequera>();
+            Wrkf_Chequera objchequera = new Wrkf_Chequera();
             Wrkf_DbChequera wrkf_dbchequera = new Wrkf_DbChequera();
             Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
             MensajeError mensajeerror;
 
-            try
+            if (Session["sUsuario_Id"] == null)
             {
-                lstchequeras = wrkf_dbchequera.GetListadoChequera();
+                mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99998", "SessionLogout");
+                objchequera.Codigox = mensajeerror.Codigox;
+                objchequera.Mensajex = mensajeerror.Mensajex;
+                objchequera.Tipox = mensajeerror.Tipox;
+                objchequera.Titulox = mensajeerror.Titulox;
             }
-            catch (Exception ex)
+            else
             {
-                mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
-
-                Wrkf_Chequera wrkf_chequera = new Wrkf_Chequera()
+                try
                 {
-                    Codigox = mensajeerror.Codigox,
-                    Mensajex = mensajeerror.Mensajex,
-                    Titulox = mensajeerror.Titulox,
-                    Tipox = mensajeerror.Tipox
-                };
+                    objchequera = wrkf_dbchequera.GetChequera_Key(pchequera_id);
+                }
+                catch (Exception ex)
+                {
+                    mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
 
-                wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Session["sUsuario_Id"].ToString(), "Wrkf_ChequeraController/ListarChequera");
+                    objchequera.Codigox = mensajeerror.Codigox;
+                    objchequera.Mensajex = mensajeerror.Mensajex;
+                    objchequera.Titulox = mensajeerror.Titulox;
+                    objchequera.Tipox = mensajeerror.Tipox;
 
-                lstchequeras.Add(wrkf_chequera);
+                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Session["sUsuario_Id"].ToString(), " Wrkf_ChequeraController/GetChequera_Key");
+                }
             }
 
-            return Json(new { chequera = lstchequeras });
+            return Json(new { chequera = objchequera });
         }
     }
 }

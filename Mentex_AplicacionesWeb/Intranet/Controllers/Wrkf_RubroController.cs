@@ -21,55 +21,94 @@ namespace Intranet.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult GetRubros(int Departamento_Id)
+        public JsonResult GetRubros_All(int pGrupoRubro_Id)
         {
-            List<Wrkf_Rubro> lstRubro;
-            Wrkf_DbRubro objRubro = new Wrkf_DbRubro();
-            lstRubro = objRubro.GetRubro(Departamento_Id);
-            return Json(lstRubro, JsonRequestBehavior.AllowGet);
+            List<Wrkf_Rubro> lstRubro = new List<Wrkf_Rubro>();
+            Wrkf_Rubro objRubro = new Wrkf_Rubro();
+            Wrkf_DatRubro objDatRubro = new Wrkf_DatRubro();
+            MensajeError mensajeerror;
+            Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
+
+            //Verificar que la sesión de usuario este activa
+            if (Session["sUsuario_Id"] == null)
+            {
+                mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99998", "SessionLogout");
+
+                objRubro.Codigox = mensajeerror.Codigox;
+                objRubro.Mensajex = mensajeerror.Mensajex;
+                objRubro.Tipox = mensajeerror.Tipox;
+                objRubro.Titulox = mensajeerror.Titulox;
+
+                lstRubro.Add(objRubro);
+            }
+            else
+            {
+                try
+                {
+                    lstRubro = objDatRubro.GetRubro_All(pGrupoRubro_Id);
+                }
+                catch(Exception ex)
+                {
+                    mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
+
+                    objRubro.Codigox = mensajeerror.Codigox;
+                    objRubro.Mensajex = mensajeerror.Mensajex;
+                    objRubro.Tipox = mensajeerror.Tipox;
+                    objRubro.Titulox = mensajeerror.Titulox;
+
+                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_RubroController/GetRubros_All");
+
+                    lstRubro.Add(objRubro);
+                }
+            }
+
+            return Json(new { ListadoRubro = lstRubro });
         }
 
         /// <summary>
-        /// Método para obtener el listado de rubros por departamento o grupo
+        /// Selecciona los datos del Rubro
         /// </summary>
+        /// <param name="pGrupoRubro_Id"></param>
+        /// <param name="pRubro_Id"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult GetRubros2(int Departamento_Id)
+        public JsonResult GetRubros_Key(int pGrupoRubro_Id, string pRubro_Id)
         {
-            List<Wrkf_Rubro> lstRubro;
-            Wrkf_DbRubro objRubro = new Wrkf_DbRubro();
-            lstRubro = objRubro.GetRubro(Departamento_Id);
-            return Json(new { data = lstRubro });
-        }
+            Wrkf_Rubro objRubro = new Wrkf_Rubro();
+            Wrkf_DatRubro objDatRubro = new Wrkf_DatRubro();
+            MensajeError mensajeerror;
+            Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
 
-        /// <summary>
-        /// Método para obtener el rubro por los campos Rubro_Id y Departamento_Id
-        /// </summary>
-        /// <param name="Rubro_Id"></param>
-        /// <param name="Departamento_Id"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public JsonResult GetRubroPorId(string Rubro_Id, int Departamento_Id)
-        {
-            List<Wrkf_Rubro> lstRubro;
-            Wrkf_DbRubro objRubro = new Wrkf_DbRubro();
-            lstRubro = objRubro.GetRubroPorId(Rubro_Id, Departamento_Id);
-            return Json(lstRubro, JsonRequestBehavior.AllowGet);
-        }
+            //Verificar que la sesión de usuario este activa
+            if (Session["sUsuario_Id"] == null)
+            {
+                mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99998", "SessionLogout");
 
-        /// <summary>
-        /// Método para obtener el rubro por los campos descripcion y departamento_id
-        /// </summary>
-        /// <param name="Rubro_Id"></param>
-        /// <param name="Departamento_Id"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public JsonResult GetRubroPorNombreDepartamento(string Descripcion, int Departamento_Id)
-        {
-            List<Wrkf_Rubro> lstRubro;
-            Wrkf_DbRubro objRubro = new Wrkf_DbRubro();
-            lstRubro = objRubro.GetRubroPorNombre(Descripcion, Departamento_Id);
-            return Json(lstRubro, JsonRequestBehavior.AllowGet);
+                objRubro.Codigox = mensajeerror.Codigox;
+                objRubro.Mensajex = mensajeerror.Mensajex;
+                objRubro.Tipox = mensajeerror.Tipox;
+                objRubro.Titulox = mensajeerror.Titulox;
+            }
+            else
+            {
+                try
+                {
+                    objRubro = objDatRubro.GetRubro_Key(pGrupoRubro_Id, pRubro_Id);
+                }
+                catch (Exception ex)
+                {
+                    mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
+
+                    objRubro.Codigox = mensajeerror.Codigox;
+                    objRubro.Mensajex = mensajeerror.Mensajex;
+                    objRubro.Tipox = mensajeerror.Tipox;
+                    objRubro.Titulox = mensajeerror.Titulox;
+
+                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_RubroController/GetRubros_Key");
+                }
+            }
+
+            return Json(new { DatosRubro = objRubro });
         }
     }
 }

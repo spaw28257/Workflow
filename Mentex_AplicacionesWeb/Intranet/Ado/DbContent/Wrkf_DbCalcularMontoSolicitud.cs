@@ -18,77 +18,40 @@ namespace Intranet.Ado.DbContent
         }
 
         /// <summary>
-        /// Ejecutarel procedimiento almacenado para calcular losmontos de la solicitud
+        /// Calcular el monto total a pagar de la solicitud de laorden de pago
         /// </summary>
-        /// <param name="calculariva"></param>
-        /// <param name="calcularretencion"></param>
-        /// <param name="cantidad"></param>
-        /// <param name="preciounitario"></param>
-        /// <param name="anticipo"></param>
-        /// <param name="porcentajeretencion"></param>
+        /// <param name="pMontoDocumento"></param>
+        /// <param name="pPlanImpuesto"></param>
         /// <returns></returns>
-        public List<Wrkf_CalcularMontos> CalcularMontosSolicitud(bool calculariva, bool calcularretencion, double cantidad, double preciounitario, double anticipo, double porcentajeretencion)
+        public List<Wrkf_CalcularMontos> CalcularMontosSolicitud(double pMontoDocumento, double pBaseIvaGe, double pBaseIvaRe, double pBaseIvaAd, string pPlanImpuesto)
         {
             List<Wrkf_CalcularMontos> lstcalcularmontos = new List<Wrkf_CalcularMontos>();
             Wrkf_CalcularMontos objcalcularmontos = new Wrkf_CalcularMontos();
 
-            double Porcentajeivax;
-            double Montoivax;
-            double Porcentajeretencionx;
-            double Montoretencionx;
-            double Subtotalx;
-            double Totalx;
-
             SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
             Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                new SqlParameter("@pcalculariva", calculariva),
-                new SqlParameter("@pcalcularretencion", calcularretencion),
-                new SqlParameter("@pcantidad", cantidad),
-                new SqlParameter("@ppreciounitario", preciounitario),
-                new SqlParameter("@panticipo", anticipo),
-                new SqlParameter("@pporcentajeretencion", porcentajeretencion),
-                new SqlParameter("@pporcentajeivax", SqlDbType.Money),
-                new SqlParameter("@pmontoivax", SqlDbType.Money),
-                new SqlParameter("@pporcentajeretencionx", SqlDbType.Money),
-                new SqlParameter("@pmontoretencionx", SqlDbType.Money),
-                new SqlParameter("@psubtotalx", SqlDbType.Money),
-                new SqlParameter("@ptotalx", SqlDbType.Money),
+                new SqlParameter("@pMontoDocumento", pMontoDocumento),
+                new SqlParameter("@pBaseIvaGe", pBaseIvaGe),
+                new SqlParameter("@pBaseIvaRe", pBaseIvaRe),
+                new SqlParameter("@pBaseIvaAd", pBaseIvaAd),
+                new SqlParameter("@pPlanImpuesto", pPlanImpuesto),
                 new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
                 new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
-                new SqlParameter("@pTipo", SqlDbType.VarChar, 20),
-                new SqlParameter("@pTitulo", SqlDbType.VarChar, 30)
+                new SqlParameter("@pTipoError", SqlDbType.VarChar, 20),
+                new SqlParameter("@pTituloError", SqlDbType.VarChar, 60)
             });
 
+            Sqlprovider.Oparameters[5].Direction = ParameterDirection.Output;
             Sqlprovider.Oparameters[6].Direction = ParameterDirection.Output;
             Sqlprovider.Oparameters[7].Direction = ParameterDirection.Output;
             Sqlprovider.Oparameters[8].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[9].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[10].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[11].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[12].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[13].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[14].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[15].Direction = ParameterDirection.Output;
 
             //optener los resultados del procedimiento almacenado
-            Sqlprovider.ExecuteStoredProcedureWithOutputParameter2("workflow.PL_Sel_CalcularMontosSolicitud", CommandType.StoredProcedure, out Dictionary<string, string> outparam);
+            DataTable DtCalcularmonto = Sqlprovider.ExecuteStoredProcedureWithOutputParameter("workflow.PL_Sel_CalcularMontosSolicitud", CommandType.StoredProcedure, out Dictionary<string, string> outparam);
 
-            Porcentajeivax = Convert.ToDouble(outparam["@pporcentajeivax"]);
-            Montoivax = Convert.ToDouble(outparam["@pmontoivax"]);
-            Porcentajeretencionx = Convert.ToDouble(outparam["@pporcentajeretencionx"]);
-            Montoretencionx = Convert.ToDouble(outparam["@pmontoretencionx"]);
-            Subtotalx = Convert.ToDouble(outparam["@psubtotalx"]);
-            Totalx = Convert.ToDouble(outparam["@ptotalx"]);
-
-            //Obtiene El Error Generado Desde El Procedimiento Almacenado [workflow].[PL_InsUpd_SolicitudOrdenPago_key].
+            ////Obtiene El Error Generado Desde El Procedimiento Almacenado [workflow].[PL_InsUpd_SolicitudOrdenPago_key].
             if (!string.IsNullOrEmpty(outparam["@pCodigoError"]))
             {
-                objcalcularmontos.Porcentajeiva = Porcentajeivax.ToString("N", new CultureInfo("is-IS"));
-                objcalcularmontos.Montoiva = Montoivax.ToString("N", new CultureInfo("is-IS"));
-                objcalcularmontos.Porcentajeretencion = Porcentajeretencionx.ToString("N", new CultureInfo("is-IS"));
-                objcalcularmontos.Montoretencion = Montoretencionx.ToString("N", new CultureInfo("is-IS"));
-                objcalcularmontos.Subtotal = Subtotalx.ToString("N", new CultureInfo("is-IS"));
-                objcalcularmontos.Total = Totalx.ToString("N", new CultureInfo("is-IS"));
                 objcalcularmontos.Codigox = outparam["@pCodigoError"];
                 objcalcularmontos.Mensajex = outparam["@pMensajeError"];
                 objcalcularmontos.Tipox = outparam["@pTipo"];
@@ -96,12 +59,11 @@ namespace Intranet.Ado.DbContent
             }
             else
             {
-                objcalcularmontos.Porcentajeiva = Porcentajeivax.ToString("N", new CultureInfo("is-IS"));
-                objcalcularmontos.Montoiva = Montoivax.ToString("N", new CultureInfo("is-IS"));
-                objcalcularmontos.Porcentajeretencion = Porcentajeretencionx.ToString("N", new CultureInfo("is-IS"));
-                objcalcularmontos.Montoretencion = Montoretencionx.ToString("N", new CultureInfo("is-IS"));
-                objcalcularmontos.Subtotal = Subtotalx.ToString("N", new CultureInfo("is-IS"));
-                objcalcularmontos.Total = Totalx.ToString("N", new CultureInfo("is-IS"));
+                objcalcularmontos.Porcentajeiva = Convert.ToDouble(DtCalcularmonto.Rows[0]["PorcentajeIva"]);
+                objcalcularmontos.Montoiva = Convert.ToDouble(DtCalcularmonto.Rows[0]["MontoIva"]);
+                objcalcularmontos.Porcentajeretencion = Convert.ToDouble(DtCalcularmonto.Rows[0]["PorcentajeRetencion"]);
+                objcalcularmontos.Montoretencion = Convert.ToDouble(DtCalcularmonto.Rows[0]["MontoRetencion"]);
+                objcalcularmontos.Totalapagar = Convert.ToDouble(DtCalcularmonto.Rows[0]["TotalPagar"]);
                 objcalcularmontos.Codigox = string.Empty;
                 objcalcularmontos.Mensajex = string.Empty;
                 objcalcularmontos.Tipox = string.Empty;

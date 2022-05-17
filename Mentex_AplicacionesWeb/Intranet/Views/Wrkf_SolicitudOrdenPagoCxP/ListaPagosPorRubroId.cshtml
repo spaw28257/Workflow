@@ -108,31 +108,24 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-header" style="background-color:#82293E;">
-                                    <h3 class="card-title" style="color:#FFFFFF;">Solicitudes de Pagos Pendientes por Revisar CxP Rubro: @lstlistapagosporrubroid[0].DescripcionRubrox</h3>
+                                    <h3 class="card-title" style="color:#FFFFFF;">Solicitudes de Ordenes de Pago (Revisión CXP)</h3>
                                 </div>
                                 <!-- /.card-header -->
                                 <div class="card-body">
-                                    @if (lstlistapagosporrubroid[0].Solicitudordenpago_Idx == -1)
-                                    {
-                                        <script>swal("No existen pagos para el rango de fecha especificado", "Información", "info");</script>
-                                    }
+
                                     <table id="example2" class="table table-bordered table-hover" style="width:100%;">
                                         <thead>
                                             <tr class="cabecera-tabla">
-                                                <th style="text-align:center; font-weight:bold;">Sol. N°</th>
-                                                <th style="text-align:center; font-weight:bold;">Aprobar</th>
-                                                <th style="text-align:center; font-weight:bold;">Proveedor</th>
-                                                <th style="text-align:center; font-weight:bold;">Total a Pagar</th>
-                                                <th style="text-align:center; font-weight:bold;">Tipo Documento</th>
-                                                <th style="text-align:center; font-weight:bold;">Descripción</th>
-                                                <th style="text-align:center; font-weight:bold;">N° Documento</th>
-                                                <th style="text-align:center; font-weight:bold;">Forma de Pago</th>
-                                                <th style="text-align:center; font-weight:bold;">Chequera</th>
-                                                <th style="text-align:center; font-weight:bold;">Fecha Documento</th>
+                                                <th style="text-align:center; font-weight:bold;">N° Pago</th>
+                                                <th style="text-align:center; font-weight:bold;">N° Item</th>
+                                                <th style="text-align:center; font-weight:bold;">Código Plantilla</th>
+                                                <th style="text-align:center; font-weight:bold;">Beneficiario</th>
+                                                <th style="text-align:center; font-weight:bold;">N° Factura</th>
+                                                <th style="text-align:center; font-weight:bold;">Fecha Factura</th>
                                                 <th style="text-align:center; font-weight:bold;">Fecha Pago</th>
-                                                <th style="text-align:center; font-weight:bold;">Observaciones</th>
-                                                <th style="text-align:center; font-weight:bold;">Doc. Recibido</th>
-                                                <th style="text-align:center; font-weight:bold;">Rechazar</th>
+                                                <th style="text-align:center; font-weight:bold;">Monto</th>
+                                                <th style="text-align:center; font-weight:bold;">Id Chequera</th>
+                                                <th style="text-align:center; font-weight:bold;">Código Moneda</th>
                                             </tr>
                                         </thead>
                                         <tbody>

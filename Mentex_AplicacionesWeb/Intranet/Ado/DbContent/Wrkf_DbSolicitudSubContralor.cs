@@ -17,161 +17,161 @@ namespace Intranet.Ado.DbContent
         /// Lista el grupo de rubros que contiene pagos pendientes por revisar por el subcontralor
         /// </summary>
         /// <returns></returns>
-        public List<Wrkf_Departamento> lstGrupoRubroSubContralor()
-        {
-            List<Wrkf_Departamento> lstgruporubro = new List<Wrkf_Departamento>();
+        //public List<Wrkf_GrupoRubro> lstGrupoRubroSubContralor()
+        //{
+        //    List<Wrkf_GrupoRubro> lstgruporubro = new List<Wrkf_GrupoRubro>();
 
-            SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
-            Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-            });
+        //    SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
+        //    Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
+        //    });
 
-            DataTable DtGrupoRubrosConPagos = Sqlprovider.ExecuteStoredProcedure("workflow.PL_Sel_GrupoRubrosSubContralor", CommandType.StoredProcedure);
+        //    DataTable DtGrupoRubrosConPagos = Sqlprovider.ExecuteStoredProcedure("workflow.PL_Sel_GrupoRubrosSubContralor", CommandType.StoredProcedure);
 
-            int total_registros = DtGrupoRubrosConPagos.Rows.Count;
+        //    int total_registros = DtGrupoRubrosConPagos.Rows.Count;
 
-            if (total_registros > 0)
-            {
-                for (int i = 0; i < total_registros; i++)
-                {
-                    Wrkf_Departamento objgruporubro = new Wrkf_Departamento()
-                    {
-                        Departamento_Idx = Convert.ToInt32(DtGrupoRubrosConPagos.Rows[i]["Gruporubro_Id"]),
-                        Departamentox = Convert.ToString(DtGrupoRubrosConPagos.Rows[i]["Departamento"]),
-                        TotalRubrosx = Convert.ToInt32(DtGrupoRubrosConPagos.Rows[i]["TotalRubros"])
-                    };
+        //    if (total_registros > 0)
+        //    {
+        //        for (int i = 0; i < total_registros; i++)
+        //        {
+        //            Wrkf_GrupoRubro objgruporubro = new Wrkf_GrupoRubro()
+        //            {
+        //                Departamento_Idx = Convert.ToInt32(DtGrupoRubrosConPagos.Rows[i]["Gruporubro_Id"]),
+        //                Departamentox = Convert.ToString(DtGrupoRubrosConPagos.Rows[i]["Departamento"]),
+        //                TotalRubrosx = Convert.ToInt32(DtGrupoRubrosConPagos.Rows[i]["TotalRubros"])
+        //            };
 
-                    lstgruporubro.Add(objgruporubro);
-                }
-            }
-            else
-            {
-                Wrkf_Departamento objgruporubro = new Wrkf_Departamento();
-                lstgruporubro.Add(objgruporubro);
-            }
+        //            lstgruporubro.Add(objgruporubro);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Wrkf_GrupoRubro objgruporubro = new Wrkf_GrupoRubro();
+        //        lstgruporubro.Add(objgruporubro);
+        //    }
 
-            return lstgruporubro;
-        }
+        //    return lstgruporubro;
+        //}
 
-        /// <summary>
-        /// Lista el grupo de rubros que contiene Notas de créditos pendientes por revisar por el subcontralor
-        /// </summary>
-        /// <returns></returns>
-        public List<Wrkf_Departamento> lstGrupoRubroNotasCreditoSubContralor()
-        {
-            List<Wrkf_Departamento> lstgruporubro = new List<Wrkf_Departamento>();
+        ///// <summary>
+        ///// Lista el grupo de rubros que contiene Notas de créditos pendientes por revisar por el subcontralor
+        ///// </summary>
+        ///// <returns></returns>
+        //public List<Wrkf_GrupoRubro> lstGrupoRubroNotasCreditoSubContralor()
+        //{
+        //    List<Wrkf_GrupoRubro> lstgruporubro = new List<Wrkf_GrupoRubro>();
 
-            SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
-            Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-            });
+        //    SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
+        //    Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
+        //    });
 
-            DataTable DtGrupoRubrosConPagos = Sqlprovider.ExecuteStoredProcedure("workflow.PL_Sel_GrupoRubrosNotasCreditoSubContralor", CommandType.StoredProcedure);
+        //    DataTable DtGrupoRubrosConPagos = Sqlprovider.ExecuteStoredProcedure("workflow.PL_Sel_GrupoRubrosNotasCreditoSubContralor", CommandType.StoredProcedure);
 
-            int total_registros = DtGrupoRubrosConPagos.Rows.Count;
+        //    int total_registros = DtGrupoRubrosConPagos.Rows.Count;
 
-            if (total_registros > 0)
-            {
-                for (int i = 0; i < total_registros; i++)
-                {
-                    Wrkf_Departamento objgruporubro = new Wrkf_Departamento()
-                    {
-                        Departamento_Idx = Convert.ToInt32(DtGrupoRubrosConPagos.Rows[i]["Gruporubro_Id"]),
-                        Departamentox = Convert.ToString(DtGrupoRubrosConPagos.Rows[i]["Departamento"]),
-                        TotalRubrosx = Convert.ToInt32(DtGrupoRubrosConPagos.Rows[i]["TotalRubros"])
-                    };
+        //    if (total_registros > 0)
+        //    {
+        //        for (int i = 0; i < total_registros; i++)
+        //        {
+        //            Wrkf_GrupoRubro objgruporubro = new Wrkf_GrupoRubro()
+        //            {
+        //                Departamento_Idx = Convert.ToInt32(DtGrupoRubrosConPagos.Rows[i]["Gruporubro_Id"]),
+        //                Departamentox = Convert.ToString(DtGrupoRubrosConPagos.Rows[i]["Departamento"]),
+        //                TotalRubrosx = Convert.ToInt32(DtGrupoRubrosConPagos.Rows[i]["TotalRubros"])
+        //            };
 
-                    lstgruporubro.Add(objgruporubro);
-                }
-            }
-            else
-            {
-                Wrkf_Departamento objgruporubro = new Wrkf_Departamento();
-                lstgruporubro.Add(objgruporubro);
-            }
+        //            lstgruporubro.Add(objgruporubro);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Wrkf_GrupoRubro objgruporubro = new Wrkf_GrupoRubro();
+        //        lstgruporubro.Add(objgruporubro);
+        //    }
 
-            return lstgruporubro;
-        }
+        //    return lstgruporubro;
+        //}
 
         /// <summary>
         /// Lista los rubros que tienen pagos pendientes por revisar por SubContraloria 
         /// </summary>
         /// <param name="gruporubro_id"></param>
         /// <returns></returns>
-        public List<Wrkf_Rubro> lstRubrosSubContraloria(int gruporubro_id)
-        {
-            List<Wrkf_Rubro> lstrubro = new List<Wrkf_Rubro>();
+        //public List<Wrkf_Rubro> lstRubrosSubContraloria(int gruporubro_id)
+        //{
+        //    List<Wrkf_Rubro> lstrubro = new List<Wrkf_Rubro>();
 
-            SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
-            Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                new SqlParameter("@pGruporubro_Id", gruporubro_id)
-            });
+        //    SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
+        //    Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
+        //        new SqlParameter("@pGruporubro_Id", gruporubro_id)
+        //    });
 
-            DataTable DtRubrosConPagos = Sqlprovider.ExecuteStoredProcedure("workflow.PL_Sel_RubrosConPagosSubContraloria", CommandType.StoredProcedure);
+        //    DataTable DtRubrosConPagos = Sqlprovider.ExecuteStoredProcedure("workflow.PL_Sel_RubrosConPagosSubContraloria", CommandType.StoredProcedure);
 
-            int total_registros = DtRubrosConPagos.Rows.Count;
+        //    int total_registros = DtRubrosConPagos.Rows.Count;
 
-            if (total_registros > 0)
-            {
-                for (int i = 0; i < total_registros; i++)
-                {
-                    Wrkf_Rubro objrubro = new Wrkf_Rubro()
-                    {
-                        Rubro_Idx = Convert.ToString(DtRubrosConPagos.Rows[i]["Rubro_Id"]),
-                        Descripcionx = Convert.ToString(DtRubrosConPagos.Rows[i]["Descripcion"]),
-                        Cantidad_Pagosx = Convert.ToInt32(DtRubrosConPagos.Rows[i]["CantidadPago"])
-                    };
+        //    if (total_registros > 0)
+        //    {
+        //        for (int i = 0; i < total_registros; i++)
+        //        {
+        //            Wrkf_Rubro objrubro = new Wrkf_Rubro()
+        //            {
+        //                Rubro_Idx = Convert.ToString(DtRubrosConPagos.Rows[i]["Rubro_Id"]),
+        //                Descripcionx = Convert.ToString(DtRubrosConPagos.Rows[i]["Descripcion"]),
+        //                Cantidad_Pagosx = Convert.ToInt32(DtRubrosConPagos.Rows[i]["CantidadPago"])
+        //            };
 
-                    lstrubro.Add(objrubro);
-                }
-            }
-            else
-            {
-                Wrkf_Rubro objrubro = new Wrkf_Rubro();
-                lstrubro.Add(objrubro);
-            }
+        //            lstrubro.Add(objrubro);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Wrkf_Rubro objrubro = new Wrkf_Rubro();
+        //        lstrubro.Add(objrubro);
+        //    }
 
-            return lstrubro;
-        }
+        //    return lstrubro;
+        //}
 
         /// <summary>
         /// Lista los rubros que tienen notas de creditos pendientes por revisar por SubContraloria 
         /// </summary>
         /// <param name="gruporubro_id"></param>
         /// <returns></returns>
-        public List<Wrkf_Rubro> lstRubrosNotasCreditosSubContraloria(int gruporubro_id)
-        {
-            List<Wrkf_Rubro> lstrubro = new List<Wrkf_Rubro>();
+        //public List<Wrkf_Rubro> lstRubrosNotasCreditosSubContraloria(int gruporubro_id)
+        //{
+        //    List<Wrkf_Rubro> lstrubro = new List<Wrkf_Rubro>();
 
-            SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
-            Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                new SqlParameter("@pGruporubro_Id", gruporubro_id)
-            });
+        //    SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
+        //    Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
+        //        new SqlParameter("@pGruporubro_Id", gruporubro_id)
+        //    });
 
-            DataTable DtRubrosConPagos = Sqlprovider.ExecuteStoredProcedure("Workflow.PL_Sel_RubrosConNotasCreditoSubContraloria", CommandType.StoredProcedure);
+        //    DataTable DtRubrosConPagos = Sqlprovider.ExecuteStoredProcedure("Workflow.PL_Sel_RubrosConNotasCreditoSubContraloria", CommandType.StoredProcedure);
 
-            int total_registros = DtRubrosConPagos.Rows.Count;
+        //    int total_registros = DtRubrosConPagos.Rows.Count;
 
-            if (total_registros > 0)
-            {
-                for (int i = 0; i < total_registros; i++)
-                {
-                    Wrkf_Rubro objrubro = new Wrkf_Rubro()
-                    {
-                        Rubro_Idx = Convert.ToString(DtRubrosConPagos.Rows[i]["Rubro_Id"]),
-                        Descripcionx = Convert.ToString(DtRubrosConPagos.Rows[i]["Descripcion"]),
-                        Cantidad_Pagosx = Convert.ToInt32(DtRubrosConPagos.Rows[i]["CantidadPago"])
-                    };
+        //    if (total_registros > 0)
+        //    {
+        //        for (int i = 0; i < total_registros; i++)
+        //        {
+        //            Wrkf_Rubro objrubro = new Wrkf_Rubro()
+        //            {
+        //                Rubro_Idx = Convert.ToString(DtRubrosConPagos.Rows[i]["Rubro_Id"]),
+        //                Descripcionx = Convert.ToString(DtRubrosConPagos.Rows[i]["Descripcion"]),
+        //                Cantidad_Pagosx = Convert.ToInt32(DtRubrosConPagos.Rows[i]["CantidadPago"])
+        //            };
 
-                    lstrubro.Add(objrubro);
-                }
-            }
-            else
-            {
-                Wrkf_Rubro objrubro = new Wrkf_Rubro();
-                lstrubro.Add(objrubro);
-            }
+        //            lstrubro.Add(objrubro);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Wrkf_Rubro objrubro = new Wrkf_Rubro();
+        //        lstrubro.Add(objrubro);
+        //    }
 
-            return lstrubro;
-        }
+        //    return lstrubro;
+        //}
 
         /// <summary>
         /// Muestra un listado de los pagos por rubros pendientes por revisar por subcontraloria

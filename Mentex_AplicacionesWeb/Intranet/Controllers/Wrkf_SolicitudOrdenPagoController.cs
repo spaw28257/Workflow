@@ -29,6 +29,8 @@ namespace Intranet.Controllers
             Wrkf_DbFormaPago objdbformapago = new Wrkf_DbFormaPago();
             List<Wrkf_TipoDocumento> lsttipodocumento;
             Wrkf_DbTipoDocumento objdbtipodocumento = new Wrkf_DbTipoDocumento();
+            List<GestionPago_EntMtxConcepto> lstConcepto;
+            GestionPago_DatMtxConcepto objDbConceptos = new GestionPago_DatMtxConcepto();
             Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
             Wrkf_SolicitudOrdenPagoPlantillaController objSolicitudOrdenPagoPlantilla = new Wrkf_SolicitudOrdenPagoPlantillaController();
 
@@ -52,6 +54,10 @@ namespace Intranet.Controllers
                     //Obtener una lista de los tipos de documentos
                     lsttipodocumento = objdbtipodocumento.GetTipoDocumentos();
                     ViewBag.listatipodocumento = lsttipodocumento;
+
+                    lstConcepto = objDbConceptos.ListarConceptosTodos();
+                    ViewBag.listaconceptos = lstConcepto;
+
                 }
                 catch (Exception ex)
                 {
@@ -121,14 +127,39 @@ namespace Intranet.Controllers
             //genera una lista con los id generados del encabezado y detalle de la solicitud de pago
             List<Wrkf_RespuestaOperacion> lstRespuestaOperacion = new List<Wrkf_RespuestaOperacion>();
             Wrkf_SolicitudOrdenPago objSolicitudOrdenPago = new Wrkf_SolicitudOrdenPago();
-            Wrkf_SolicitudOrdenPagoDetalle objSolicitudOrdenPagoDetalle = new Wrkf_SolicitudOrdenPagoDetalle();
-            ConvertExtension objConvertExtension = new ConvertExtension();
             Wrkf_DbSolicitudOrdenPago objDbSolicitudOrdenPago = new Wrkf_DbSolicitudOrdenPago();
             Wrkf_RespuestaOperacion objRespuestaOperacion = new Wrkf_RespuestaOperacion();
             ConvertExtension objconvertextension = new ConvertExtension();
             GestionPago_DbDiaFeriado objdiaferiado = new GestionPago_DbDiaFeriado();
             MensajeError mensajeerror;
             Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
+
+            //GAP
+            string vCodigoSolicitud = Item[20].Trim();
+            string vCodigoPlantilla = Item[0].Trim();
+            double vMonto = Convert.ToDouble(Item[18].Trim());
+            string vDescripcionFactura = Item[8].Trim();
+            string vFechaFactura = Item[11].Trim();
+            string vFechaPago = Item[12].Trim();
+            string vNroFactura = Item[9].Trim();
+            string vNroControl = Item[10].Trim();
+            int vCodigoConcepto = Convert.ToInt32(Item[21].Trim());
+            string vIdProveedor = Item[3].Trim();
+            double vMontoExento = Convert.ToDouble(Item[14].Trim());
+
+
+            //workflow
+            int vCodigoGrupoRubro = Convert.ToInt32(Item[1].Trim());
+            string vCodigoRubro = Item[2].Trim();
+            int vTipoDocumento = Convert.ToInt32(Item[7].Trim());
+            int vtipoPago = Convert.ToInt32(Item[13].Trim());
+            double vBaseIvaGE = Convert.ToDouble(Item[16].Trim());
+            double vBaseIvaRe = Convert.ToDouble(Item[17].Trim());
+            double vBaseIvaAd = Convert.ToDouble(Item[22].Trim());
+            string vPlanImpuesto = Item[6].Trim();
+            string vCodigoMoneda = Item[15].Trim();
+            string vObservaciones = Item[19].Trim();
+            string UsuarioSesion = Session["sUsuario_Id"].ToString().Trim();
 
             bool requerido = false;
 
@@ -148,9 +179,9 @@ namespace Intranet.Controllers
                     //verificar si la fecha de pago es un dia sabado o domingo Item[3] representa la fecha de pago
                     if (requerido == false)
                     {
-                        if (objconvertextension.VerificarSabadoDomingo(Item[3]) == true)
+                        if (objconvertextension.VerificarSabadoDomingo(Convert.ToDateTime(vFechaPago)))
                         {
-                            mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("00004", "Wrkf_SolicitudOrdenPagoController/AddItemPago");
+                            mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("ADD002", "AddItemPago");
                             objRespuestaOperacion.Codigox = mensajeerror.Codigox;
                             objRespuestaOperacion.Mensajex = mensajeerror.Mensajex;
                             objRespuestaOperacion.Tipox = mensajeerror.Tipox;
@@ -162,9 +193,24 @@ namespace Intranet.Controllers
                     //verifica si la fecha es un dia feriado Item[3] representa la fecha de pago
                     if (requerido == false)
                     {
-                        if (objdiaferiado.GetDiaFeriado(Item[3]) == true)
+
+                        if (objdiaferiado.GetDiaFeriado(Convert.ToDateTime(vFechaPago)))
                         {
-                            mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("00005", "Wrkf_SolicitudOrdenPagoController/AddItemPago");
+                            mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("ADD003", "AddItemPago");
+                            objRespuestaOperacion.Codigox = mensajeerror.Codigox;
+                            objRespuestaOperacion.Mensajex = mensajeerror.Mensajex;
+                            objRespuestaOperacion.Tipox = mensajeerror.Tipox;
+                            objRespuestaOperacion.Titulox = mensajeerror.Titulox;
+                            requerido = true;
+                        }
+                    }
+
+                    //verifica que la fecha de la factura no sea mayor a la fecha de pago
+                    if (requerido == false)
+                    {
+                        if (objconvertextension.CompararFechas(Convert.ToDateTime(vFechaFactura), Convert.ToDateTime(vFechaPago)) > 0)
+                        {
+                            mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("ADD001", "AddItemPago");
                             objRespuestaOperacion.Codigox = mensajeerror.Codigox;
                             objRespuestaOperacion.Mensajex = mensajeerror.Mensajex;
                             objRespuestaOperacion.Tipox = mensajeerror.Tipox;
@@ -176,67 +222,54 @@ namespace Intranet.Controllers
                     //Se registra la solicitud de orden de pago
                     if (requerido == false)
                     {
-                        //encabezado de la solicitud de orden pago
-                        objSolicitudOrdenPago.curncyidx = Convert.ToString(Item[0]);
-                        objSolicitudOrdenPagoDetalle.Rubro_Idx = Convert.ToString(Item[1]);
-                        objSolicitudOrdenPagoDetalle.FechaDocumentox = Convert.ToDateTime(Item[2]);
-                        objSolicitudOrdenPagoDetalle.Fechapagox = Convert.ToDateTime(Item[3]);
-
-                        //detalle del encabezado de la solicitud orden pago
-                        objSolicitudOrdenPagoDetalle.IdProveedorx = Convert.ToString(Item[4]);
-                        objSolicitudOrdenPagoDetalle.Proveedorx = Convert.ToString(Item[5]);
-                        objSolicitudOrdenPagoDetalle.Descripcionx = Convert.ToString(Item[6]);
-                        objSolicitudOrdenPagoDetalle.Numerodocumentox = Convert.ToString(Item[7]);
-                        objSolicitudOrdenPagoDetalle.Cantidadx = objConvertExtension.FormatoNumeroDecimal(Convert.ToDouble(Item[8])).ToString();
-                        objSolicitudOrdenPagoDetalle.Preciounitariox = objConvertExtension.FormatoNumeroDecimal(Convert.ToDouble(Item[9])).ToString();
-                        objSolicitudOrdenPagoDetalle.Anticipox = objConvertExtension.FormatoNumeroDecimal(Convert.ToDouble(Item[10])).ToString();
-                        objSolicitudOrdenPagoDetalle.Subtotalx = objConvertExtension.FormatoNumeroDecimal(Convert.ToDouble(Item[11])).ToString();
-                        objSolicitudOrdenPagoDetalle.Totalx = objConvertExtension.FormatoNumeroDecimal(Convert.ToDouble(Item[12])).ToString();
-                        objSolicitudOrdenPagoDetalle.TipoDocumentox = Convert.ToInt32(Item[15]);
-                        objSolicitudOrdenPagoDetalle.Calculaivax = Convert.ToBoolean(Item[16]);
-                        objSolicitudOrdenPagoDetalle.Realizaretencionx = Convert.ToBoolean(Item[17]);
-                        objSolicitudOrdenPagoDetalle.Porcentajeivax = objConvertExtension.FormatoNumeroDecimal(Convert.ToDouble(Item[18])).ToString();
-                        objSolicitudOrdenPagoDetalle.Montoivax = objConvertExtension.FormatoNumeroDecimal(Convert.ToDouble(Item[19])).ToString();
-                        objSolicitudOrdenPagoDetalle.Porcentajeretencionx = objConvertExtension.FormatoNumeroDecimal(Convert.ToDouble(Item[20])).ToString();
-                        objSolicitudOrdenPagoDetalle.Totalretenidox = objConvertExtension.FormatoNumeroDecimal(Convert.ToDouble(Item[21])).ToString();
-                        objSolicitudOrdenPagoDetalle.Gruporubro_Idx = Convert.ToInt32(Item[22]);
-                        objSolicitudOrdenPago.Solicitudordenpago_Idx = Convert.ToInt32(Item[13]);
-                        objSolicitudOrdenPagoDetalle.Solicitudordenpagodetalle_Idx = Convert.ToInt32(Item[14]);
-                        objSolicitudOrdenPagoDetalle.Formapago_Idx = Convert.ToInt32(Item[23]);
-                        objSolicitudOrdenPagoDetalle.Observacionesx = Convert.ToString(Item[24]);
-
-                        //verificar si la solicitud ya esta creada
-                        objRespuestaOperacion = objDbSolicitudOrdenPago.ExisteSolicitud(objSolicitudOrdenPago.Solicitudordenpago_Idx, Convert.ToString(Session["sUsuario_Id"]));
-
-                        if (objRespuestaOperacion.RespuestaSioNox == true)
+                        //obtiene el proximo correlativo de la solicitud de orden de pago
+                        if (string.IsNullOrEmpty(vCodigoSolicitud))
                         {
-                            //verificar que todos los pagos de la solicitud tengan la misma moneda
-                            objRespuestaOperacion = objDbSolicitudOrdenPago.VerificarMonedaSolicitud(objSolicitudOrdenPago.Solicitudordenpago_Idx, objSolicitudOrdenPago.curncyidx, Convert.ToString(Session["sUsuario_Id"]));
-
-                            if (objRespuestaOperacion.RespuestaSioNox == false)
-                            {
-                                mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("00006", "Wrkf_SolicitudOrdenPagoController/AddItemPago");
-                                objRespuestaOperacion.Codigox = mensajeerror.Codigox;
-                                objRespuestaOperacion.Mensajex = mensajeerror.Mensajex;
-                                objRespuestaOperacion.Tipox = mensajeerror.Tipox;
-                                objRespuestaOperacion.Titulox = mensajeerror.Titulox;
-                                requerido = true;
-                            }
-                            else
-                            {
-                                requerido = false;
-                            }
+                            string strProximoCorrelativo = objDbSolicitudOrdenPago.ProximoCorrelativo(vCodigoPlantilla);
+                            objSolicitudOrdenPago.Codigo = strProximoCorrelativo;
                         }
                         else
                         {
-                            requerido = false;
+                            objSolicitudOrdenPago.Codigo = vCodigoSolicitud;
                         }
 
-                        //registra los datos de la solicitud de orden de pago
-                        if (requerido == false)
-                        {
-                            objRespuestaOperacion = objDbSolicitudOrdenPago.AddSolicitudOrdenPago(objSolicitudOrdenPago, objSolicitudOrdenPagoDetalle, Convert.ToString(Session["sUsuario_Id"]));
-                        }
+                        //GAP
+                        objSolicitudOrdenPago.GAPCodigoPlantilla= vCodigoPlantilla;
+                        objSolicitudOrdenPago.GAPMonto = vMonto;
+                        objSolicitudOrdenPago.GAPDescripcionFactura = vDescripcionFactura;
+                        objSolicitudOrdenPago.GAPFechaFactura = vFechaFactura;
+                        objSolicitudOrdenPago.GAPFechaPago = vFechaPago;
+                        objSolicitudOrdenPago.GAPEstatus = 2; //Aprobado
+                        objSolicitudOrdenPago.GAPNroFactura = vNroFactura;
+                        objSolicitudOrdenPago.GAPNroControl = vNroControl;
+                        objSolicitudOrdenPago.GAPTipoPago = "T"; //Transferencia
+                        objSolicitudOrdenPago.GAPCodigoConcepto = vCodigoConcepto;
+                        objSolicitudOrdenPago.GAPIdProveedor = vIdProveedor;
+                        objSolicitudOrdenPago.GAPProveedor = "";
+                        objSolicitudOrdenPago.GAPRIF = "";
+                        objSolicitudOrdenPago.GAPCuentaBancaria = "";
+                        objSolicitudOrdenPago.GAPEmail = "";
+                        objSolicitudOrdenPago.GAPPorcentajeRetencion = 0;
+                        objSolicitudOrdenPago.GAPMontoExento = vMontoExento;
+                        objSolicitudOrdenPago.GAPBaseImpIVAAdicional = vBaseIvaAd;
+                        objSolicitudOrdenPago.GAPBaseImpIVAReducido = vBaseIvaRe;
+                        objSolicitudOrdenPago.GAPBaseImpIVAGeneral = vBaseIvaGE;
+                        objSolicitudOrdenPago.GAPTienda = "";
+                        objSolicitudOrdenPago.GAPUsuarioAprueba = UsuarioSesion;
+                        objSolicitudOrdenPago.GAPFechaAprobacion = objconvertextension.FormatoFechayyyyMMdd(DateTime.Now).ToString();
+
+                        //workflow
+                        objSolicitudOrdenPago.GrupoRubro_Id = vCodigoGrupoRubro;
+                        objSolicitudOrdenPago.Rubro_Id = vCodigoRubro;
+                        objSolicitudOrdenPago.Tipodocumento = vTipoDocumento;
+                        objSolicitudOrdenPago.TipoPago = vtipoPago;
+                        objSolicitudOrdenPago.MontoIva = 0.00;
+                        objSolicitudOrdenPago.MontoRetenido = 0.00;
+                        objSolicitudOrdenPago.PlanImpuesto = vPlanImpuesto;
+                        objSolicitudOrdenPago.CodigoMoneda = vCodigoMoneda;
+                        objSolicitudOrdenPago.Observaciones = vObservaciones;
+
+                        objRespuestaOperacion = objDbSolicitudOrdenPago.AddSolicitudOrdenPago(objSolicitudOrdenPago, UsuarioSesion);
                     }
 
                     lstRespuestaOperacion.Add(objRespuestaOperacion);
@@ -248,7 +281,7 @@ namespace Intranet.Controllers
                     objRespuestaOperacion.Mensajex = mensajeerror.Mensajex;
                     objRespuestaOperacion.Tipox = mensajeerror.Tipox;
                     objRespuestaOperacion.Titulox = mensajeerror.Titulox;
-                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoController/AddItemPago");
+                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), UsuarioSesion, "Wrkf_SolicitudOrdenPagoController/AddItemPago");
                 }
             }
 
@@ -300,7 +333,7 @@ namespace Intranet.Controllers
                 }
             }
 
-            return Json(lstSolicitudOrdenPago, JsonRequestBehavior.AllowGet);
+            return Json(new { ListadoSolicitudPago = lstSolicitudOrdenPago });
         }
 
         /// <summary>
@@ -332,7 +365,7 @@ namespace Intranet.Controllers
             {
                 try
                 {
-                    lstSolicitudOrdenPago = objDbSolicitudOrdenPago.GetSolicitudOrdenPagoPorId(solicitud_orden_pago_id);
+                    //lstSolicitudOrdenPago = objDbSolicitudOrdenPago.GetSolicitudOrdenPagoPorId(solicitud_orden_pago_id);
                 }
                 catch (Exception ex)
                 {
@@ -413,12 +446,11 @@ namespace Intranet.Controllers
         /// <param name="porcentajeretencion"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult GetCalcularMontos(bool calculariva, bool calcularretencion, double cantidad, double preciounitario, double anticipo, double porcentajeretencion)
+        public JsonResult GetCalcularMontos(double pMontoDocumento, double pBaseIvaGe, double pBaseIvaRe, double pBaseIvaAd, string pPlanImpuesto)
         {
             List<Wrkf_CalcularMontos> lstMontos = new List<Wrkf_CalcularMontos>();
             Wrkf_DbCalcularMontoSolicitud objdbcalcularmontosolicitud = new Wrkf_DbCalcularMontoSolicitud();
             Wrkf_CalcularMontos objwrkfcalcularmontos = new Wrkf_CalcularMontos();
-            ConvertExtension objConvertExtension = new ConvertExtension();
             MensajeError mensajeerror;
             Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
 
@@ -438,11 +470,7 @@ namespace Intranet.Controllers
             {
                 try
                 {
-                    preciounitario = objConvertExtension.FormatoNumeroDecimal(preciounitario);
-                    cantidad = objConvertExtension.FormatoNumeroDecimal(cantidad);
-                    anticipo = objConvertExtension.FormatoNumeroDecimal(anticipo);
-
-                    lstMontos = objdbcalcularmontosolicitud.CalcularMontosSolicitud(calculariva, calcularretencion, cantidad, preciounitario, anticipo, porcentajeretencion);
+                    lstMontos = objdbcalcularmontosolicitud.CalcularMontosSolicitud(pMontoDocumento, pBaseIvaGe, pBaseIvaRe, pBaseIvaAd,  pPlanImpuesto);
                 }
                 catch (Exception ex)
                 {
@@ -463,122 +491,18 @@ namespace Intranet.Controllers
         }
 
         /// <summary>
-        /// Obtener a los proveedores por clase
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        public JsonResult GetProveedoresPorClaseId()
-        {
-            MensajeError mensajeerror;
-            Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
-            List<Wrkf_Proveedores> lstProveedores = new List<Wrkf_Proveedores>();
-            Wrkf_DbProveedor objProveedor = new Wrkf_DbProveedor();
-            Wrkf_Proveedores wrkf_proveedores = new Wrkf_Proveedores();
-            
-
-            //verificar la sesion del usuario
-            if (Session["sUsuario_Id"] == null)
-            {
-                mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99998", "SessionLogout");
-
-                wrkf_proveedores.Codigox = mensajeerror.Codigox;
-                wrkf_proveedores.Mensajex = mensajeerror.Mensajex;
-                wrkf_proveedores.Tipox = mensajeerror.Tipox;
-                wrkf_proveedores.Titulox = mensajeerror.Titulox;
-
-                lstProveedores.Add(wrkf_proveedores);
-            }
-            else
-            {
-                try
-                {
-                    lstProveedores = objProveedor.GetListadoProveedor();
-                }
-                catch (Exception ex)
-                {
-                    mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
-
-                    wrkf_proveedores.Codigox = mensajeerror.Codigox;
-                    wrkf_proveedores.Mensajex = mensajeerror.Mensajex;
-                    wrkf_proveedores.Tipox = mensajeerror.Tipox;
-                    wrkf_proveedores.Titulox = mensajeerror.Titulox;
-
-                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoController/GetCalcularMontos");
-
-                    lstProveedores.Add(wrkf_proveedores);
-                }
-            }
-
-            return Json(lstProveedores, JsonRequestBehavior.AllowGet);
-        }
-
-        /// <summary>
-        /// Obtiene los proveedores por nombre
-        /// </summary>
-        /// <param name="vendname"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public JsonResult GetListadoProveedorPorNombre(string vendname)
-        {
-            MensajeError mensajeerror;
-            Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
-            List<Wrkf_Proveedores> lstProveedores = new List<Wrkf_Proveedores>();
-            Wrkf_DbProveedor objProveedor = new Wrkf_DbProveedor();
-            Wrkf_Proveedores wrkf_proveedores = new Wrkf_Proveedores();
-
-            //verificar la sesion del usuario
-            if (Session["sUsuario_Id"] == null)
-            {
-                mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99998", "SessionLogout");
-
-                wrkf_proveedores.Codigox = mensajeerror.Codigox;
-                wrkf_proveedores.Mensajex = mensajeerror.Mensajex;
-                wrkf_proveedores.Tipox = mensajeerror.Tipox;
-                wrkf_proveedores.Titulox = mensajeerror.Titulox;
-
-                lstProveedores.Add(wrkf_proveedores);
-            }
-            else
-            {
-                try
-                {
-                    lstProveedores = objProveedor.GetListadoProveedorPorNombre(vendname);
-                }
-                catch (Exception ex)
-                {
-                    mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
-
-                    wrkf_proveedores.Codigox = mensajeerror.Codigox;
-                    wrkf_proveedores.Mensajex = mensajeerror.Mensajex;
-                    wrkf_proveedores.Tipox = mensajeerror.Tipox;
-                    wrkf_proveedores.Titulox = mensajeerror.Titulox;
-
-                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoController/GetCalcularMontos");
-
-                    lstProveedores.Add(wrkf_proveedores);
-                }
-            }
-
-            return Json(lstProveedores, JsonRequestBehavior.AllowGet);
-        }
-
-        /// <summary>
         /// Subir los soportes de pagos
         /// </summary>
         /// <returns></returns>
         [HttpPost]
         public JsonResult UploadSoportesPago()
         {
-            Wrkf_DbSolicitudOrdenPago objsolicitudordenpago = new Wrkf_DbSolicitudOrdenPago();
             Wrkf_DbParametros wrkf_dbparametros = new Wrkf_DbParametros();
-            Wrkf_Parametros wrkf_parametros = new Wrkf_Parametros();
+            Wrkf_Parametros wrkf_parametros;
             MensajeError mensajeerror;
             Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
-
-            string directorio = Request["directorio"];
-            string numero_solicitud = Request["numero_solicitud"];
-            string numero_solicitud_det_id = Request["numero_solicitud_det_id"];
-            string ruta;
+            ConvertExtension ObjConvertExtension = new ConvertExtension();
+            string ruta, vFechaDirectorio;
 
             try
             {
@@ -587,7 +511,15 @@ namespace Intranet.Controllers
 
                 ruta = wrkf_parametros.ValorAlfaNumerico1.Trim();
 
-                ruta += @directorio + "\\" + numero_solicitud;
+                string vPlantilla = Request["CodigoPlantilla"];
+                string vCodigoPago = Request["CodigoPago"];
+                string vCodigoItemPago = Request["CodigoItemPago"];
+                string vFechaPagoItem = Request["FechaPagoItem"];
+
+                vFechaDirectorio = ObjConvertExtension.FormatoFechayyyyMMdd(Convert.ToDateTime(vFechaPagoItem)).ToString();
+
+                /*ruta donde se guardan los adjuntos del pago*/
+                ruta += vPlantilla + "\\" + vFechaDirectorio + "\\" + vCodigoItemPago;
 
                 for (int i = 0; i < Request.Files.Count; i++)
                 {
@@ -605,18 +537,6 @@ namespace Intranet.Controllers
 
                     //guardar los soportes
                     file.SaveAs(@ruta + "\\" + fileName);
-
-                    //si el archivo se guardo en el directorio se guardan los datos en la base de datos
-                    if (System.IO.File.Exists(@ruta + "\\" + fileName))
-                    {
-                        Wrkf_SolicitudOrdenPagoSoporte objsolicitudpagosoporte = new Wrkf_SolicitudOrdenPagoSoporte();
-                        objsolicitudpagosoporte.Solicitudordenpago_Idx = Convert.ToInt32(numero_solicitud);
-                        objsolicitudpagosoporte.Solicitudordenpagodetalle_Idx = Convert.ToInt32(numero_solicitud_det_id);
-                        objsolicitudpagosoporte.RutaDirectoriox = @ruta + "\\";
-                        objsolicitudpagosoporte.NombreArchivox = fileName;
-                        Wrkf_RespuestaOperacion objrespuestaoperacion = new Wrkf_RespuestaOperacion();
-                        objrespuestaoperacion = objsolicitudordenpago.AddSoporteSolicitudOrdenPago(objsolicitudpagosoporte);
-                    }
                 }
             }
             catch (Exception ex)
@@ -634,36 +554,6 @@ namespace Intranet.Controllers
 
             return Json("Uploaded " + Request.Files.Count + " files");
         }
-
-        ///// <summary>
-        ///// El método realiza una busqueda de los soportes de pagos asociados a la solicitud 
-        ///// </summary>
-        ///// <param name="directorio"></param>
-        ///// <param name="numero_solicitud"></param>
-        ///// <returns></returns>
-        //[HttpPost]
-        //public JsonResult ListarSoportePago(int Solicitudordenpago_Id, int Solicitudordenpagodetalle_Id)
-        //{
-        //    List<Wrkf_SolicitudOrdenPagoSoporte> lstSoportePago = new List<Wrkf_SolicitudOrdenPagoSoporte>();
-        //    Wrkf_DbSolicitudOrdenPago objsolicitudordenpago = new Wrkf_DbSolicitudOrdenPago();
-        //    Wrkf_SolicitudOrdenPagoSoporte objwrkfsolicitudordenpagosoporte = new Wrkf_SolicitudOrdenPagoSoporte();
-
-        //    try
-        //    {
-        //        lstSoportePago = objsolicitudordenpago.GetListarSoportes(Solicitudordenpago_Id, Solicitudordenpagodetalle_Id);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        objwrkfsolicitudordenpagosoporte.Codigox = ex.HResult.ToString();
-        //        objwrkfsolicitudordenpagosoporte.Mensajex = ex.Message.ToString();
-        //        objwrkfsolicitudordenpagosoporte.Tipox = "error";
-        //        objwrkfsolicitudordenpagosoporte.Titulox = "Solicitud Orden de Pago";
-
-        //        lstSoportePago.Add(objwrkfsolicitudordenpagosoporte);
-        //    }
-
-        //    return Json(lstSoportePago, JsonRequestBehavior.AllowGet);
-        //}
 
         /// <summary>
         /// Obtiene la fecha actual del sistema
@@ -768,102 +658,11 @@ namespace Intranet.Controllers
         }
 
         /// <summary>
-        /// Método para registrar los datos de los soportes de pago Path.Combine(Server.MapPath("~/MyFiles") 
+        /// Anula la solicitud de orden de pago que se encuentra en estatus 1 en el GAP
         /// </summary>
-        /// <param name="SoportesPago"></param>
+        /// <param name="pCodigo"></param>
         /// <returns></returns>
-        [HttpPost]
-        public JsonResult AddSoportePago(Wrkf_SolicitudOrdenPagoSoporte SoportesPago)
-        {
-            Wrkf_RespuestaOperacion objRespuestaOperacion = new Wrkf_RespuestaOperacion();
-            Wrkf_DbSolicitudOrdenPago objAddSoportePago = new Wrkf_DbSolicitudOrdenPago();
-            MensajeError mensajeerror;
-            Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
-
-            //verificar la sesion del usuario
-            if (Session["sUsuario_Id"] == null)
-            {
-                mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99998", "SessionLogout");
-
-                objRespuestaOperacion.Codigox = mensajeerror.Codigox;
-                objRespuestaOperacion.Mensajex = mensajeerror.Mensajex;
-                objRespuestaOperacion.Tipox = mensajeerror.Tipox;
-                objRespuestaOperacion.Titulox = mensajeerror.Titulox;
-            }
-            else
-            {
-                try
-                {
-                    objRespuestaOperacion = objAddSoportePago.AddSoporteSolicitudOrdenPago(SoportesPago);
-                }
-                catch (Exception ex)
-                {
-                    mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
-
-                    objRespuestaOperacion.Codigox = mensajeerror.Codigox;
-                    objRespuestaOperacion.Mensajex = mensajeerror.Mensajex;
-                    objRespuestaOperacion.Tipox = mensajeerror.Tipox;
-                    objRespuestaOperacion.Titulox = mensajeerror.Titulox;
-
-                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoController/AddSoportePago");
-                }
-            }
-
-            return Json(objRespuestaOperacion, JsonRequestBehavior.AllowGet);
-        }
-
-        /// <summary>
-        /// Método para enviar la solicitud de la orden de pago al jefe de cuenta por pagar
-        /// </summary>
-        /// <param name="Solicitudordenpago_Id"></param>
-        /// <param name="Usuariomodifico"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public JsonResult EnviaraCXP(int Solicitudordenpago_Id)
-        {
-            Wrkf_RespuestaOperacion objRespuestaOperacion = new Wrkf_RespuestaOperacion();
-            Wrkf_DbSolicitudOrdenPago objAddSoportePago = new Wrkf_DbSolicitudOrdenPago();
-            MensajeError mensajeerror;
-            Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
-
-            //verificar la sesion del usuario
-            if (Session["sUsuario_Id"] == null)
-            {
-                mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99998", "SessionLogout");
-
-                objRespuestaOperacion.Codigox = mensajeerror.Codigox;
-                objRespuestaOperacion.Mensajex = mensajeerror.Mensajex;
-                objRespuestaOperacion.Tipox = mensajeerror.Tipox;
-                objRespuestaOperacion.Titulox = mensajeerror.Titulox;
-            }
-            else
-            {
-                try
-                {
-                    objRespuestaOperacion = objAddSoportePago.EnviaraCXP(Solicitudordenpago_Id, Convert.ToString(Session["sUsuario_Id"]));
-                }
-                catch (Exception ex)
-                {
-                    mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
-
-                    objRespuestaOperacion.Codigox = mensajeerror.Codigox;
-                    objRespuestaOperacion.Mensajex = mensajeerror.Mensajex;
-                    objRespuestaOperacion.Tipox = mensajeerror.Tipox;
-                    objRespuestaOperacion.Titulox = mensajeerror.Titulox;
-
-                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoController/EnviaraCXP");
-                }
-            }
-
-            return Json(objRespuestaOperacion, JsonRequestBehavior.AllowGet);
-        }
-
-        /// <summary>
-        /// El método anula la solicitud de la orden de pago
-        /// </summary>
-        /// <param name="Solicitudordenpago_Id"></param>
-        /// <returns></returns>
-        public JsonResult AnularSolicitudOrdenPago(int Solicitudordenpago_Id)
+        public JsonResult AnularSolicitudOrdenPago(string pCodigo)
         {
             Wrkf_RespuestaOperacion objrespuestaoperacion = new Wrkf_RespuestaOperacion();
             Wrkf_DbSolicitudOrdenPago objdbsolicitudordenpago = new Wrkf_DbSolicitudOrdenPago();
@@ -884,7 +683,7 @@ namespace Intranet.Controllers
             {
                 try
                 {
-                    objrespuestaoperacion = objdbsolicitudordenpago.AnularSolicitudOrdenPago(Solicitudordenpago_Id, Convert.ToString(Session["sUsuario_Id"]));
+                    objrespuestaoperacion = objdbsolicitudordenpago.AnularSolicitudOrdenPago(pCodigo, Convert.ToString(Session["sUsuario_Id"]));
                 }
                 catch (Exception ex)
                 {
@@ -896,52 +695,6 @@ namespace Intranet.Controllers
                     objrespuestaoperacion.Titulox = mensajeerror.Titulox;
 
                     wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoController/AnularSolicitudOrdenPago");
-                }
-            }
-
-            return Json(objrespuestaoperacion, JsonRequestBehavior.AllowGet);
-        }
-
-        /// <summary>
-        /// El método anula un pago en especifico de la solicitud.
-        /// </summary>
-        /// <param name="Solicitudordenpagodetalle_Id"></param>
-        /// <param name="Solicitudordenpago_Id"></param>
-        /// <param name="Usuariomodifico"></param>
-        /// <returns></returns>
-        public JsonResult AnularPagoEspecificoSolicitud(int Solicitudordenpagodetalle_Id, int Solicitudordenpago_Id)
-        {
-            Wrkf_RespuestaOperacion objrespuestaoperacion = new Wrkf_RespuestaOperacion();
-            Wrkf_DbSolicitudOrdenPago objdbsolicitudordenpago = new Wrkf_DbSolicitudOrdenPago();
-            MensajeError mensajeerror;
-            Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
-
-            //verificar la sesion del usuario
-            if (Session["sUsuario_Id"] == null)
-            {
-                mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99998", "SessionLogout");
-
-                objrespuestaoperacion.Codigox = mensajeerror.Codigox;
-                objrespuestaoperacion.Mensajex = mensajeerror.Mensajex;
-                objrespuestaoperacion.Tipox = mensajeerror.Tipox;
-                objrespuestaoperacion.Titulox = mensajeerror.Titulox;
-            }
-            else
-            {
-                try
-                {
-                    objrespuestaoperacion = objdbsolicitudordenpago.AnularPagoEspecificoSolicitud(Solicitudordenpagodetalle_Id, Solicitudordenpago_Id, Convert.ToString(Session["sUsuario_Id"]));
-                }
-                catch (Exception ex)
-                {
-                    mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
-
-                    objrespuestaoperacion.Codigox = mensajeerror.Codigox;
-                    objrespuestaoperacion.Mensajex = mensajeerror.Mensajex;
-                    objrespuestaoperacion.Tipox = mensajeerror.Tipox;
-                    objrespuestaoperacion.Titulox = mensajeerror.Titulox;
-
-                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoController/AnularPagoEspecificoSolicitud");
                 }
             }
 

@@ -18,6 +18,7 @@ namespace Intranet.Models
         private int vSensibilidad;
         private bool vEstatus;
         private string vIdClaseProveedor;
+        private string vIdChequera;
 
 
         public GestionPago_MtxPlantilla()
@@ -29,6 +30,7 @@ namespace Intranet.Models
             vSensibilidad = 0;
             vEstatus = false;
             vIdClaseProveedor = "";
+            vIdChequera = "";
         }
 
         public string Codigo { get => vCodigo; set => vCodigo = value; }
@@ -38,5 +40,6 @@ namespace Intranet.Models
         public int Sensibilidad { get => vSensibilidad; set => vSensibilidad = value; }
         public bool Estatus { get => vEstatus; set => vEstatus = value; }
         public string IdClaseProveedor { get => vIdClaseProveedor; set => vIdClaseProveedor = value; }
+        public string IdChequera { get => vIdChequera; set => vIdChequera = value; }
     }
 }

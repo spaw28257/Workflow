@@ -23,58 +23,128 @@ namespace Intranet.Ado.DbContent
         }
 
         /// <summary>
+        /// Obtiene el proximo correlativo para asignarlo a la solicitud de orden de pago
+        /// </summary>
+        /// <param name="CodigoPlantilla"></param>
+        /// <returns></returns>
+        public string ProximoCorrelativo(string CodigoPlantilla)
+        {
+            string ProximoCorrelativo;
+
+            SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
+            Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
+                new SqlParameter("@CodigoPlantilla", CodigoPlantilla)
+            });
+
+            string sqlQuery = "SELECT GestionPago.FU_ProximoCorrelativoPagoNoFrecuente(@CodigoPlantilla)";
+
+            DataTable DtProximoCorrelativo = Sqlprovider.ExecuteStoredProcedure(sqlQuery, CommandType.Text);
+
+            if (DtProximoCorrelativo.Rows.Count > 0)
+            {
+                ProximoCorrelativo = DtProximoCorrelativo.Rows[0][0].ToString();
+            }
+            else
+            {
+                ProximoCorrelativo = string.Empty;
+            }
+
+            return ProximoCorrelativo;
+        }
+
+        /// <summary>
+        /// Obtiene el proximo correlativo del item para los pagos no frecuentes
+        /// </summary>
+        /// <returns></returns>
+        public string ProximoCorrelativoItemNoFrecuente()
+        {
+            string ProximoCorrelativoItemnoFrecuente;
+
+            SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
+            Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
+            });
+
+            string sqlQuery = "SELECT GestionPago.FU_ProximoCorrelativoItemNoFrecuente()";
+
+            DataTable DtProximoCorrelativoItemNoFrecuente = Sqlprovider.ExecuteStoredProcedure(sqlQuery, CommandType.Text);
+
+            if (DtProximoCorrelativoItemNoFrecuente.Rows.Count > 0)
+            {
+                ProximoCorrelativoItemnoFrecuente = DtProximoCorrelativoItemNoFrecuente.Rows[0][0].ToString();
+            }
+            else
+            {
+                ProximoCorrelativoItemnoFrecuente = string.Empty;
+            }
+
+            return ProximoCorrelativoItemnoFrecuente;
+        }
+
+        /// <summary>
         /// Registra la solicitud de la orden del pago
         /// </summary>
         /// <param name="OrdenPago"></param>
         /// <param name="OrdenPagoDetalle"></param>
         /// <param name="Usuario"></param>
         /// <returns></returns>
-        public Wrkf_RespuestaOperacion AddSolicitudOrdenPago(Wrkf_SolicitudOrdenPago OrdenPago, Wrkf_SolicitudOrdenPagoDetalle OrdenPagoDetalle, string Usuario)
+        public Wrkf_RespuestaOperacion AddSolicitudOrdenPago(Wrkf_SolicitudOrdenPago OrdenPago, string Usuario)
         {
             Wrkf_RespuestaOperacion objRespuestaOperacion = new Wrkf_RespuestaOperacion();
+            ConvertExtension objConvertExtension = new ConvertExtension();
+
+            string vFechaFactura = objConvertExtension.FormatoFechayyyyMMdd(Convert.ToDateTime(OrdenPago.GAPFechaFactura)).ToString();
+            string vFechaPago = objConvertExtension.FormatoFechayyyyMMdd(Convert.ToDateTime(OrdenPago.GAPFechaPago)).ToString();
 
             SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
             Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                new SqlParameter("@pcurncyid", OrdenPago.curncyidx),
-                new SqlParameter("@pRubro_Id", OrdenPagoDetalle.Rubro_Idx),
-                new SqlParameter("@pFechaDocumento", OrdenPagoDetalle.FechaDocumentox),
-                new SqlParameter("@pFechapago", OrdenPagoDetalle.Fechapagox),
-                new SqlParameter("@pIdProveedor", OrdenPagoDetalle.IdProveedorx),
-                new SqlParameter("@pproveedor", OrdenPagoDetalle.Proveedorx),
-                new SqlParameter("@pDescripcion", OrdenPagoDetalle.Descripcionx),
-                new SqlParameter("@pNumerodocumento", OrdenPagoDetalle.Numerodocumentox),
-                new SqlParameter("@pCantidad", Convert.ToDouble(OrdenPagoDetalle.Cantidadx)),
-                new SqlParameter("@pPrecio", Convert.ToDouble(OrdenPagoDetalle.Preciounitariox)),
-                new SqlParameter("@pAnticipo", Convert.ToDouble(OrdenPagoDetalle.Anticipox)),
-                new SqlParameter("@pSubtotal", Convert.ToDouble(OrdenPagoDetalle.Subtotalx)),
-                new SqlParameter("@pTotal", Convert.ToDouble(OrdenPagoDetalle.Totalx)),
-                new SqlParameter("@pUsuario", Usuario),
-                new SqlParameter("@pTipodocumento", OrdenPagoDetalle.TipoDocumentox),
-                new SqlParameter("@pCalculariva", OrdenPagoDetalle.Calculaivax),
-                new SqlParameter("@pRealizarretencion", OrdenPagoDetalle.Realizaretencionx),
-                new SqlParameter("@pPorcentajeiva", Convert.ToDouble(OrdenPagoDetalle.Porcentajeivax)),
-                new SqlParameter("@pTotaliva", Convert.ToDouble(OrdenPagoDetalle.Montoivax)),
-                new SqlParameter("@pPorcentajeretencion", Convert.ToDouble(OrdenPagoDetalle.Porcentajeretencionx)),
-                new SqlParameter("@pTotalretenido", Convert.ToDouble(OrdenPagoDetalle.Totalretenidox)),
-                new SqlParameter("@pGruporubro_Id", OrdenPagoDetalle.Gruporubro_Idx),
-                new SqlParameter("@pPago_Id", OrdenPago.Solicitudordenpago_Idx),
-                new SqlParameter("@pPagodetalle_Id", OrdenPagoDetalle.Solicitudordenpagodetalle_Idx),
-                new SqlParameter("@pFormapago_Id", OrdenPagoDetalle.Formapago_Idx),
-                new SqlParameter("@pObservaciones", OrdenPagoDetalle.Observacionesx),
-                new SqlParameter("@pSolicitudordenpago_Id", SqlDbType.Int),
-                new SqlParameter("@pSolicitudordenpagodetalle_Id", SqlDbType.Int),
+                new SqlParameter("@pCodigo", OrdenPago.Codigo),
+                new SqlParameter("@pGAPCodigoPlantilla", OrdenPago.GAPCodigoPlantilla),
+                new SqlParameter("@pGAPMonto", OrdenPago.GAPMonto),
+                new SqlParameter("@pGAPDescripcionFactura", OrdenPago.GAPDescripcionFactura),
+                new SqlParameter("@pGAPFechaFactura", vFechaFactura),
+                new SqlParameter("@pGAPFechaPago", vFechaPago),
+                new SqlParameter("@pGAPEstatus", OrdenPago.GAPEstatus),
+                new SqlParameter("@pGAPNroFactura", OrdenPago.GAPNroFactura),
+                new SqlParameter("@pGAPNroControl", OrdenPago.GAPNroControl),
+                new SqlParameter("@pGAPTipoPago", OrdenPago.GAPTipoPago),
+                new SqlParameter("@pGAPCodigoConcepto", OrdenPago.GAPCodigoConcepto),
+                new SqlParameter("@pGAPIdProveedor", OrdenPago.GAPIdProveedor),
+                new SqlParameter("@pGAPProveedor", OrdenPago.GAPProveedor),
+                new SqlParameter("@pGAPRIF", OrdenPago.GAPRIF),
+                new SqlParameter("@pGAPCuentaBancaria", OrdenPago.GAPCuentaBancaria),
+                new SqlParameter("@pGAPEmail", OrdenPago.GAPEmail),
+                new SqlParameter("@pGAPPorcentajeRetencion", OrdenPago.GAPPorcentajeRetencion),
+                new SqlParameter("@pGAPMontoExento", OrdenPago.GAPMontoExento),
+                new SqlParameter("@pGAPBaseImpIVAAdicional", OrdenPago.GAPBaseImpIVAAdicional),
+                new SqlParameter("@pGAPBaseImpIVAReducido", OrdenPago.GAPBaseImpIVAReducido),
+                new SqlParameter("@pGAPBaseImpIVAGeneral", OrdenPago.GAPBaseImpIVAGeneral),
+                new SqlParameter("@pGAPTienda", OrdenPago.GAPTienda),
+                new SqlParameter("@pGAPUsuarioAprueba", OrdenPago.GAPUsuarioAprueba),
+                new SqlParameter("@pGAPFechaAprobacion", OrdenPago.GAPFechaAprobacion),
+                new SqlParameter("@pGrupoRubro_Id", OrdenPago.GrupoRubro_Id),
+                new SqlParameter("@pRubro_Id", OrdenPago.Rubro_Id),
+                new SqlParameter("@pTipodocumento", OrdenPago.Tipodocumento),
+                new SqlParameter("@pTipoPago", OrdenPago.TipoPago),
+                new SqlParameter("@pMontoIva", OrdenPago.MontoIva),
+                new SqlParameter("@pMontoRetenido", OrdenPago.MontoRetenido),
+                new SqlParameter("@pPlanImpuesto", OrdenPago.PlanImpuesto),
+                new SqlParameter("@pCodigoMoneda", OrdenPago.CodigoMoneda),
+                new SqlParameter("@pObservaciones", OrdenPago.Observaciones),
+                new SqlParameter("@pUsuarioCreacion", Usuario),
                 new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
                 new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
-                new SqlParameter("@pTipo", SqlDbType.VarChar, 20),
-                new SqlParameter("@pTitulo", SqlDbType.VarChar, 30)
+                new SqlParameter("@pTipoError", SqlDbType.VarChar, 20),
+                new SqlParameter("@pTituloError", SqlDbType.VarChar, 60),
+                new SqlParameter("@pNumeroSolicitudPago", SqlDbType.VarChar, 11),
+                new SqlParameter("@pNumeroItem", SqlDbType.VarChar, 7)
             });
 
-            Sqlprovider.Oparameters[26].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[27].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[28].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[29].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[30].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[31].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[34].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[35].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[36].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[37].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[38].Direction = ParameterDirection.Output;
+            Sqlprovider.Oparameters[39].Direction = ParameterDirection.Output;
 
             //optener los resultados del procedimiento almacenado
             //Dictionary<string, string> outparam; = new Dictionary<string, string>();
@@ -83,19 +153,17 @@ namespace Intranet.Ado.DbContent
             //Obtiene El Error Generado Desde El Procedimiento Almacenado Workflow.sp_insup_solicitudordenpago.
             if (!string.IsNullOrEmpty(outparam["@pCodigoError"]))
             {
-                objRespuestaOperacion.NumeroRegistroOrdenPagox = -1;
-                objRespuestaOperacion.NumeroRegistroDetallePagox = -1;
-                objRespuestaOperacion.RegistrosProcesadosx = 0;
+                objRespuestaOperacion.NumeroRegistroOrdenPagox = 0;
+                objRespuestaOperacion.NumeroRegistroDetallePagox = 0;
                 objRespuestaOperacion.Codigox = outparam["@pCodigoError"];
                 objRespuestaOperacion.Mensajex = outparam["@pMensajeError"];
-                objRespuestaOperacion.Tipox = outparam["@pTipo"];
-                objRespuestaOperacion.Titulox = outparam["@pTitulo"];
+                objRespuestaOperacion.Tipox = outparam["@pTipoError"];
+                objRespuestaOperacion.Titulox = outparam["@pTituloError"];
             }
             else
             {
-                objRespuestaOperacion.NumeroRegistroOrdenPagox = Convert.ToInt32(outparam["@pSolicitudordenpago_Id"]);
-                objRespuestaOperacion.NumeroRegistroDetallePagox = Convert.ToInt32(outparam["@pSolicitudordenpagodetalle_Id"]);
-                objRespuestaOperacion.RegistrosProcesadosx = Result;
+                objRespuestaOperacion.NumeroRegistroOrdenPagox = Convert.ToInt64(outparam["@pNumeroSolicitudPago"].Trim());
+                objRespuestaOperacion.NumeroRegistroDetallePagox = Convert.ToInt64(outparam["@pNumeroItem"].Trim());
                 objRespuestaOperacion.Codigox = string.Empty;
                 objRespuestaOperacion.Mensajex = string.Empty;
                 objRespuestaOperacion.Tipox = string.Empty;
@@ -106,11 +174,11 @@ namespace Intranet.Ado.DbContent
         }
 
         /// <summary>
-        /// El método retorna una lista con todas las solicitudes de ordenes de pagos
+        /// Lista las solicitudes de ordenes de pagos registradas por el usuario
         /// </summary>
-        /// <param name="solicitud_pago_id"></param>
+        /// <param name="usuario"></param>
         /// <returns></returns>
-        public List<Wrkf_SolicitudOrdenPago> GetSolicitudOrdenPagoTodas(string usuario)
+        public List<Wrkf_SolicitudOrdenPago> GetSolicitudOrdenPagoTodas(string pusuario)
         {
             List<Wrkf_SolicitudOrdenPago> lstSolicitudOrdenPago = new List<Wrkf_SolicitudOrdenPago>();
             Wrkf_DbMensajeError objdbmensajeerror = new Wrkf_DbMensajeError();
@@ -118,11 +186,11 @@ namespace Intranet.Ado.DbContent
 
             SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
             Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                new SqlParameter("@pUsuarioregistro",usuario),
+                new SqlParameter("@pUsuario",pusuario),
                 new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
                 new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
-                new SqlParameter("@pTipo", SqlDbType.VarChar, 20),
-                new SqlParameter("@pTitulo", SqlDbType.VarChar, 30)
+                new SqlParameter("@pTipoError", SqlDbType.VarChar, 20),
+                new SqlParameter("@pTituloError", SqlDbType.VarChar, 60)
             });
 
             Sqlprovider.Oparameters[1].Direction = ParameterDirection.Output;
@@ -130,9 +198,7 @@ namespace Intranet.Ado.DbContent
             Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
             Sqlprovider.Oparameters[4].Direction = ParameterDirection.Output;
 
-            DataTable DtListadoSolicitudOrdenPagoTodas = Sqlprovider.ExecuteStoredProcedureWithOutputParameter("WorkFlow.PL_Sel_SolicitudOrdenPago_Todas", 
-                                                                                                                CommandType.StoredProcedure, 
-                                                                                                                out Dictionary<string, string> outparam);
+            DataTable DtListadoSolicitudOrdenPago = Sqlprovider.ExecuteStoredProcedureWithOutputParameter("WorkFlow.PL_Sel_SolicitudOrdenPago_All", CommandType.StoredProcedure, out Dictionary<string, string> outparam);
 
             //verifica que el procedimiento almacenado al momento de ejecutar no tenga errores
             if (!string.IsNullOrEmpty(outparam["@pCodigoError"]))
@@ -141,99 +207,8 @@ namespace Intranet.Ado.DbContent
                 {
                     Codigox = outparam["@pCodigoError"],
                     Mensajex = outparam["@pMensajeError"],
-                    Tipox = outparam["@pTipo"],
-                    Titulox = outparam["@pTitulo"]
-                };
-
-                lstSolicitudOrdenPago.Add(objSolicitudOrdenPago);
-            }
-            else
-            {
-                int total_registros = DtListadoSolicitudOrdenPagoTodas.Rows.Count;
-
-                if (total_registros > 0)
-                {
-                    for (int i = 0; i < total_registros; i++)
-                    {
-                        Wrkf_SolicitudOrdenPago objSolicitudOrdenPago = new Wrkf_SolicitudOrdenPago()
-                        {
-                            Solicitudordenpago_Idx = Convert.ToInt32(DtListadoSolicitudOrdenPagoTodas.Rows[i]["Solicitudordenpago_Id"]),
-                            Codigoplantillax = Convert.ToString(DtListadoSolicitudOrdenPagoTodas.Rows[i]["Codigoplantilla"]),
-                            Nombreplantillax = Convert.ToString(DtListadoSolicitudOrdenPagoTodas.Rows[i]["Nombreplantilla"]),
-                            Recibidocxpx = Convert.ToBoolean(DtListadoSolicitudOrdenPagoTodas.Rows[i]["Recibidocxp"]),
-                            Aprobadocontraloriax = Convert.ToBoolean(DtListadoSolicitudOrdenPagoTodas.Rows[i]["Aprobadocontraloria"]),
-                            Aprobadovpx = Convert.ToBoolean(DtListadoSolicitudOrdenPagoTodas.Rows[i]["Aprobadovp"]),
-                            Aplicadotesoreriax = Convert.ToBoolean(DtListadoSolicitudOrdenPagoTodas.Rows[i]["Aplicadotesoreria"]),
-                            Anuladax = Convert.ToBoolean(DtListadoSolicitudOrdenPagoTodas.Rows[i]["Anulada"]),
-                            FechaRegx = Convert.ToString(DtListadoSolicitudOrdenPagoTodas.Rows[i]["Fecharegistro"]),
-                            Usuarioregistrox = Convert.ToString(DtListadoSolicitudOrdenPagoTodas.Rows[i]["Usuarioregistro"]),
-                            Fechamodificacionx = Convert.ToDateTime(DtListadoSolicitudOrdenPagoTodas.Rows[i]["Fechamodificacion"]),
-                            Usuariomodificox = Convert.ToString(DtListadoSolicitudOrdenPagoTodas.Rows[i]["Usuariomodifico"]),
-                            curncyidx = Convert.ToString(DtListadoSolicitudOrdenPagoTodas.Rows[i]["curncyid"]),
-                            Urgentex = Convert.ToBoolean(DtListadoSolicitudOrdenPagoTodas.Rows[i]["Urgente"]),
-                        };
-
-                        lstSolicitudOrdenPago.Add(objSolicitudOrdenPago);
-                    }
-                }
-                else
-                {
-                    //busca el mensaje de error en la base de datos
-                    objmensajeerror = objdbmensajeerror.GetObtenerMensajeError("SOP003", "SOLIORPAGO");
-
-                    Wrkf_SolicitudOrdenPago objSolicitudOrdenPago = new Wrkf_SolicitudOrdenPago()
-                    {
-                        Codigox = objmensajeerror.Codigox,
-                        Mensajex = objmensajeerror.Mensajex,
-                        Tipox = objmensajeerror.Tipox,
-                        Titulox = objmensajeerror.Titulox
-                    };
-
-                    lstSolicitudOrdenPago.Add(objSolicitudOrdenPago);
-                }
-            }
-
-            return lstSolicitudOrdenPago;
-        }
-
-        /// <summary>
-        /// El método retorna una lista con el encabezado de la solicitud de la orden de pago
-        /// </summary>
-        /// <param name="solicitud_pago_id"></param>
-        /// <returns></returns>
-        public List<Wrkf_SolicitudOrdenPago> GetSolicitudOrdenPagoPorId(int solicitud_pago_id)
-        {
-            List<Wrkf_SolicitudOrdenPago> lstSolicitudOrdenPago = new List<Wrkf_SolicitudOrdenPago>();
-            Wrkf_DbMensajeError objdbmensajeerror = new Wrkf_DbMensajeError();
-            MensajeError objmensajeerror;
-
-            SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
-            Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                new SqlParameter("@pSolicitudordenpago_Id", solicitud_pago_id),
-                new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
-                new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
-                new SqlParameter("@pTipo", SqlDbType.VarChar, 20),
-                new SqlParameter("@pTitulo", SqlDbType.VarChar, 30)
-            });
-
-            Sqlprovider.Oparameters[1].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[2].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[4].Direction = ParameterDirection.Output;
-
-            DataTable DtListadoSolicitudOrdenPago = Sqlprovider.ExecuteStoredProcedureWithOutputParameter("WorkFlow.PL_Sel_solicitudordenpago", 
-                                                                                                            CommandType.StoredProcedure, 
-                                                                                                            out Dictionary<string, string> outparam);
-
-            //verificar si el procedimiento almacenado genero algun error
-            if (!string.IsNullOrEmpty(outparam["@pCodigoError"]))
-            {
-                Wrkf_SolicitudOrdenPago objSolicitudOrdenPago = new Wrkf_SolicitudOrdenPago()
-                {
-                    Codigox = outparam["@pCodigoError"],
-                    Mensajex = outparam["@pMensajeError"],
-                    Tipox = outparam["@pTipo"],
-                    Titulox = outparam["@pTitulo"]
+                    Tipox = outparam["@pTipoError"],
+                    Titulox = outparam["@pTituloError"]
                 };
 
                 lstSolicitudOrdenPago.Add(objSolicitudOrdenPago);
@@ -248,20 +223,22 @@ namespace Intranet.Ado.DbContent
                     {
                         Wrkf_SolicitudOrdenPago objSolicitudOrdenPago = new Wrkf_SolicitudOrdenPago()
                         {
-                            Solicitudordenpago_Idx = Convert.ToInt32(DtListadoSolicitudOrdenPago.Rows[i]["Solicitudordenpago_Id"]),
-                            Codigoplantillax = Convert.ToString(DtListadoSolicitudOrdenPago.Rows[i]["Codigoplantilla"]),
-                            Nombreplantillax = Convert.ToString(DtListadoSolicitudOrdenPago.Rows[i]["Nombreplantilla"]),
-                            Recibidocxpx = Convert.ToBoolean(DtListadoSolicitudOrdenPago.Rows[i]["Recibidocxp"]),
-                            Aprobadocontraloriax = Convert.ToBoolean(DtListadoSolicitudOrdenPago.Rows[i]["Aprobadocontraloria"]),
-                            Aprobadovpx = Convert.ToBoolean(DtListadoSolicitudOrdenPago.Rows[i]["Aprobadovp"]),
-                            Aplicadotesoreriax = Convert.ToBoolean(DtListadoSolicitudOrdenPago.Rows[i]["Aplicadotesoreria"]),
-                            Anuladax = Convert.ToBoolean(DtListadoSolicitudOrdenPago.Rows[i]["Anulada"]),
-                            Usuarioregistrox = Convert.ToString(DtListadoSolicitudOrdenPago.Rows[i]["Usuarioregistro"]),
-                            Fechamodificacionx = Convert.ToDateTime(DtListadoSolicitudOrdenPago.Rows[i]["Fechamodificacion"]),
-                            Usuariomodificox = Convert.ToString(DtListadoSolicitudOrdenPago.Rows[i]["Usuariomodifico"]),
-                            curncyidx = Convert.ToString(DtListadoSolicitudOrdenPago.Rows[i]["curncyid"]),
-                            Urgentex = Convert.ToBoolean(DtListadoSolicitudOrdenPago.Rows[i]["Urgente"]),
-                            FechaRegx = Convert.ToString(DtListadoSolicitudOrdenPago.Rows[i]["Fecharegistro"]),
+                            Codigo = DtListadoSolicitudOrdenPago.Rows[i]["Codigo"].ToString(),
+                            GAPCodigoItem = DtListadoSolicitudOrdenPago.Rows[i]["CodigoItem"].ToString(),
+                            GAPCodigoPlantilla = DtListadoSolicitudOrdenPago.Rows[i]["CodigoPlantilla"].ToString(),
+                            GAPProveedor = DtListadoSolicitudOrdenPago.Rows[i]["VENDNAME"].ToString(),
+                            GAPIdProveedor = DtListadoSolicitudOrdenPago.Rows[i]["IdProveedor"].ToString(),
+                            GAPNroFactura = DtListadoSolicitudOrdenPago.Rows[i]["NroFactura"].ToString(),
+                            GAPDescripcionFactura = DtListadoSolicitudOrdenPago.Rows[i]["DescripcionFactura"].ToString(),
+                            GAPFechaFactura = DtListadoSolicitudOrdenPago.Rows[i]["FechaFactura"].ToString(),
+                            GAPFechaPago = DtListadoSolicitudOrdenPago.Rows[i]["FechaPago"].ToString(),
+                            GAPMonto = Convert.ToDouble(DtListadoSolicitudOrdenPago.Rows[i]["Monto"]),
+                            GAPIdChequera = DtListadoSolicitudOrdenPago.Rows[i]["IdChequera"].ToString(),
+                            GrupoRubro_Id = Convert.ToInt32(DtListadoSolicitudOrdenPago.Rows[i]["GrupoRubro_Id"]),
+                            GrupoRubroDescripcion = DtListadoSolicitudOrdenPago.Rows[i]["GrupoRubroDescripcion"].ToString(),
+                            Rubro_Id = DtListadoSolicitudOrdenPago.Rows[i]["Rubro_Id"].ToString(),
+                            RubroDescripcion = DtListadoSolicitudOrdenPago.Rows[i]["rubroDescripcion"].ToString(),
+                            CodigoMoneda = DtListadoSolicitudOrdenPago.Rows[i]["CodigoMoneda"].ToString()
                         };
 
                         lstSolicitudOrdenPago.Add(objSolicitudOrdenPago);
@@ -286,6 +263,97 @@ namespace Intranet.Ado.DbContent
 
             return lstSolicitudOrdenPago;
         }
+
+        ///// <summary>
+        ///// El método retorna una lista con el encabezado de la solicitud de la orden de pago
+        ///// </summary>
+        ///// <param name="solicitud_pago_id"></param>
+        ///// <returns></returns>
+        //public List<Wrkf_SolicitudOrdenPago> GetSolicitudOrdenPagoPorId(int solicitud_pago_id)
+        //{
+        //    List<Wrkf_SolicitudOrdenPago> lstSolicitudOrdenPago = new List<Wrkf_SolicitudOrdenPago>();
+        //    Wrkf_DbMensajeError objdbmensajeerror = new Wrkf_DbMensajeError();
+        //    MensajeError objmensajeerror;
+
+        //    SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
+        //    Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
+        //        new SqlParameter("@pSolicitudordenpago_Id", solicitud_pago_id),
+        //        new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
+        //        new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
+        //        new SqlParameter("@pTipo", SqlDbType.VarChar, 20),
+        //        new SqlParameter("@pTitulo", SqlDbType.VarChar, 30)
+        //    });
+
+        //    Sqlprovider.Oparameters[1].Direction = ParameterDirection.Output;
+        //    Sqlprovider.Oparameters[2].Direction = ParameterDirection.Output;
+        //    Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
+        //    Sqlprovider.Oparameters[4].Direction = ParameterDirection.Output;
+
+        //    DataTable DtListadoSolicitudOrdenPago = Sqlprovider.ExecuteStoredProcedureWithOutputParameter("WorkFlow.PL_Sel_solicitudordenpago", 
+        //                                                                                                    CommandType.StoredProcedure, 
+        //                                                                                                    out Dictionary<string, string> outparam);
+
+        //    //verificar si el procedimiento almacenado genero algun error
+        //    if (!string.IsNullOrEmpty(outparam["@pCodigoError"]))
+        //    {
+        //        Wrkf_SolicitudOrdenPago objSolicitudOrdenPago = new Wrkf_SolicitudOrdenPago()
+        //        {
+        //            Codigox = outparam["@pCodigoError"],
+        //            Mensajex = outparam["@pMensajeError"],
+        //            Tipox = outparam["@pTipo"],
+        //            Titulox = outparam["@pTitulo"]
+        //        };
+
+        //        lstSolicitudOrdenPago.Add(objSolicitudOrdenPago);
+        //    }
+        //    else
+        //    {
+        //        int total_registros = DtListadoSolicitudOrdenPago.Rows.Count;
+
+        //        if (total_registros > 0)
+        //        {
+        //            for (int i = 0; i < total_registros; i++)
+        //            {
+        //                Wrkf_SolicitudOrdenPago objSolicitudOrdenPago = new Wrkf_SolicitudOrdenPago()
+        //                {
+        //                    Solicitudordenpago_Idx = Convert.ToInt32(DtListadoSolicitudOrdenPago.Rows[i]["Solicitudordenpago_Id"]),
+        //                    Codigoplantillax = Convert.ToString(DtListadoSolicitudOrdenPago.Rows[i]["Codigoplantilla"]),
+        //                    Nombreplantillax = Convert.ToString(DtListadoSolicitudOrdenPago.Rows[i]["Nombreplantilla"]),
+        //                    Recibidocxpx = Convert.ToBoolean(DtListadoSolicitudOrdenPago.Rows[i]["Recibidocxp"]),
+        //                    Aprobadocontraloriax = Convert.ToBoolean(DtListadoSolicitudOrdenPago.Rows[i]["Aprobadocontraloria"]),
+        //                    Aprobadovpx = Convert.ToBoolean(DtListadoSolicitudOrdenPago.Rows[i]["Aprobadovp"]),
+        //                    Aplicadotesoreriax = Convert.ToBoolean(DtListadoSolicitudOrdenPago.Rows[i]["Aplicadotesoreria"]),
+        //                    Anuladax = Convert.ToBoolean(DtListadoSolicitudOrdenPago.Rows[i]["Anulada"]),
+        //                    Usuarioregistrox = Convert.ToString(DtListadoSolicitudOrdenPago.Rows[i]["Usuarioregistro"]),
+        //                    Fechamodificacionx = Convert.ToDateTime(DtListadoSolicitudOrdenPago.Rows[i]["Fechamodificacion"]),
+        //                    Usuariomodificox = Convert.ToString(DtListadoSolicitudOrdenPago.Rows[i]["Usuariomodifico"]),
+        //                    curncyidx = Convert.ToString(DtListadoSolicitudOrdenPago.Rows[i]["curncyid"]),
+        //                    Urgentex = Convert.ToBoolean(DtListadoSolicitudOrdenPago.Rows[i]["Urgente"]),
+        //                    FechaRegx = Convert.ToString(DtListadoSolicitudOrdenPago.Rows[i]["Fecharegistro"]),
+        //                };
+
+        //                lstSolicitudOrdenPago.Add(objSolicitudOrdenPago);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            //busca el mensaje de error en la base de datos
+        //            objmensajeerror = objdbmensajeerror.GetObtenerMensajeError("SOP003", "SOLIORPAGO");
+
+        //            Wrkf_SolicitudOrdenPago objSolicitudOrdenPago = new Wrkf_SolicitudOrdenPago()
+        //            {
+        //                Codigox = objmensajeerror.Codigox,
+        //                Mensajex = objmensajeerror.Mensajex,
+        //                Tipox = objmensajeerror.Tipox,
+        //                Titulox = objmensajeerror.Titulox
+        //            };
+
+        //            lstSolicitudOrdenPago.Add(objSolicitudOrdenPago);
+        //        }
+        //    }
+
+        //    return lstSolicitudOrdenPago;
+        //}
 
         /// <summary>
         /// El método retorna una lista con el detalle de la solicitud de orden de pago por solicitud_pago_id
@@ -376,55 +444,6 @@ namespace Intranet.Ado.DbContent
             }
 
             return lstSolicitudOrdenPagoDetalle;
-        }
-
-        /// <summary>
-        /// El método registra o actualiza los datos de los soportes del pago
-        /// </summary>
-        /// <param name="SoportePago"></param>
-        /// <returns></returns>
-        public Wrkf_RespuestaOperacion AddSoporteSolicitudOrdenPago(Wrkf_SolicitudOrdenPagoSoporte SoportePago)
-        {
-            Wrkf_RespuestaOperacion objRespuestaOperacion = new Wrkf_RespuestaOperacion();
-            SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
-            Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                new SqlParameter("@pSoporte_id", SoportePago.Soporte_idx),
-                new SqlParameter("@pSolicitudordenpago_Id", SoportePago.Solicitudordenpago_Idx),
-                new SqlParameter("@pSolicitudordenpagodetalle_Id", SoportePago.Solicitudordenpagodetalle_Idx),
-                new SqlParameter("@pRutaDirectorio", SoportePago.RutaDirectoriox),
-                new SqlParameter("@pNombreArchivo", SoportePago.NombreArchivox),
-                new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
-                new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
-                new SqlParameter("@pTipo", SqlDbType.VarChar, 20),
-                new SqlParameter("@pTitulo", SqlDbType.VarChar, 30)
-            });
-
-            Sqlprovider.Oparameters[5].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[6].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[7].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[8].Direction = ParameterDirection.Output;
-
-            //optener los resultados del procedimiento almacenado
-            Dictionary<string, string> outparam;
-            Sqlprovider.ExecuteStoredProcedureWithOutputParameter("workflow.PL_InsUpd_SolicitudOrdenPagoSoporte", CommandType.StoredProcedure, out outparam);
-
-            //Obtiene El Error Generado Desde El Procedimiento Almacenado workflow.PL_InsUpd_SolicitudOrdenPagoSoporte.
-            if (!string.IsNullOrEmpty(outparam["@pCodigoError"]))
-            {
-                objRespuestaOperacion.Codigox = outparam["@pCodigoError"];
-                objRespuestaOperacion.Mensajex = outparam["@pMensajeError"];
-                objRespuestaOperacion.Tipox = outparam["@pTipo"];
-                objRespuestaOperacion.Titulox = outparam["@pTitulo"];
-            }
-            else
-            {
-                objRespuestaOperacion.Codigox = string.Empty;
-                objRespuestaOperacion.Mensajex = string.Empty;
-                objRespuestaOperacion.Tipox = string.Empty;
-                objRespuestaOperacion.Titulox = string.Empty;
-            }
-
-            return objRespuestaOperacion;
         }
 
         /// <summary>
@@ -524,64 +543,23 @@ namespace Intranet.Ado.DbContent
             return lstSoportePagos;
         }
 
-        public Wrkf_RespuestaOperacion EnviaraCXP(int Solicitudordenpago_Id, string Usuariomodifico)
+        /// <summary>
+        /// Anula las solicitudes de pagos realizadas desde workflow y que se encuentran en estatus 1 en el GAP
+        /// </summary>
+        /// <param name="pCodigo"></param>
+        /// <param name="pUsuario"></param>
+        /// <returns></returns>
+        public Wrkf_RespuestaOperacion AnularSolicitudOrdenPago(string pCodigo, string pUsuario)
         {
             Wrkf_RespuestaOperacion objRespuestaOperacion = new Wrkf_RespuestaOperacion();
             SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
             Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                new SqlParameter("@pSolicitudordenpago_Id", Solicitudordenpago_Id),
-                new SqlParameter("@pUsuariomodifico", Usuariomodifico),
+                new SqlParameter("@pCodigo", pCodigo),
+                new SqlParameter("@pUsuarioAnulacion", pUsuario),
                 new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
                 new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
-                new SqlParameter("@pTipo", SqlDbType.VarChar, 20),
-                new SqlParameter("@pTitulo", SqlDbType.VarChar, 30)
-            });
-
-            Sqlprovider.Oparameters[2].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[4].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[5].Direction = ParameterDirection.Output;
-
-            //optener los resultados del procedimiento almacenado
-            Dictionary<string, string> outparam;
-            Sqlprovider.ExecuteStoredProcedureWithOutputParameter("workflow.PL_InsUpd_EnviarOrdenPagoaCXP", CommandType.StoredProcedure, out outparam);
-
-            //Obtiene El Error Generado Desde El Procedimiento Almacenado Workflow.sp_insup_SolicitudOrdenPagoSoporte.
-            if (!string.IsNullOrEmpty(outparam["@pCodigoError"]))
-            {
-                objRespuestaOperacion.Codigox = outparam["@pCodigoError"];
-                objRespuestaOperacion.Mensajex = outparam["@pMensajeError"];
-                objRespuestaOperacion.Tipox = outparam["@pTipo"];
-                objRespuestaOperacion.Titulox = outparam["@pTitulo"];
-            }
-            else
-            {
-                objRespuestaOperacion.Codigox = string.Empty;
-                objRespuestaOperacion.Mensajex = string.Empty;
-                objRespuestaOperacion.Tipox = string.Empty;
-                objRespuestaOperacion.Titulox = string.Empty;
-            }
-
-            return objRespuestaOperacion;
-        }
-
-        /// <summary>
-        /// El método Anula la solicitud de orden de pago
-        /// </summary>
-        /// <param name="Solicitudordenpago_Id"></param>
-        /// <param name="Usuariomodifico"></param>
-        /// <returns></returns>
-        public Wrkf_RespuestaOperacion AnularSolicitudOrdenPago(int Solicitudordenpago_Id, string Usuariomodifico)
-        {
-            Wrkf_RespuestaOperacion objRespuestaOperacion = new Wrkf_RespuestaOperacion();
-            SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
-            Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                new SqlParameter("@Solicitudordenpago_Id", Solicitudordenpago_Id),
-                new SqlParameter("@Usuariomodifico", Usuariomodifico),
-                new SqlParameter("@CodigoError", SqlDbType.VarChar, 10),
-                new SqlParameter("@MensajeError", SqlDbType.VarChar, 200),
-                new SqlParameter("@Tipo", SqlDbType.VarChar, 20),
-                new SqlParameter("@Titulo", SqlDbType.VarChar, 30)
+                new SqlParameter("@pTipoError", SqlDbType.VarChar, 20),
+                new SqlParameter("@pTituloError", SqlDbType.VarChar, 60)
             });
 
             Sqlprovider.Oparameters[2].Direction = ParameterDirection.Output;
@@ -591,20 +569,19 @@ namespace Intranet.Ado.DbContent
 
             //optener los resultados del procedimiento almacenado
             Dictionary<string, string> outparam = new Dictionary<string, string>();
-            int AnularSolicitudOrdenPago = Sqlprovider.ExecuteStoredProcedureWithOutputParameter2("Workflow.sp_up_AnularSolicitudOrdenPago", CommandType.StoredProcedure, out outparam);
+            int AnularSolicitudOrdenPago = Sqlprovider.ExecuteStoredProcedureWithOutputParameter2("WorkFlow.PL_Up_AnularPagoEspecifico", CommandType.StoredProcedure, out outparam);
 
-            //Obtiene El Error Generado Desde El Procedimiento Almacenado Workflow.sp_insup_SolicitudOrdenPagoSoporte.
-            if (!string.IsNullOrEmpty(outparam["@CodigoError"]))
+            //Obtiene El Error Generado Desde El Procedimiento Almacenado.
+            if (!string.IsNullOrEmpty(outparam["@pCodigoError"]))
             {
                 objRespuestaOperacion.RegistrosProcesadosx = AnularSolicitudOrdenPago;
-                objRespuestaOperacion.Codigox = outparam["@CodigoError"];
-                objRespuestaOperacion.Mensajex = outparam["@MensajeError"];
-                objRespuestaOperacion.Tipox = outparam["@Tipo"];
-                objRespuestaOperacion.Titulox = outparam["@Titulo"];
+                objRespuestaOperacion.Codigox = outparam["@pCodigoError"];
+                objRespuestaOperacion.Mensajex = outparam["@pMensajeError"];
+                objRespuestaOperacion.Tipox = outparam["@pTipoError"];
+                objRespuestaOperacion.Titulox = outparam["@pTituloError"];
             }
             else
             {
-                objRespuestaOperacion.RegistrosProcesadosx = AnularSolicitudOrdenPago;
                 objRespuestaOperacion.Codigox = string.Empty;
                 objRespuestaOperacion.Mensajex = string.Empty;
                 objRespuestaOperacion.Tipox = string.Empty;
@@ -707,57 +684,6 @@ namespace Intranet.Ado.DbContent
                 objRespuestaOperacion.Mensajex = ex.Message.ToString().Trim();
                 objRespuestaOperacion.Tipox = "error";
                 objRespuestaOperacion.Titulox = "Verifición Moneda de la Solicitud";
-            }
-
-            return objRespuestaOperacion;
-        }
-
-        /// <summary>
-        /// El método Anula un pago especifico de la solicitud de orden de pago
-        /// </summary>
-        /// <param name="Solicitudordenpagodetalle_Id"></param>
-        /// <param name="Solicitudordenpago_Id"></param>
-        /// <param name="Usuariomodifico"></param>
-        /// <returns></returns>
-        public Wrkf_RespuestaOperacion AnularPagoEspecificoSolicitud(int Solicitudordenpagodetalle_Id, int Solicitudordenpago_Id, string Usuariomodifico)
-        {
-            Wrkf_RespuestaOperacion objRespuestaOperacion = new Wrkf_RespuestaOperacion();
-            SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
-            Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                new SqlParameter("@Solicitudordenpagodetalle_Id", Solicitudordenpagodetalle_Id),
-                new SqlParameter("@Solicitudordenpago_Id", Solicitudordenpago_Id),
-                new SqlParameter("@Usuariomodifico", Usuariomodifico),
-                new SqlParameter("@CodigoError", SqlDbType.VarChar, 10),
-                new SqlParameter("@MensajeError", SqlDbType.VarChar, 200),
-                new SqlParameter("@Tipo", SqlDbType.VarChar, 20),
-                new SqlParameter("@Titulo", SqlDbType.VarChar, 30)
-            });
-
-            Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[4].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[5].Direction = ParameterDirection.Output;
-            Sqlprovider.Oparameters[6].Direction = ParameterDirection.Output;
-
-            //optener los resultados del procedimiento almacenado
-            Dictionary<string, string> outparam = new Dictionary<string, string>();
-            int AnularPagoEspecifico = Sqlprovider.ExecuteStoredProcedureWithOutputParameter2("Workflow.sp_up_AnularPagoEspecifico", CommandType.StoredProcedure, out outparam);
-
-            //Obtiene El Error Generado Desde El Procedimiento Almacenado Workflow.sp_up_AnularPagoEspecifico.
-            if (!string.IsNullOrEmpty(outparam["@CodigoError"]))
-            {
-                objRespuestaOperacion.RegistrosProcesadosx = AnularPagoEspecifico;
-                objRespuestaOperacion.Codigox = outparam["@CodigoError"];
-                objRespuestaOperacion.Mensajex = outparam["@MensajeError"];
-                objRespuestaOperacion.Tipox = outparam["@Tipo"];
-                objRespuestaOperacion.Titulox = outparam["@Titulo"];
-            }
-            else
-            {
-                objRespuestaOperacion.RegistrosProcesadosx = AnularPagoEspecifico;
-                objRespuestaOperacion.Codigox = string.Empty;
-                objRespuestaOperacion.Mensajex = string.Empty;
-                objRespuestaOperacion.Tipox = string.Empty;
-                objRespuestaOperacion.Titulox = string.Empty;
             }
 
             return objRespuestaOperacion;

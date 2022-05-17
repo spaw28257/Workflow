@@ -17,184 +17,184 @@ namespace Intranet.Ado.DbContent
         /// Listar los grupo de rubros que tienen rubros con pagos pendientes por aprobar por el contralor
         /// </summary>
         /// <returns></returns>
-        public List<Wrkf_Departamento> LstGrupoRubroVP(bool documento_nc)
-        {
-            List<Wrkf_Departamento> lstgruporubro = new List<Wrkf_Departamento>();
-            Wrkf_DbMensajeError objdbmensajeerror = new Wrkf_DbMensajeError();
-            MensajeError objmensajeerror;
+        //public List<Wrkf_GrupoRubro> LstGrupoRubroVP(bool documento_nc)
+        //{
+        //    List<Wrkf_GrupoRubro> lstgruporubro = new List<Wrkf_GrupoRubro>();
+        //    Wrkf_DbMensajeError objdbmensajeerror = new Wrkf_DbMensajeError();
+        //    MensajeError objmensajeerror;
 
-            try
-            {
-                SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
-                Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                    new SqlParameter("@pDocumentoNC", documento_nc),
-                    new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
-                    new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
-                    new SqlParameter("@pTipo", SqlDbType.VarChar, 20),
-                    new SqlParameter("@pTitulo", SqlDbType.VarChar, 30)
-                });
+        //    try
+        //    {
+        //        SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
+        //        Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
+        //            new SqlParameter("@pDocumentoNC", documento_nc),
+        //            new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
+        //            new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
+        //            new SqlParameter("@pTipo", SqlDbType.VarChar, 20),
+        //            new SqlParameter("@pTitulo", SqlDbType.VarChar, 30)
+        //        });
 
-                Sqlprovider.Oparameters[1].Direction = ParameterDirection.Output;
-                Sqlprovider.Oparameters[2].Direction = ParameterDirection.Output;
-                Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
-                Sqlprovider.Oparameters[4].Direction = ParameterDirection.Output;
+        //        Sqlprovider.Oparameters[1].Direction = ParameterDirection.Output;
+        //        Sqlprovider.Oparameters[2].Direction = ParameterDirection.Output;
+        //        Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
+        //        Sqlprovider.Oparameters[4].Direction = ParameterDirection.Output;
 
-                DataTable DtGrupoRubros = Sqlprovider.ExecuteStoredProcedureWithOutputParameter("workflow.PL_Sel_GrupoRubrosVpFinanza", CommandType.StoredProcedure, out Dictionary<string, string> outparam);
+        //        DataTable DtGrupoRubros = Sqlprovider.ExecuteStoredProcedureWithOutputParameter("workflow.PL_Sel_GrupoRubrosVpFinanza", CommandType.StoredProcedure, out Dictionary<string, string> outparam);
 
-                //verifica que el procedimiento almacenado al momento de ejecutar no tenga errores
-                if (!string.IsNullOrEmpty(outparam["@pCodigoError"]))
-                {
-                    Wrkf_Departamento objgruporubro = new Wrkf_Departamento()
-                    {
-                        Codigox = outparam["@pCodigoError"],
-                        Mensajex = outparam["@pMensajeError"],
-                        Tipox = outparam["@pTipo"],
-                        Titulox = outparam["@pTitulo"]
-                    };
+        //        //verifica que el procedimiento almacenado al momento de ejecutar no tenga errores
+        //        if (!string.IsNullOrEmpty(outparam["@pCodigoError"]))
+        //        {
+        //            Wrkf_GrupoRubro objgruporubro = new Wrkf_GrupoRubro()
+        //            {
+        //                Codigox = outparam["@pCodigoError"],
+        //                Mensajex = outparam["@pMensajeError"],
+        //                Tipox = outparam["@pTipo"],
+        //                Titulox = outparam["@pTitulo"]
+        //            };
 
-                    lstgruporubro.Add(objgruporubro);
-                }
-                else
-                {
-                    int total_registros = DtGrupoRubros.Rows.Count;
+        //            lstgruporubro.Add(objgruporubro);
+        //        }
+        //        else
+        //        {
+        //            int total_registros = DtGrupoRubros.Rows.Count;
 
-                    if (total_registros > 0)
-                    {
-                        for (int i = 0; i < total_registros; i++)
-                        {
-                            Wrkf_Departamento objgruporubro = new Wrkf_Departamento()
-                            {
-                                DepartamentoEncript_Idx = EncriptadorMD5.Encrypt(Convert.ToString(DtGrupoRubros.Rows[i]["Gruporubro_Id"])),
-                                Departamento_Idx = Convert.ToInt32(DtGrupoRubros.Rows[i]["Gruporubro_Id"]),
-                                Departamentox = Convert.ToString(DtGrupoRubros.Rows[i]["Departamento"]),
-                                TotalRubrosx = Convert.ToInt32(DtGrupoRubros.Rows[i]["TotalRubros"])
-                            };
+        //            if (total_registros > 0)
+        //            {
+        //                for (int i = 0; i < total_registros; i++)
+        //                {
+        //                    Wrkf_GrupoRubro objgruporubro = new Wrkf_GrupoRubro()
+        //                    {
+        //                        DepartamentoEncript_Idx = EncriptadorMD5.Encrypt(Convert.ToString(DtGrupoRubros.Rows[i]["Gruporubro_Id"])),
+        //                        Departamento_Idx = Convert.ToInt32(DtGrupoRubros.Rows[i]["Gruporubro_Id"]),
+        //                        Departamentox = Convert.ToString(DtGrupoRubros.Rows[i]["Departamento"]),
+        //                        TotalRubrosx = Convert.ToInt32(DtGrupoRubros.Rows[i]["TotalRubros"])
+        //                    };
 
-                            lstgruporubro.Add(objgruporubro);
-                        }
-                    }
-                    else
-                    {
-                        objmensajeerror = objdbmensajeerror.GetObtenerMensajeError("SOP005", "SOLIORPAGO");
+        //                    lstgruporubro.Add(objgruporubro);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                objmensajeerror = objdbmensajeerror.GetObtenerMensajeError("SOP005", "SOLIORPAGO");
 
-                        Wrkf_Departamento objgruporubro = new Wrkf_Departamento()
-                        {
-                            Codigox = objmensajeerror.Codigox,
-                            Mensajex = objmensajeerror.Mensajex,
-                            Tipox = "card card-info",
-                            Titulox = objmensajeerror.Titulox
-                        };
+        //                Wrkf_GrupoRubro objgruporubro = new Wrkf_GrupoRubro()
+        //                {
+        //                    Codigox = objmensajeerror.Codigox,
+        //                    Mensajex = objmensajeerror.Mensajex,
+        //                    Tipox = "card card-info",
+        //                    Titulox = objmensajeerror.Titulox
+        //                };
 
-                        lstgruporubro.Add(objgruporubro);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Wrkf_Departamento objwrkfdepartamento = new Wrkf_Departamento()
-                {
-                    Codigox = ex.HResult.ToString(),
-                    Mensajex = ex.Message.ToString(),
-                    Tipox = "error",
-                    Titulox = "Excepción Al Obtener los Grupo de Rubros"
-                };
+        //                lstgruporubro.Add(objgruporubro);
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Wrkf_GrupoRubro objwrkfdepartamento = new Wrkf_GrupoRubro()
+        //        {
+        //            Codigox = ex.HResult.ToString(),
+        //            Mensajex = ex.Message.ToString(),
+        //            Tipox = "error",
+        //            Titulox = "Excepción Al Obtener los Grupo de Rubros"
+        //        };
 
-                lstgruporubro.Add(objwrkfdepartamento);
-            }
+        //        lstgruporubro.Add(objwrkfdepartamento);
+        //    }
 
-            return lstgruporubro;
-        }
+        //    return lstgruporubro;
+        //}
 
         /// <summary>
         /// Lista los grupos que tienen pagos urgentes pendientes por la aprobación de VP
         /// </summary>
         /// <returns></returns>
-        public List<Wrkf_Departamento> LstGrupoRubroVP_Urgentes()
-        {
-            List<Wrkf_Departamento> lstgruporubro = new List<Wrkf_Departamento>();
-            Wrkf_DbMensajeError objdbmensajeerror = new Wrkf_DbMensajeError();
-            MensajeError objmensajeerror;
+        //public List<Wrkf_GrupoRubro> LstGrupoRubroVP_Urgentes()
+        //{
+        //    List<Wrkf_GrupoRubro> lstgruporubro = new List<Wrkf_GrupoRubro>();
+        //    Wrkf_DbMensajeError objdbmensajeerror = new Wrkf_DbMensajeError();
+        //    MensajeError objmensajeerror;
 
-            try
-            {
-                SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
-                Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                    new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
-                    new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
-                    new SqlParameter("@pTipo", SqlDbType.VarChar, 20),
-                    new SqlParameter("@pTitulo", SqlDbType.VarChar, 30)
-                });
+        //    try
+        //    {
+        //        SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
+        //        Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
+        //            new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
+        //            new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
+        //            new SqlParameter("@pTipo", SqlDbType.VarChar, 20),
+        //            new SqlParameter("@pTitulo", SqlDbType.VarChar, 30)
+        //        });
 
-                Sqlprovider.Oparameters[0].Direction = ParameterDirection.Output;
-                Sqlprovider.Oparameters[1].Direction = ParameterDirection.Output;
-                Sqlprovider.Oparameters[2].Direction = ParameterDirection.Output;
-                Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
+        //        Sqlprovider.Oparameters[0].Direction = ParameterDirection.Output;
+        //        Sqlprovider.Oparameters[1].Direction = ParameterDirection.Output;
+        //        Sqlprovider.Oparameters[2].Direction = ParameterDirection.Output;
+        //        Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
 
-                DataTable DtGrupoRubros = Sqlprovider.ExecuteStoredProcedureWithOutputParameter("workflow.PL_Sel_GrupoRubrosVpFinanza_Urgente", CommandType.StoredProcedure, out Dictionary<string, string> outparam);
+        //        DataTable DtGrupoRubros = Sqlprovider.ExecuteStoredProcedureWithOutputParameter("workflow.PL_Sel_GrupoRubrosVpFinanza_Urgente", CommandType.StoredProcedure, out Dictionary<string, string> outparam);
 
-                //verifica que el procedimiento almacenado al momento de ejecutar no tenga errores
-                if (!string.IsNullOrEmpty(outparam["@pCodigoError"]))
-                {
-                    Wrkf_Departamento objgruporubro = new Wrkf_Departamento()
-                    {
-                        Codigox = outparam["@pCodigoError"],
-                        Mensajex = outparam["@pMensajeError"],
-                        Tipox = outparam["@pTipo"],
-                        Titulox = outparam["@pTitulo"]
-                    };
+        //        //verifica que el procedimiento almacenado al momento de ejecutar no tenga errores
+        //        if (!string.IsNullOrEmpty(outparam["@pCodigoError"]))
+        //        {
+        //            Wrkf_GrupoRubro objgruporubro = new Wrkf_GrupoRubro()
+        //            {
+        //                Codigox = outparam["@pCodigoError"],
+        //                Mensajex = outparam["@pMensajeError"],
+        //                Tipox = outparam["@pTipo"],
+        //                Titulox = outparam["@pTitulo"]
+        //            };
 
-                    lstgruporubro.Add(objgruporubro);
-                }
-                else
-                {
-                    int total_registros = DtGrupoRubros.Rows.Count;
+        //            lstgruporubro.Add(objgruporubro);
+        //        }
+        //        else
+        //        {
+        //            int total_registros = DtGrupoRubros.Rows.Count;
 
-                    if (total_registros > 0)
-                    {
-                        for (int i = 0; i < total_registros; i++)
-                        {
-                            Wrkf_Departamento objgruporubro = new Wrkf_Departamento()
-                            {
-                                DepartamentoEncript_Idx = EncriptadorMD5.Encrypt(Convert.ToString(DtGrupoRubros.Rows[i]["Gruporubro_Id"])),
-                                Departamento_Idx = Convert.ToInt32(DtGrupoRubros.Rows[i]["Gruporubro_Id"]),
-                                Departamentox = Convert.ToString(DtGrupoRubros.Rows[i]["Departamento"]),
-                                TotalRubrosx = Convert.ToInt32(DtGrupoRubros.Rows[i]["TotalRubros"])
-                            };
+        //            if (total_registros > 0)
+        //            {
+        //                for (int i = 0; i < total_registros; i++)
+        //                {
+        //                    Wrkf_GrupoRubro objgruporubro = new Wrkf_GrupoRubro()
+        //                    {
+        //                        DepartamentoEncript_Idx = EncriptadorMD5.Encrypt(Convert.ToString(DtGrupoRubros.Rows[i]["Gruporubro_Id"])),
+        //                        Departamento_Idx = Convert.ToInt32(DtGrupoRubros.Rows[i]["Gruporubro_Id"]),
+        //                        Departamentox = Convert.ToString(DtGrupoRubros.Rows[i]["Departamento"]),
+        //                        TotalRubrosx = Convert.ToInt32(DtGrupoRubros.Rows[i]["TotalRubros"])
+        //                    };
 
-                            lstgruporubro.Add(objgruporubro);
-                        }
-                    }
-                    else
-                    {
-                        objmensajeerror = objdbmensajeerror.GetObtenerMensajeError("SOP005", "SOLIORPAGO");
+        //                    lstgruporubro.Add(objgruporubro);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                objmensajeerror = objdbmensajeerror.GetObtenerMensajeError("SOP005", "SOLIORPAGO");
 
-                        Wrkf_Departamento objgruporubro = new Wrkf_Departamento()
-                        {
-                            Codigox = objmensajeerror.Codigox,
-                            Mensajex = objmensajeerror.Mensajex,
-                            Tipox = "card card-info",
-                            Titulox = objmensajeerror.Titulox
-                        };
+        //                Wrkf_GrupoRubro objgruporubro = new Wrkf_GrupoRubro()
+        //                {
+        //                    Codigox = objmensajeerror.Codigox,
+        //                    Mensajex = objmensajeerror.Mensajex,
+        //                    Tipox = "card card-info",
+        //                    Titulox = objmensajeerror.Titulox
+        //                };
 
-                        lstgruporubro.Add(objgruporubro);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Wrkf_Departamento objwrkfdepartamento = new Wrkf_Departamento()
-                {
-                    Codigox = ex.HResult.ToString(),
-                    Mensajex = ex.Message.ToString(),
-                    Tipox = "error",
-                    Titulox = "Excepción Al Obtener los Grupo de Rubros"
-                };
+        //                lstgruporubro.Add(objgruporubro);
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Wrkf_GrupoRubro objwrkfdepartamento = new Wrkf_GrupoRubro()
+        //        {
+        //            Codigox = ex.HResult.ToString(),
+        //            Mensajex = ex.Message.ToString(),
+        //            Tipox = "error",
+        //            Titulox = "Excepción Al Obtener los Grupo de Rubros"
+        //        };
 
-                lstgruporubro.Add(objwrkfdepartamento);
-            }
+        //        lstgruporubro.Add(objwrkfdepartamento);
+        //    }
 
-            return lstgruporubro;
-        }
+        //    return lstgruporubro;
+        //}
 
         /// <summary>
         /// Obtiene los rubros asociados 
@@ -202,191 +202,191 @@ namespace Intranet.Ado.DbContent
         /// <param name="gruporubro_id"></param>
         /// <param name="documento_nc"></param>
         /// <returns></returns>
-        public List<Wrkf_Rubro> LstRubroVP(int gruporubro_id, bool documento_nc)
-        {
-            List<Wrkf_Rubro> lstrubro = new List<Wrkf_Rubro>();
-            Wrkf_DbMensajeError objdbmensajeerror = new Wrkf_DbMensajeError();
-            MensajeError objmensajeerror;
+        //public List<Wrkf_Rubro> LstRubroVP(int gruporubro_id, bool documento_nc)
+        //{
+        //    List<Wrkf_Rubro> lstrubro = new List<Wrkf_Rubro>();
+        //    Wrkf_DbMensajeError objdbmensajeerror = new Wrkf_DbMensajeError();
+        //    MensajeError objmensajeerror;
 
-            try
-            {
-                SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
-                Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                    new SqlParameter("@pGruporubro_Id", gruporubro_id),
-                    new SqlParameter("@pDocumentoNC", documento_nc),
-                    new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
-                    new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
-                    new SqlParameter("@pTipo", SqlDbType.VarChar, 20),
-                    new SqlParameter("@pTitulo", SqlDbType.VarChar, 30)
-                });
+        //    try
+        //    {
+        //        SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
+        //        Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
+        //            new SqlParameter("@pGruporubro_Id", gruporubro_id),
+        //            new SqlParameter("@pDocumentoNC", documento_nc),
+        //            new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
+        //            new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
+        //            new SqlParameter("@pTipo", SqlDbType.VarChar, 20),
+        //            new SqlParameter("@pTitulo", SqlDbType.VarChar, 30)
+        //        });
 
-                Sqlprovider.Oparameters[2].Direction = ParameterDirection.Output;
-                Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
-                Sqlprovider.Oparameters[4].Direction = ParameterDirection.Output;
-                Sqlprovider.Oparameters[5].Direction = ParameterDirection.Output;
+        //        Sqlprovider.Oparameters[2].Direction = ParameterDirection.Output;
+        //        Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
+        //        Sqlprovider.Oparameters[4].Direction = ParameterDirection.Output;
+        //        Sqlprovider.Oparameters[5].Direction = ParameterDirection.Output;
 
-                DataTable DtRubros = Sqlprovider.ExecuteStoredProcedureWithOutputParameter("Workflow.PL_Sel_RubrosVpFinanza", CommandType.StoredProcedure, out Dictionary<string, string> outparam);
+        //        DataTable DtRubros = Sqlprovider.ExecuteStoredProcedureWithOutputParameter("Workflow.PL_Sel_RubrosVpFinanza", CommandType.StoredProcedure, out Dictionary<string, string> outparam);
 
-                //verifica que el procedimiento almacenado al momento de ejecutar no tenga errores
-                if (!string.IsNullOrEmpty(outparam["@pCodigoError"]))
-                {
-                    Wrkf_Rubro objrubro = new Wrkf_Rubro()
-                    {
-                        Codigox = outparam["@pCodigoError"],
-                        Mensajex = outparam["@pMensajeError"],
-                        Tipox = outparam["@pTipo"],
-                        Titulox = outparam["@pTitulo"]
-                    };
+        //        //verifica que el procedimiento almacenado al momento de ejecutar no tenga errores
+        //        if (!string.IsNullOrEmpty(outparam["@pCodigoError"]))
+        //        {
+        //            Wrkf_Rubro objrubro = new Wrkf_Rubro()
+        //            {
+        //                Codigox = outparam["@pCodigoError"],
+        //                Mensajex = outparam["@pMensajeError"],
+        //                Tipox = outparam["@pTipo"],
+        //                Titulox = outparam["@pTitulo"]
+        //            };
 
-                    lstrubro.Add(objrubro);
-                }
-                else
-                {
-                    int total_registros = DtRubros.Rows.Count;
+        //            lstrubro.Add(objrubro);
+        //        }
+        //        else
+        //        {
+        //            int total_registros = DtRubros.Rows.Count;
 
-                    if (total_registros > 0)
-                    {
-                        for (int i = 0; i < total_registros; i++)
-                        {
-                            Wrkf_Rubro objrubro = new Wrkf_Rubro()
-                            {
-                                RubroEncript_Idx = EncriptadorMD5.Encrypt(Convert.ToString(DtRubros.Rows[i]["Rubro_Id"])),
-                                Rubro_Idx = Convert.ToString(DtRubros.Rows[i]["Rubro_Id"]),
-                                Descripcionx = Convert.ToString(DtRubros.Rows[i]["Descripcion"]),
-                                Cantidad_Pagosx = Convert.ToInt32(DtRubros.Rows[i]["CantidadPago"]),
-                                GruporubroEncript_Idx = EncriptadorMD5.Encrypt(gruporubro_id.ToString())
-                            };
+        //            if (total_registros > 0)
+        //            {
+        //                for (int i = 0; i < total_registros; i++)
+        //                {
+        //                    Wrkf_Rubro objrubro = new Wrkf_Rubro()
+        //                    {
+        //                        RubroEncript_Idx = EncriptadorMD5.Encrypt(Convert.ToString(DtRubros.Rows[i]["Rubro_Id"])),
+        //                        Rubro_Idx = Convert.ToString(DtRubros.Rows[i]["Rubro_Id"]),
+        //                        Descripcionx = Convert.ToString(DtRubros.Rows[i]["Descripcion"]),
+        //                        Cantidad_Pagosx = Convert.ToInt32(DtRubros.Rows[i]["CantidadPago"]),
+        //                        GruporubroEncript_Idx = EncriptadorMD5.Encrypt(gruporubro_id.ToString())
+        //                    };
 
-                            lstrubro.Add(objrubro);
-                        }
-                    }
-                    else
-                    {
-                        objmensajeerror = objdbmensajeerror.GetObtenerMensajeError("SOP007", "SOLIORPAGO");
+        //                    lstrubro.Add(objrubro);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                objmensajeerror = objdbmensajeerror.GetObtenerMensajeError("SOP007", "SOLIORPAGO");
 
-                        Wrkf_Rubro objrubro = new Wrkf_Rubro()
-                        {
-                            Codigox = objmensajeerror.Codigox,
-                            Mensajex = objmensajeerror.Mensajex,
-                            Tipox = objmensajeerror.Tipox,
-                            Titulox = objmensajeerror.Titulox
-                        };
+        //                Wrkf_Rubro objrubro = new Wrkf_Rubro()
+        //                {
+        //                    Codigox = objmensajeerror.Codigox,
+        //                    Mensajex = objmensajeerror.Mensajex,
+        //                    Tipox = objmensajeerror.Tipox,
+        //                    Titulox = objmensajeerror.Titulox
+        //                };
 
-                        lstrubro.Add(objrubro);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Wrkf_Rubro objrubro = new Wrkf_Rubro()
-                {
-                    Codigox = ex.HResult.ToString(),
-                    Mensajex = ex.Message.ToString() + " " + ex.StackTrace.ToString(),
-                    Tipox = "error",
-                    Titulox = "Excepción Al Obtener los pagos por Rubros"
-                };
+        //                lstrubro.Add(objrubro);
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Wrkf_Rubro objrubro = new Wrkf_Rubro()
+        //        {
+        //            Codigox = ex.HResult.ToString(),
+        //            Mensajex = ex.Message.ToString() + " " + ex.StackTrace.ToString(),
+        //            Tipox = "error",
+        //            Titulox = "Excepción Al Obtener los pagos por Rubros"
+        //        };
 
-                lstrubro.Add(objrubro);
-            }
+        //        lstrubro.Add(objrubro);
+        //    }
 
-            return lstrubro;
-        }
+        //    return lstrubro;
+        //}
 
         /// <summary>
         /// Lista los rubros con pagos urgentes pendientes por la aprobacion de VP
         /// </summary>
         /// <param name="gruporubro_id"></param>
         /// <returns></returns>
-        public List<Wrkf_Rubro> LstRubroVP_Urgentes(int gruporubro_id)
-        {
-            List<Wrkf_Rubro> lstrubro = new List<Wrkf_Rubro>();
-            Wrkf_DbMensajeError objdbmensajeerror = new Wrkf_DbMensajeError();
-            MensajeError objmensajeerror;
+        //public List<Wrkf_Rubro> LstRubroVP_Urgentes(int gruporubro_id)
+        //{
+        //    List<Wrkf_Rubro> lstrubro = new List<Wrkf_Rubro>();
+        //    Wrkf_DbMensajeError objdbmensajeerror = new Wrkf_DbMensajeError();
+        //    MensajeError objmensajeerror;
 
-            try
-            {
-                SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
-                Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
-                    new SqlParameter("@pGruporubro_Id", gruporubro_id),
-                    new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
-                    new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
-                    new SqlParameter("@pTipo", SqlDbType.VarChar, 20),
-                    new SqlParameter("@pTitulo", SqlDbType.VarChar, 30)
-                });
+        //    try
+        //    {
+        //        SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
+        //        Sqlprovider.Oparameters.AddRange(new SqlParameter[] {
+        //            new SqlParameter("@pGruporubro_Id", gruporubro_id),
+        //            new SqlParameter("@pCodigoError", SqlDbType.VarChar, 10),
+        //            new SqlParameter("@pMensajeError", SqlDbType.VarChar, 200),
+        //            new SqlParameter("@pTipo", SqlDbType.VarChar, 20),
+        //            new SqlParameter("@pTitulo", SqlDbType.VarChar, 30)
+        //        });
 
-                Sqlprovider.Oparameters[1].Direction = ParameterDirection.Output;
-                Sqlprovider.Oparameters[2].Direction = ParameterDirection.Output;
-                Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
-                Sqlprovider.Oparameters[4].Direction = ParameterDirection.Output;
+        //        Sqlprovider.Oparameters[1].Direction = ParameterDirection.Output;
+        //        Sqlprovider.Oparameters[2].Direction = ParameterDirection.Output;
+        //        Sqlprovider.Oparameters[3].Direction = ParameterDirection.Output;
+        //        Sqlprovider.Oparameters[4].Direction = ParameterDirection.Output;
 
-                DataTable DtRubros = Sqlprovider.ExecuteStoredProcedureWithOutputParameter("Workflow.PL_Sel_RubrosVpFinanza_Urgentes",
-                                                                                            CommandType.StoredProcedure, 
-                                                                                            out Dictionary<string, string> outparam);
+        //        DataTable DtRubros = Sqlprovider.ExecuteStoredProcedureWithOutputParameter("Workflow.PL_Sel_RubrosVpFinanza_Urgentes",
+        //                                                                                    CommandType.StoredProcedure, 
+        //                                                                                    out Dictionary<string, string> outparam);
 
-                //verifica que el procedimiento almacenado al momento de ejecutar no tenga errores
-                if (!string.IsNullOrEmpty(outparam["@pCodigoError"]))
-                {
-                    Wrkf_Rubro objrubro = new Wrkf_Rubro()
-                    {
-                        Codigox = outparam["@pCodigoError"],
-                        Mensajex = outparam["@pMensajeError"],
-                        Tipox = outparam["@pTipo"],
-                        Titulox = outparam["@pTitulo"]
-                    };
+        //        //verifica que el procedimiento almacenado al momento de ejecutar no tenga errores
+        //        if (!string.IsNullOrEmpty(outparam["@pCodigoError"]))
+        //        {
+        //            Wrkf_Rubro objrubro = new Wrkf_Rubro()
+        //            {
+        //                Codigox = outparam["@pCodigoError"],
+        //                Mensajex = outparam["@pMensajeError"],
+        //                Tipox = outparam["@pTipo"],
+        //                Titulox = outparam["@pTitulo"]
+        //            };
 
-                    lstrubro.Add(objrubro);
-                }
-                else
-                {
-                    int total_registros = DtRubros.Rows.Count;
+        //            lstrubro.Add(objrubro);
+        //        }
+        //        else
+        //        {
+        //            int total_registros = DtRubros.Rows.Count;
 
-                    if (total_registros > 0)
-                    {
-                        for (int i = 0; i < total_registros; i++)
-                        {
-                            Wrkf_Rubro objrubro = new Wrkf_Rubro()
-                            {
-                                RubroEncript_Idx = EncriptadorMD5.Encrypt(Convert.ToString(DtRubros.Rows[i]["Rubro_Id"])),
-                                Rubro_Idx = Convert.ToString(DtRubros.Rows[i]["Rubro_Id"]),
-                                Descripcionx = Convert.ToString(DtRubros.Rows[i]["Descripcion"]),
-                                Cantidad_Pagosx = Convert.ToInt32(DtRubros.Rows[i]["CantidadPago"]),
-                                GruporubroEncript_Idx = EncriptadorMD5.Encrypt(gruporubro_id.ToString())
-                            };
+        //            if (total_registros > 0)
+        //            {
+        //                for (int i = 0; i < total_registros; i++)
+        //                {
+        //                    Wrkf_Rubro objrubro = new Wrkf_Rubro()
+        //                    {
+        //                        RubroEncript_Idx = EncriptadorMD5.Encrypt(Convert.ToString(DtRubros.Rows[i]["Rubro_Id"])),
+        //                        Rubro_Idx = Convert.ToString(DtRubros.Rows[i]["Rubro_Id"]),
+        //                        Descripcionx = Convert.ToString(DtRubros.Rows[i]["Descripcion"]),
+        //                        Cantidad_Pagosx = Convert.ToInt32(DtRubros.Rows[i]["CantidadPago"]),
+        //                        GruporubroEncript_Idx = EncriptadorMD5.Encrypt(gruporubro_id.ToString())
+        //                    };
 
-                            lstrubro.Add(objrubro);
-                        }
-                    }
-                    else
-                    {
-                        objmensajeerror = objdbmensajeerror.GetObtenerMensajeError("SOP007", "SOLIORPAGO");
+        //                    lstrubro.Add(objrubro);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                objmensajeerror = objdbmensajeerror.GetObtenerMensajeError("SOP007", "SOLIORPAGO");
 
-                        Wrkf_Rubro objrubro = new Wrkf_Rubro()
-                        {
-                            Codigox = objmensajeerror.Codigox,
-                            Mensajex = objmensajeerror.Mensajex,
-                            Tipox = objmensajeerror.Tipox,
-                            Titulox = objmensajeerror.Titulox
-                        };
+        //                Wrkf_Rubro objrubro = new Wrkf_Rubro()
+        //                {
+        //                    Codigox = objmensajeerror.Codigox,
+        //                    Mensajex = objmensajeerror.Mensajex,
+        //                    Tipox = objmensajeerror.Tipox,
+        //                    Titulox = objmensajeerror.Titulox
+        //                };
 
-                        lstrubro.Add(objrubro);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Wrkf_Rubro objrubro = new Wrkf_Rubro()
-                {
-                    Codigox = ex.HResult.ToString(),
-                    Mensajex = ex.Message.ToString() + " " + ex.StackTrace.ToString(),
-                    Tipox = "error",
-                    Titulox = "Excepción Al Obtener los pagos por Rubros"
-                };
+        //                lstrubro.Add(objrubro);
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Wrkf_Rubro objrubro = new Wrkf_Rubro()
+        //        {
+        //            Codigox = ex.HResult.ToString(),
+        //            Mensajex = ex.Message.ToString() + " " + ex.StackTrace.ToString(),
+        //            Tipox = "error",
+        //            Titulox = "Excepción Al Obtener los pagos por Rubros"
+        //        };
 
-                lstrubro.Add(objrubro);
-            }
+        //        lstrubro.Add(objrubro);
+        //    }
 
-            return lstrubro;
-        }
+        //    return lstrubro;
+        //}
 
         /// <summary>
         /// Muestra un listado de los pagos por rubros pendientes por revisar por subcontraloria

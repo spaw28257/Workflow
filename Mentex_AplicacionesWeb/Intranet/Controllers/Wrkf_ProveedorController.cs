@@ -18,10 +18,46 @@ namespace Intranet.Controllers
         [HttpPost]
         public JsonResult ListadoProveedores_todos()
         {
-            List<Wrkf_Proveedores> lstProveedores;
-            Wrkf_DbProveedor objProveedor = new Wrkf_DbProveedor();
-            lstProveedores = objProveedor.GetListadoProveedor();
-            return Json(new { data = lstProveedores });
+            List<Wrkf_Proveedores> lstProveedor = new List<Wrkf_Proveedores>();
+            Wrkf_Proveedores objProveedorModel = new Wrkf_Proveedores();
+            Wrkf_DbProveedor objProveedorDat = new Wrkf_DbProveedor();
+            MensajeError mensajeerror;
+            Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
+
+            //Verificar que la sesión de usuario este activa
+            if (Session["sUsuario_Id"] == null)
+            {
+                mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99998", "SessionLogout");
+
+                objProveedorModel.Codigox = mensajeerror.Codigox;
+                objProveedorModel.Mensajex = mensajeerror.Mensajex;
+                objProveedorModel.Tipox = mensajeerror.Tipox;
+                objProveedorModel.Titulox = mensajeerror.Titulox;
+
+                lstProveedor.Add(objProveedorModel);
+            }
+            else
+            {
+                try
+                {
+                    lstProveedor = objProveedorDat.GetListadoProveedor();
+                }
+                catch(Exception ex)
+                {
+                    mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
+
+                    objProveedorModel.Codigox = mensajeerror.Codigox;
+                    objProveedorModel.Mensajex = mensajeerror.Mensajex;
+                    objProveedorModel.Tipox = mensajeerror.Tipox;
+                    objProveedorModel.Titulox = mensajeerror.Titulox;
+
+                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_ProveedorController/ListadoProveedores_todos");
+
+                    lstProveedor.Add(objProveedorModel);
+                }
+            }
+
+            return Json(new { ListadoProveedores = lstProveedor });
         }
 
         /// <summary>
@@ -30,12 +66,48 @@ namespace Intranet.Controllers
         /// <param name="vendorid"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult GetListadoProveedorPorId(string vendorid)
+        public JsonResult GetListadoProveedorPorId(string pVendorid)
         {
-            List<Wrkf_Proveedores> lstProveedores;
-            Wrkf_DbProveedor objProveedor = new Wrkf_DbProveedor();
-            lstProveedores = objProveedor.GetListadoProveedorPorId(vendorid);
-            return Json(lstProveedores, JsonRequestBehavior.AllowGet);
+            List<Wrkf_Proveedores> lstProveedor = new List<Wrkf_Proveedores>();
+            Wrkf_Proveedores objProveedorModel = new Wrkf_Proveedores();
+            Wrkf_DbProveedor objProveedorDat = new Wrkf_DbProveedor();
+            MensajeError mensajeerror;
+            Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
+
+            //Verificar que la sesión de usuario este activa
+            if (Session["sUsuario_Id"] == null)
+            {
+                mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99998", "SessionLogout");
+
+                objProveedorModel.Codigox = mensajeerror.Codigox;
+                objProveedorModel.Mensajex = mensajeerror.Mensajex;
+                objProveedorModel.Tipox = mensajeerror.Tipox;
+                objProveedorModel.Titulox = mensajeerror.Titulox;
+
+                lstProveedor.Add(objProveedorModel);
+            }
+            else
+            {
+                try
+                {
+                    lstProveedor = objProveedorDat.GetListadoProveedorPorId(pVendorid);
+                }
+                catch (Exception ex)
+                {
+                    mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
+
+                    objProveedorModel.Codigox = mensajeerror.Codigox;
+                    objProveedorModel.Mensajex = mensajeerror.Mensajex;
+                    objProveedorModel.Tipox = mensajeerror.Tipox;
+                    objProveedorModel.Titulox = mensajeerror.Titulox;
+
+                    wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_ProveedorController/GetListadoProveedorPorId");
+
+                    lstProveedor.Add(objProveedorModel);
+                }
+            }
+
+            return Json(new { ListadoProveedores = lstProveedor });
         }
     }
 }

@@ -23,14 +23,14 @@ namespace Intranet.Controllers
         {
             //Obtener una lista con las opciones de menu
             List<Wrkf_OpcionesMenuItem> lstopcionesmenuitem;
-            List<Wrkf_Departamento> lstgruporubro = new List<Wrkf_Departamento>();
-            List<Wrkf_Departamento> lstgruporubronotacreditoscontralor;
-            List<Wrkf_Departamento> lstgruporubrourgente;
+            List<Wrkf_GrupoRubro> lstgruporubro = new List<Wrkf_GrupoRubro>();
+            List<Wrkf_GrupoRubro> lstgruporubronotacreditoscontralor;
+            List<Wrkf_GrupoRubro> lstgruporubrourgente;
             Wrkf_DbOpcionesMenu objdbopcionesmenu = new Wrkf_DbOpcionesMenu();
             Wrkf_DbMensajeError wrkf_dbmensajeerror = new Wrkf_DbMensajeError();
             MensajeError objmensajeerror;
             Wrkf_DbSolicitudContralor objsolicitudcontralor = new Wrkf_DbSolicitudContralor();
-            Wrkf_Departamento objdepartamento = new Wrkf_Departamento();
+            Wrkf_GrupoRubro objdepartamento = new Wrkf_GrupoRubro();
 
             if (Session["sUsuario_Id"] == null)
             {
@@ -56,8 +56,8 @@ namespace Intranet.Controllers
                         ViewBag.TituloMnu = objmensajeerror.Titulox;
                     }
 
-                    //Obtener los grupo de rubros con los pagos asociados
-                    lstgruporubro = objsolicitudcontralor.lstGrupoRubroContralor(false);
+                    ////Obtener los grupo de rubros con los pagos asociados
+                    //lstgruporubro = objsolicitudcontralor.lstGrupoRubroContralor(false);
 
                     if (lstgruporubro.Count > 0)
                     {
@@ -77,47 +77,47 @@ namespace Intranet.Controllers
                         ViewBag.listagruporubrospagos = lstgruporubro;
                     }
 
-                    //obtener los grupo de rubros con las notas de creditos pendientes
-                    lstgruporubronotacreditoscontralor = objsolicitudcontralor.lstGrupoRubroContralor(true);
+                    ////obtener los grupo de rubros con las notas de creditos pendientes
+                    //lstgruporubronotacreditoscontralor = objsolicitudcontralor.lstGrupoRubroContralor(true);
 
-                    if (lstgruporubronotacreditoscontralor.Count > 0)
-                    {
-                        ViewBag.lstgruporubronotacreditoscontralor = lstgruporubronotacreditoscontralor;
-                    }
-                    else
-                    {
-                        objmensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("SOP006", "SOLIORPAGO");
+                    //if (lstgruporubronotacreditoscontralor.Count > 0)
+                    //{
+                    //    ViewBag.lstgruporubronotacreditoscontralor = lstgruporubronotacreditoscontralor;
+                    //}
+                    //else
+                    //{
+                    //    objmensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("SOP006", "SOLIORPAGO");
 
-                        objdepartamento.Codigox = objmensajeerror.Codigox;
-                        objdepartamento.Mensajex = objmensajeerror.Mensajex;
-                        objdepartamento.Tipox = "card card-info";
-                        objdepartamento.Titulox = objmensajeerror.Titulox;
+                    //    objdepartamento.Codigox = objmensajeerror.Codigox;
+                    //    objdepartamento.Mensajex = objmensajeerror.Mensajex;
+                    //    objdepartamento.Tipox = "card card-info";
+                    //    objdepartamento.Titulox = objmensajeerror.Titulox;
 
-                        lstgruporubronotacreditoscontralor.Add(objdepartamento);
+                    //    lstgruporubronotacreditoscontralor.Add(objdepartamento);
 
-                        ViewBag.lstgruporubronotacreditoscontralor = lstgruporubronotacreditoscontralor;
-                    }
+                    //    ViewBag.lstgruporubronotacreditoscontralor = lstgruporubronotacreditoscontralor;
+                    //}
 
-                    //obtener los grupos de rubros con pagos urgentes
-                    lstgruporubrourgente = objsolicitudcontralor.lstGrupoRubroUrgentesContralor();
+                    ////obtener los grupos de rubros con pagos urgentes
+                    //lstgruporubrourgente = objsolicitudcontralor.lstGrupoRubroUrgentesContralor();
 
-                    if (lstgruporubrourgente.Count > 0)
-                    {
-                        ViewBag.lstgruporubrourgentes = lstgruporubrourgente;
-                    }
-                    else
-                    {
-                        objmensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("SOP006", "SOLIORPAGO");
+                    //if (lstgruporubrourgente.Count > 0)
+                    //{
+                    //    ViewBag.lstgruporubrourgentes = lstgruporubrourgente;
+                    //}
+                    //else
+                    //{
+                    //    objmensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("SOP006", "SOLIORPAGO");
 
-                        objdepartamento.Codigox = objmensajeerror.Codigox;
-                        objdepartamento.Mensajex = objmensajeerror.Mensajex;
-                        objdepartamento.Tipox = "card card-danger";
-                        objdepartamento.Titulox = objmensajeerror.Titulox;
+                    //    objdepartamento.Codigox = objmensajeerror.Codigox;
+                    //    objdepartamento.Mensajex = objmensajeerror.Mensajex;
+                    //    objdepartamento.Tipox = "card card-danger";
+                    //    objdepartamento.Titulox = objmensajeerror.Titulox;
 
-                        lstgruporubrourgente.Add(objdepartamento);
+                    //    lstgruporubrourgente.Add(objdepartamento);
 
-                        ViewBag.lstgruporubrourgentes = lstgruporubrourgente;
-                    }
+                    //    ViewBag.lstgruporubrourgentes = lstgruporubrourgente;
+                    //}
                 }
                 catch (Exception ex)
                 {
@@ -142,125 +142,125 @@ namespace Intranet.Controllers
         /// Muestra una vista con el listado de los rubros con pagos pendientes por aprobar por contraloria
         /// </summary>
         /// <returns></returns>
-        public ActionResult ListaRubroContraloria(string grid)
-        {
-            //Obtener una lista con las opciones de menu
-            List<Wrkf_OpcionesMenuItem> lstopcionesmenuitem;
-            List<Wrkf_Rubro> lstrubrocontralor;
-            List<Wrkf_Rubro> lstrubronotacreditoscontralor = new List<Wrkf_Rubro>();
-            List<Wrkf_Rubro> lstrubrocontralorurgente;
-            Wrkf_DbOpcionesMenu objdbopcionesmenu = new Wrkf_DbOpcionesMenu();
-            Wrkf_DbMensajeError objwrkfdbmensajeerror = new Wrkf_DbMensajeError();
-            MensajeError objmensajeerror;
-            Wrkf_DbSolicitudContralor objsolicitudcontralor = new Wrkf_DbSolicitudContralor();
-            Wrkf_Rubro objrubro = new Wrkf_Rubro();
+        //public ActionResult ListaRubroContraloria(string grid)
+        //{
+        //    //Obtener una lista con las opciones de menu
+        //    List<Wrkf_OpcionesMenuItem> lstopcionesmenuitem;
+        //    List<Wrkf_Rubro> lstrubrocontralor;
+        //    List<Wrkf_Rubro> lstrubronotacreditoscontralor = new List<Wrkf_Rubro>();
+        //    List<Wrkf_Rubro> lstrubrocontralorurgente;
+        //    Wrkf_DbOpcionesMenu objdbopcionesmenu = new Wrkf_DbOpcionesMenu();
+        //    Wrkf_DbMensajeError objwrkfdbmensajeerror = new Wrkf_DbMensajeError();
+        //    MensajeError objmensajeerror;
+        //    Wrkf_DbSolicitudContralor objsolicitudcontralor = new Wrkf_DbSolicitudContralor();
+        //    Wrkf_Rubro objrubro = new Wrkf_Rubro();
 
-            if (Session["sUsuario_Id"] == null)
-            {
-                return RedirectToAction("CerrarSesion", "Wrkf_Login");
-            }
-            else
-            {
-                try
-                {
-                    int gruporubro_id = Convert.ToInt32(EncriptadorMD5.Decrypt(grid));
-                    lstopcionesmenuitem = objdbopcionesmenu.Fn_ListarOpcionesMenuPorRol(Session["sUsuario_Id"].ToString());
-                    ViewBag.grid = grid; //grupo del rubro encriptado
+        //    if (Session["sUsuario_Id"] == null)
+        //    {
+        //        return RedirectToAction("CerrarSesion", "Wrkf_Login");
+        //    }
+        //    else
+        //    {
+        //        try
+        //        {
+        //            int gruporubro_id = Convert.ToInt32(EncriptadorMD5.Decrypt(grid));
+        //            lstopcionesmenuitem = objdbopcionesmenu.Fn_ListarOpcionesMenuPorRol(Session["sUsuario_Id"].ToString());
+        //            ViewBag.grid = grid; //grupo del rubro encriptado
 
-                    //verificar si la lista tiene las opciones del menu del controlar para mostrar en la vista
-                    if (lstopcionesmenuitem.Count > 0)
-                    {
-                        ViewBag.listaropcionesmenu = lstopcionesmenuitem;
-                    }
-                    else
-                    {
-                        objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("MNU001", "MENUOPCION");
-                        ViewBag.CodigoMnu = objmensajeerror.Codigox;
-                        ViewBag.MensajeMnu = objmensajeerror.Mensajex;
-                        ViewBag.TipoMnu = objmensajeerror.Tipox;
-                        ViewBag.TituloMnu = objmensajeerror.Titulox;
-                    }
+        //            //verificar si la lista tiene las opciones del menu del controlar para mostrar en la vista
+        //            if (lstopcionesmenuitem.Count > 0)
+        //            {
+        //                ViewBag.listaropcionesmenu = lstopcionesmenuitem;
+        //            }
+        //            else
+        //            {
+        //                objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("MNU001", "MENUOPCION");
+        //                ViewBag.CodigoMnu = objmensajeerror.Codigox;
+        //                ViewBag.MensajeMnu = objmensajeerror.Mensajex;
+        //                ViewBag.TipoMnu = objmensajeerror.Tipox;
+        //                ViewBag.TituloMnu = objmensajeerror.Titulox;
+        //            }
 
-                    //Obtener los grupo de rubros con los pagos asociados
-                    lstrubrocontralor = objsolicitudcontralor.LstRubroContralor(gruporubro_id, false);
+        //            //Obtener los grupo de rubros con los pagos asociados
+        //            lstrubrocontralor = objsolicitudcontralor.LstRubroContralor(gruporubro_id, false);
 
-                    if (lstrubrocontralor.Count > 0)
-                    {
-                        ViewBag.listarubrospagos = lstrubrocontralor;
-                    }
-                    else
-                    {
-                        objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("SOP007", "SOLIORPAGO");
+        //            if (lstrubrocontralor.Count > 0)
+        //            {
+        //                ViewBag.listarubrospagos = lstrubrocontralor;
+        //            }
+        //            else
+        //            {
+        //                objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("SOP007", "SOLIORPAGO");
 
-                        objrubro.Codigox = objmensajeerror.Codigox;
-                        objrubro.Mensajex = objmensajeerror.Mensajex;
-                        objrubro.Tipox = objmensajeerror.Tipox;
-                        objrubro.Titulox = objmensajeerror.Titulox;
+        //                objrubro.Codigox = objmensajeerror.Codigox;
+        //                objrubro.Mensajex = objmensajeerror.Mensajex;
+        //                objrubro.Tipox = objmensajeerror.Tipox;
+        //                objrubro.Titulox = objmensajeerror.Titulox;
 
-                        lstrubrocontralor.Add(objrubro);
+        //                lstrubrocontralor.Add(objrubro);
 
-                        ViewBag.listarubrospagos = lstrubrocontralor;
-                    }
+        //                ViewBag.listarubrospagos = lstrubrocontralor;
+        //            }
 
-                    //obtener los grupo de rubros con las notas de creditos pendientes
-                    lstrubronotacreditoscontralor = objsolicitudcontralor.LstRubroContralor(gruporubro_id, true);
+        //            //obtener los grupo de rubros con las notas de creditos pendientes
+        //            lstrubronotacreditoscontralor = objsolicitudcontralor.LstRubroContralor(gruporubro_id, true);
 
-                    if (lstrubronotacreditoscontralor.Count > 0)
-                    {
-                        ViewBag.lstrubronotacreditoscontralor = lstrubronotacreditoscontralor;
-                    }
-                    else
-                    {
-                        objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("SOP006", "SOLIORPAGO");
+        //            if (lstrubronotacreditoscontralor.Count > 0)
+        //            {
+        //                ViewBag.lstrubronotacreditoscontralor = lstrubronotacreditoscontralor;
+        //            }
+        //            else
+        //            {
+        //                objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("SOP006", "SOLIORPAGO");
 
-                        objrubro.Codigox = objmensajeerror.Codigox;
-                        objrubro.Mensajex = objmensajeerror.Mensajex;
-                        objrubro.Tipox = "card card-info";
-                        objrubro.Titulox = objmensajeerror.Titulox;
+        //                objrubro.Codigox = objmensajeerror.Codigox;
+        //                objrubro.Mensajex = objmensajeerror.Mensajex;
+        //                objrubro.Tipox = "card card-info";
+        //                objrubro.Titulox = objmensajeerror.Titulox;
 
-                        lstrubronotacreditoscontralor.Add(objrubro);
+        //                lstrubronotacreditoscontralor.Add(objrubro);
 
-                        ViewBag.lstrubronotacreditoscontralor = lstrubronotacreditoscontralor;
-                    }
+        //                ViewBag.lstrubronotacreditoscontralor = lstrubronotacreditoscontralor;
+        //            }
 
-                    //obtener los rubros marcados como pagos urgentes
-                    lstrubrocontralorurgente = objsolicitudcontralor.LstRubroContralorUrgentes(gruporubro_id);
+        //            //obtener los rubros marcados como pagos urgentes
+        //            lstrubrocontralorurgente = objsolicitudcontralor.LstRubroContralorUrgentes(gruporubro_id);
 
-                    if (lstrubrocontralorurgente.Count > 0)
-                    {
-                        ViewBag.lstrubrocontralorurgente = lstrubrocontralorurgente;
-                    }
-                    else
-                    {
-                        objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("SOP006", "SOLIORPAGO");
+        //            if (lstrubrocontralorurgente.Count > 0)
+        //            {
+        //                ViewBag.lstrubrocontralorurgente = lstrubrocontralorurgente;
+        //            }
+        //            else
+        //            {
+        //                objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("SOP006", "SOLIORPAGO");
 
-                        objrubro.Codigox = objmensajeerror.Codigox;
-                        objrubro.Mensajex = objmensajeerror.Mensajex;
-                        objrubro.Tipox = "card card-info";
-                        objrubro.Titulox = objmensajeerror.Titulox;
+        //                objrubro.Codigox = objmensajeerror.Codigox;
+        //                objrubro.Mensajex = objmensajeerror.Mensajex;
+        //                objrubro.Tipox = "card card-info";
+        //                objrubro.Titulox = objmensajeerror.Titulox;
 
-                        lstrubrocontralorurgente.Add(objrubro);
+        //                lstrubrocontralorurgente.Add(objrubro);
 
-                        ViewBag.lstrubrocontralorurgente = lstrubrocontralorurgente;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("99999", "Exception");
-                    objrubro.Codigox = objmensajeerror.Codigox;
-                    objrubro.Mensajex = objmensajeerror.Mensajex;
-                    objrubro.Tipox = objmensajeerror.Tipox;
-                    objrubro.Titulox = objmensajeerror.Titulox;
-                    objwrkfdbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoContralorController/ListaRubroContraloria");
+        //                ViewBag.lstrubrocontralorurgente = lstrubrocontralorurgente;
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            objmensajeerror = objwrkfdbmensajeerror.GetObtenerMensajeError("99999", "Exception");
+        //            objrubro.Codigox = objmensajeerror.Codigox;
+        //            objrubro.Mensajex = objmensajeerror.Mensajex;
+        //            objrubro.Tipox = objmensajeerror.Tipox;
+        //            objrubro.Titulox = objmensajeerror.Titulox;
+        //            objwrkfdbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoContralorController/ListaRubroContraloria");
 
-                    lstrubronotacreditoscontralor.Add(objrubro);
+        //            lstrubronotacreditoscontralor.Add(objrubro);
 
-                    ViewBag.lstrubronotacreditoscontralor = lstrubronotacreditoscontralor;
-                }
-            }
+        //            ViewBag.lstrubronotacreditoscontralor = lstrubronotacreditoscontralor;
+        //        }
+        //    }
 
-            return View();
-        }
+        //    return View();
+        //}
 
         /// <summary>
         /// Muestra un listado delos pagospendientes de aprobación por contaloria

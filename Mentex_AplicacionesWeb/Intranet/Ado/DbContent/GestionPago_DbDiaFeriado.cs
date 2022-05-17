@@ -19,7 +19,7 @@ namespace Intranet.Ado.DbContent
         /// </summary>
         /// <param name="fecha"></param>
         /// <returns></returns>
-        public bool GetDiaFeriado(string dia)
+        public bool GetDiaFeriado(DateTime dia)
         {
             //Ejecutar el procedimiento almacenado
             SQLClient Sqlprovider = new SQLClient((int)BasedeDatos.CORP);
