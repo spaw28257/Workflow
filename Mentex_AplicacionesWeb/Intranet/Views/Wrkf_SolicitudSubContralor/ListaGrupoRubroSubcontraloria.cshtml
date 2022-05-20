@@ -1,6 +1,4 @@
-﻿@using System.Web
-
-<html lang="en">
+﻿<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -105,17 +103,17 @@
                                     <!-- small box -->
                                     <div class="small-box" style="background-color:#82293E;">
                                         <div class="inner">
-                                            <h5 style="color:#FFFFFF;">Grupo Rubro: @gruporubrosconpagos.Departamentox</h5>
+                                            <h5 style="color:#FFFFFF;">Grupo Rubro: @gruporubrosconpagos.Descripcion</h5>
 
-                                            <p style="color:#FFFFFF;">Total Pagos Por Revisar: @gruporubrosconpagos.TotalRubrosx</p>
+                                            <p style="color:#FFFFFF;">Total Pagos Por Revisar: @gruporubrosconpagos.TotalGrupoRubros</p>
                                         </div>
                                         <div class="icon">
                                             <i class="ion ion-bag"></i>
                                         </div>
 
-                                        @if (gruporubrosconpagos.TotalRubrosx > 0)
+                                        @if (gruporubrosconpagos.TotalGrupoRubros > 0)
                                         {
-                                            <a href="@Url.Action("ListarRubrosPagosSubContraloria", "Wrkf_SolicitudSubContralor", new {gruporubro_id= gruporubrosconpagos.Departamento_Idx})"
+                                            <a href="@Url.Action("ListarRubrosPagosSubContraloria", "Wrkf_SolicitudSubContralor", new {pgruporubro_id= gruporubrosconpagos.GrupoRubroIdEncript})"
                                                class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
                                         }
                                         else
@@ -145,57 +143,6 @@
                         }
                     </div>
 
-                    <hr style="height:1px;border:none;color:#333;background-color:#333;" />
-
-                    <div class="row">
-                        @if (ViewBag.listagruporubronotacreditosubcontr.Count > 0)
-                        {
-                            foreach (var gruporubronotacreditosubcont in ViewBag.listagruporubronotacreditosubcontr)
-                            {
-                                <div class="col-lg-3 col-6">
-                                    <!-- small box -->
-                                    <div class="small-box" style="background-color: #5DADE2; ">
-                                        <div class="inner">
-                                            <h5 style="color:#FFFFFF;">Notas de Créditos</h5>
-                                            <h5 style="color:#FFFFFF;">Grupo Rubro: @gruporubronotacreditosubcont.Departamentox</h5>
-
-                                            <p style="color:#FFFFFF;">Total Pagos Por Revisar: @gruporubronotacreditosubcont.TotalRubrosx</p>
-                                        </div>
-                                        <div class="icon">
-                                            <i class="ion ion-bag"></i>
-                                        </div>
-                                        @if (gruporubronotacreditosubcont.TotalRubrosx > 0)
-                                        {
-                                            <a href="@Url.Action("ListarRubrosPagosSubContraloria", "Wrkf_SolicitudSubContralor", new {gruporubro_id= gruporubronotacreditosubcont.Departamento_Idx})"
-                                               class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
-                                        }
-                                        else
-                                        {
-                                            <a href="#" onclick="Mensaje()" class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
-                                        }
-                                    </div>
-                                </div>
-                            }
-                        }
-                        else
-                        {
-                            <div class="col-lg-3 col-6">
-                                <!-- small box -->
-                                <div class="small-box" style="background-color: #5DADE2; ">
-                                    <div class="inner">
-                                        <h5 style="color:#FFFFFF;">Notas de Créditos</h5>
-                                        <h5 style="color:#FFFFFF;">Grupo Rubro: </h5>
-
-                                        <p style="color:#FFFFFF;">Total Pagos Por Revisar: 0</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="ion ion-bag"></i>
-                                    </div>
-                                    <a href="#" onclick="Mensaje()" class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                        }
-                    </div>
                     <!-- /.row -->
                 </div><!-- /.container-fluid -->
             </section>

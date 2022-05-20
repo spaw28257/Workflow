@@ -37,18 +37,19 @@ namespace Intranet.Controllers
             string vRuta2 = vPlantilla + "\\" + vFechaPagoItem + "\\" + vCodigoItemPago;
 
             var pathCarpeta = System.IO.Path.Combine(ruta, vRuta2);
+            ViewBag.Ruta = pathCarpeta;
 
             if (System.IO.Directory.Exists(pathCarpeta))
             {
                 var listaArchivos = System.IO.Directory.GetFiles(pathCarpeta);
 
                 ViewBag.listaArchivos = listaArchivos;
-                ViewBag.Ruta = pathCarpeta;
+                ViewBag.TotalArchivos = listaArchivos.Count();
             }
             else
             {
                 ViewBag.listaArchivos = new string[0];
-                ViewBag.Ruta = pathCarpeta;
+                ViewBag.TotalArchivos = 0;
             }
 
             return View();

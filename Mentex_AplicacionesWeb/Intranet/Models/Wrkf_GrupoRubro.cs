@@ -15,18 +15,22 @@ namespace Intranet.Models
         private int vGrupoRubro_Id;
         private string vDescripcion;
         private int vTotalGrupoRubros;
+        private int vPagoUrgente;
 
         public Wrkf_GrupoRubro()
         {
            vGrupoRubroIdEncript = "";
            vGrupoRubro_Id = 0;
            vDescripcion = "";
-            vTotalGrupoRubros = 0;
+           vTotalGrupoRubros = 0;
+           vPagoUrgente = 0;
         }
 
+        /*Propiedades*/
         public string GrupoRubroIdEncript { get => vGrupoRubroIdEncript; set => vGrupoRubroIdEncript = value; }
         public int GrupoRubro_Id { get => vGrupoRubro_Id; set => vGrupoRubro_Id = value; }
         public string Descripcion { get => vDescripcion; set => vDescripcion = value; }
         public int TotalGrupoRubros { get => vTotalGrupoRubros; set => vTotalGrupoRubros = value; }
+        public int PagoUrgente { get => vPagoUrgente; set => vPagoUrgente = value; }
     }
 }

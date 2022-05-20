@@ -119,16 +119,16 @@
                                     <!-- small box -->
                                     <div class="small-box" style="background-color:#82293E;">
                                         <div class="inner">
-                                            <h5 style="color:#FFFFFF;">Rubro: @rubrosconpagos.Descripcionx</h5>
+                                            <h5 style="color:#FFFFFF;">Rubro: @rubrosconpagos.Descripcion</h5>
 
-                                            <p style="color:#FFFFFF;">Total Pagos Por Revisar: @rubrosconpagos.Cantidad_Pagosx</p>
+                                            <p style="color:#FFFFFF;">Total Pagos Por Revisar: @rubrosconpagos.TotalRubros</p>
                                         </div>
                                         <div class="icon">
                                             <i class="ion ion-bag"></i>
                                         </div>
-                                        @if (rubrosconpagos.Cantidad_Pagosx > 0)
+                                        @if (rubrosconpagos.TotalRubros > 0)
                                         {
-                                            <a href="@Url.Action("ListaPagosPorRubroIdSubContraloria", "Wrkf_SolicitudSubContralor", new {rubro_id= @rubrosconpagos.Rubro_Idx, fechadesde = "", fechahasta = "", tipodocumento = "FAC"})"
+                                            <a href="@Url.Action("ListaPagosPorRubroIdSubContraloria", "Wrkf_SolicitudSubContralor", new {pgruporubro_id= @ViewBag.gruporubroencript, prubro_id= @rubrosconpagos.Rubro_IdEncript})"
                                                class="small-box-footer">Ver Detalle de Pagos <i class="fas fa-arrow-circle-right"></i></a>
                                         }
                                         else
@@ -157,59 +157,6 @@
                             </div>
                         }
                     </div>
-
-                    <hr style="height:1px;border:none;color:#333;background-color:#333;" />
-
-                    <div class="row">
-                        @if (ViewBag.listarubronotacreditos.Count > 0)
-                        {
-                            foreach (var rubrosnotascreditossubcont in ViewBag.listarubronotacreditos)
-                            {
-                                <div class="col-lg-3 col-6">
-                                    <!-- small box -->
-                                    <div class="small-box" style="background-color: #5DADE2;">
-                                        <div class="inner">
-                                            <h5 style="color:#FFFFFF;">Notas Créditos</h5>
-                                            <h5 style="color:#FFFFFF;">Rubro: @rubrosnotascreditossubcont.Descripcionx</h5>
-
-                                            <p style="color:#FFFFFF;">Total Pagos Por Revisar: @rubrosnotascreditossubcont.Cantidad_Pagosx</p>
-                                        </div>
-                                        <div class="icon">
-                                            <i class="ion ion-bag"></i>
-                                        </div>
-                                        @if (rubrosnotascreditossubcont.Cantidad_Pagosx > 0)
-                                        {
-                                            <a href="@Url.Action("ListaPagosPorRubroIdSubContraloria", "Wrkf_SolicitudSubContralor", new {rubro_id= rubrosnotascreditossubcont.Rubro_Idx, fechadesde = "", fechahasta = "", tipodocumento = "NC"})"
-                                               class="small-box-footer">Ver Detalle de Pagos <i class="fas fa-arrow-circle-right"></i></a>
-                                        }
-                                        else
-                                        {
-                                            <a href="#" onclick="Mensaje()" class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
-                                        }
-                                    </div>
-                                </div>
-                            }
-                        }
-                        else
-                        {
-                            <div class="col-lg-3 col-6">
-                                <!-- small box -->
-                                <div class="small-box" style="background-color: #5DADE2;">
-                                    <div class="inner">
-                                        <h5 style="color:#FFFFFF;">Notas Créditos</h5>
-                                        <h5 style="color:#FFFFFF;">Rubro: </h5>
-
-                                        <p style="color:#FFFFFF;">Total Pagos Por Revisar: 0</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="ion ion-bag"></i>
-                                    </div>
-                                    <a href="#" onclick="Mensaje()" class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                        }
-                    </div>
-
 
                     <!-- /.row -->
                 </div><!-- /.container-fluid -->
@@ -247,5 +194,13 @@
 
     <!-- AdminLTE for demo purposes -->
     <script src="~/Adminlte/js/demo.js"></script>
+
+    <script src="~/Adminlte/plugins/sweetalert2/sweetalert.min.js"></script>
+
+    <script>
+        function Mensaje() {
+            swal("No existen Pagos para su aprobación", "Solicitud de Aprobación de Pagos", "info");
+        }
+    </script>
 </body>
 </html>

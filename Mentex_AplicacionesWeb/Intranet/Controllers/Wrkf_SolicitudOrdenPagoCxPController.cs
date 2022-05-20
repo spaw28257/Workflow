@@ -443,7 +443,7 @@ namespace Intranet.Controllers
                 {
                     mensajeerror = wrkf_dbmensajeerror.GetObtenerMensajeError("99999", "Exception");
                     objsolicitudordenpago.Codigox = mensajeerror.Codigox;
-                    objsolicitudordenpago.Mensajex = mensajeerror.Mensajex;
+                    objsolicitudordenpago.Mensajex = ex.Message.ToString();
                     objsolicitudordenpago.Tipox = mensajeerror.Tipox;
                     objsolicitudordenpago.Titulox = mensajeerror.Titulox;
                     wrkf_dbmensajeerror.RegistrarLogErrores(ex.HResult, ex.Message.ToString(), Convert.ToString(Session["sUsuario_Id"]), "Wrkf_SolicitudOrdenPagoCxPController/GetDetalleOrdenPagoPorRevisarCxP");

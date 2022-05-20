@@ -732,11 +732,7 @@
     <Content Include="Views\Wrkf_Login\Index.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Wrkf_SolicitudOrdenPago\SolicitudOrdenPago.cshtml" />
-    <Content Include="Views\Wrkf_SolicitudOrdenPagoCxP\SolicitudOrdenPagoCxP.cshtml" />
     <Content Include="Views\Wrkf_Login\CerrarSesion.cshtml" />
-    <Content Include="Views\Wrkf_SolicitudOrdenPagoCxP\ListarRubrosPagosCxP.cshtml" />
-    <Content Include="Views\Wrkf_SolicitudOrdenPagoCxP\ListaPagosPorRubroId.cshtml" />
-    <Content Include="Views\Wrkf_SolicitudOrdenPagoCxP\GrupoRubroPagosAsociados.cshtml" />
     <Content Include="Views\Wrkf_SolicitudSubContralor\ListarRubrosPagosSubContraloria.cshtml" />
     <Content Include="Views\Wrkf_SolicitudSubContralor\ListaPagosPorRubroIdSubContraloria.cshtml" />
     <Content Include="Views\Wrkf_SolicitudSubContralor\ListaGrupoRubroSubcontraloria.cshtml" />
@@ -745,15 +741,12 @@
     <Content Include="Views\Wrkf_SolicitudOrdenPagoContralor\ListaPagosRubrosIdContralor.cshtml" />
     <Content Include="Views\Wrkf_SolicitudOrdenPagoVP\ListaGrupoRubroVP.cshtml" />
     <Content Include="Views\Wrkf_SolicitudOrdenPagoVP\ListaRubroVP.cshtml" />
-    <Content Include="Views\Wrkf_SolicitudOrdenPagoVP\ListaPagosRubrosIdVP.cshtml" />
     <Content Include="Views\Wrkf_SolicitudOrdenPagoPlantilla\SolicitudOrdenPagoPlantilla.cshtml" />
     <Content Include="Views\Wrkf_SolicitudOrdenPagoPlantilla\SolicitudOrdenPagoPlantillaItems.cshtml" />
     <Content Include="Views\Wrkf_SolicitudOrdenPagoPlantilla\SolicitudOrdenPagoReporte.cshtml" />
     <Content Include="Views\Wrk_SolicitudOrdenPagoSoporte\DescargarSoporte.cshtml" />
     <Content Include="Views\Wrkf_Provision\CargarProvision.cshtml" />
     <Content Include="Views\Wrkf_Provision\ImprimirProvision.cshtml" />
-    <Content Include="Views\Wrkf_SolicitudOrdenPagoContralor\ListaPagosRubrosIdContralor_Urgentes.cshtml" />
-    <Content Include="Views\Wrkf_SolicitudOrdenPagoVP\ListaPagosRubrosIdVP_Urgentes.cshtml" />
     <Content Include="Views\Wrkf_SolicitudOrdenPago\ReporteSolicitudEnviadaCxP.cshtml" />
     <Content Include="Views\Wrkf_Reporte\GenerarReportePagosPendientes.cshtml" />
     <Content Include="Views\Wrkf_Reporte\TipoReportes.cshtml" />
@@ -762,6 +755,7 @@
     <Content Include="Views\Wrkf_Plantilla\Index.cshtml" />
     <Content Include="Views\Wrkf_SolicitudOrdenPagoCxP\Index.cshtml" />
     <Content Include="Views\Wrkf_SolicitudOrdenPagoCxP\ListadoAprobacionRechazoPagoCxP.cshtml" />
+    <Content Include="Views\Wrkf_SolicitudOrdenPagoVP\ListaPagosRubrosIdVP.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

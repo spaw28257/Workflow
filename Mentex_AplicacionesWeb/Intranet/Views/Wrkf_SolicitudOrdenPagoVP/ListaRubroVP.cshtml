@@ -1,4 +1,7 @@
-﻿@using EncryptDecrypt
+﻿@{
+    string vBackGroundColor = "";
+    string vPrioridadPago = "";
+}
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -72,6 +75,7 @@
                                 </p>
                             </li>
                         }
+
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
@@ -96,78 +100,37 @@
             <section class="content">
                 <div class="container-fluid">
                     <!-- Small boxes (Stat box) -->
-                    <div class="row">
-                        @if (ViewBag.lstrubrourgentes[0].Codigox == "")
-                        {
-                            foreach (var rubrosconpagosurgentes in ViewBag.lstrubrourgentes)
-                            {
-                                <div class="col-lg-3 col-6">
-                                    <!-- small box -->
-                                    <div class="small-box" style="background-color: #DC3545;">
-                                        <div class="inner">
-                                            <h5 style="color:#FFFFFF;">Rubro: @rubrosconpagosurgentes.Descripcionx (Pagos Urgentes)</h5>
-
-                                            <p style="color:#FFFFFF;">Total Pagos Por Revisar: @rubrosconpagosurgentes.Cantidad_Pagosx</p>
-                                        </div>
-                                        <div class="icon">
-                                            <i class="ion ion-bag"></i>
-                                        </div>
-
-                                        @if (rubrosconpagosurgentes.Cantidad_Pagosx > 0)
-                                        {
-                                            <a href="@Url.Action("ListaPagosRubrosIdVP_Urgentes", "Wrkf_SolicitudOrdenPagoVP", new { grid = rubrosconpagosurgentes.GruporubroEncript_Idx, rid = rubrosconpagosurgentes.RubroEncript_Idx, fch1 = "", fch2= "" })"
-                                               class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
-                                        }
-                                        else
-                                        {
-                                            <a href="#" onclick="Mensaje()" class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
-                                        }
-                                    </div>
-                                </div>
-                            }
-                        }
-                        else
-                        {
-                            <div class="col-lg-3 col-6">
-                                <!-- small box -->
-                                <div class="small-box" style="background-color: #DC3545;">
-                                    <div class="inner">
-                                        <h5 style="color:#FFFFFF;">Rubro: </h5>
-
-                                        <p style="color:#FFFFFF;">Total Pagos Por Revisar: 0</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="ion ion-bag"></i>
-                                    </div>
-                                    <a href="#" onclick="Mensaje()" class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                        }
-                    </div>
-
-                    <hr style="height:1px;border:none;color:#333;background-color:#333;" />
 
                     <div class="row">
-                        @if (ViewBag.listarubrospagos[0].Codigox == "")
+                        @if (ViewBag.listarubrospagos.Count > 0)
                         {
                             foreach (var rubrosconpagos in ViewBag.listarubrospagos)
                             {
+                                if (rubrosconpagos.PagoUrgente == 1)
+                                {
+                                    vBackGroundColor = "#FF0000;";
+                                    vPrioridadPago = "Pago Urgente";
+                                }
+                                else
+                                {
+                                    vBackGroundColor = "#82293E;";
+                                    vPrioridadPago = "";
+                                }
                                 <div class="col-lg-3 col-6">
                                     <!-- small box -->
-                                    <div class="small-box" style="background-color:#82293E;">
+                                    <div class="small-box" style="background-color:@vBackGroundColor">
                                         <div class="inner">
-                                            <h5 style="color:#FFFFFF;">Rubro: @rubrosconpagos.Descripcionx</h5>
+                                            <h5 style="color:#FFFFFF;">Rubro: @rubrosconpagos.Descripcion</h5>
 
-                                            <p style="color:#FFFFFF;">Total Pagos Por Revisar: @rubrosconpagos.Cantidad_Pagosx</p>
+                                            <p style="color:#FFFFFF;">Total Pagos Por Revisar: @rubrosconpagos.TotalRubros</p>
                                         </div>
                                         <div class="icon">
                                             <i class="ion ion-bag"></i>
                                         </div>
-
-                                        @if (rubrosconpagos.Cantidad_Pagosx > 0)
+                                        @if (rubrosconpagos.TotalRubros > 0)
                                         {
-                                            <a href="@Url.Action("ListaPagosRubrosIdVP", "Wrkf_SolicitudOrdenPagoVP", new { grid = rubrosconpagos.GruporubroEncript_Idx, rid = rubrosconpagos.RubroEncript_Idx, fch1 = "", fch2= "", tpdo = EncriptadorMD5.Encrypt("FAC") })"
-                                               class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
+                                            <a href="@Url.Action("ListaPagosRubrosIdVP", "Wrkf_SolicitudOrdenPagoVP", new { pgruporubro_id= @ViewBag.gruporubroencript, prubro_id= @rubrosconpagos.Rubro_IdEncript, pprioridadpago = @rubrosconpagos.PagoUrgente })"
+                                               class="small-box-footer">Ver Detalle de Pagos @vPrioridadPago <i class="fas fa-arrow-circle-right"></i></a>
                                         }
                                         else
                                         {
@@ -183,58 +146,7 @@
                                 <!-- small box -->
                                 <div class="small-box" style="background-color:#82293E;">
                                     <div class="inner">
-                                        <h5 style="color:#FFFFFF;">Rubro: </h5>
-
-                                        <p style="color:#FFFFFF;">Total Pagos Por Revisar: 0</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="ion ion-bag"></i>
-                                    </div>
-                                    <a href="#" onclick="Mensaje()" class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                        }
-                    </div>
-
-                    <hr style="height:1px;border:none;color:#333;background-color:#333;" />
-
-                    <div class="row">
-                        @if (ViewBag.lstrubronotacreditos[0].Codigox == "")
-                        {
-                            foreach (var rubronotacredito in ViewBag.lstrubronotacreditos)
-                            {
-                                <div class="col-lg-3 col-6">
-                                    <div class="small-box" style="background-color: #5DADE2; ">
-                                        <div class="inner">
-                                            <h5 style="color:#FFFFFF;">Notas de Créditos</h5>
-                                            <h5 style="color:#FFFFFF;">Grupo Rubro: @rubronotacredito.Descripcionx</h5>
-
-                                            <p style="color:#FFFFFF;">Total Pagos Por Revisar: @rubronotacredito.Cantidad_Pagosx</p>
-                                        </div>
-                                        <div class="icon">
-                                            <i class="ion ion-bag"></i>
-                                        </div>
-
-                                        @if (rubronotacredito.Cantidad_Pagosx > 0)
-                                        {
-                                            <a href="@Url.Action("ListaPagosRubrosIdVP", "Wrkf_SolicitudOrdenPagoVP",  new { grid = rubronotacredito.GruporubroEncript_Idx, rid = rubronotacredito.RubroEncript_Idx, fch1 = "", fch2= "", tpdo = EncriptadorMD5.Encrypt("NC") })"
-                                               class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
-                                        }
-                                        else
-                                        {
-                                            <a href="#" onclick="Mensaje()" class="small-box-footer">Ver Detalle de los Rubros <i class="fas fa-arrow-circle-right"></i></a>
-                                        }
-                                    </div>
-                                </div>
-                            }
-                        }
-                        else
-                        {
-                            <div class="col-lg-3 col-6">
-                                <div class="small-box" style="background-color: #5DADE2; ">
-                                    <div class="inner">
-                                        <h5 style="color:#FFFFFF;">Notas de Créditos</h5>
-                                        <h5 style="color:#FFFFFF;">Grupo Rubro:</h5>
+                                        <h5 style="color:#FFFFFF;">Rubro:</h5>
 
                                         <p style="color:#FFFFFF;">Total Pagos Por Revisar: 0</p>
                                     </div>

@@ -1,9 +1,4 @@
 ﻿@using System.Web
-@using Intranet.Models
-@{
-    List<Wrkf_ListaPagosPorRubroId> lstlistapagosporrubroid = ViewBag.listarpagos;
-    var totalelementos = lstlistapagosporrubroid.Count;
-}
 
 <html lang="en">
 <head>
@@ -27,7 +22,7 @@
     <script src="~/Adminlte/plugins/sweetalert2/sweetalert.min.js"></script>
 
 </head>
-<body class="hold-transition sidebar-mini layout-fixed">
+<body class="hold-transition sidebar-mini layout-fixed" onload="CargarPagosVP()">
     <div class="wrapper">
 
         <!-- Preloader -->
@@ -44,9 +39,6 @@
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
                     <a href="@Url.Action("Index", "Home")" class="nav-link"><i class="fas fa-home"></i>&nbsp;Inicio</a>
-                </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <a href="#" onclick="ImprimirPagosPendientesArea()" class="nav-link"><i class="fas fa-th-list"></i>&nbsp;Reporte</a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
                     <a href="@Url.Action("CerrarSesion", "Wrkf_Login")" class="nav-link"><i class="fas fa-lock"></i>&nbsp;Cerrar Sesión</a>
@@ -104,132 +96,11 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-header" style="background-color:#82293E;">
-                                    <h3 class="card-title" style="color:#FFFFFF;">Solicitudes de Pagos Pendientes por Revisar VP Finanza Rubro: @lstlistapagosporrubroid[0].DescripcionRubrox</h3>
+                                    <h3 class="card-title" style="color:#FFFFFF;">Solicitudes de Pagos Pendientes por Revisar Por VP Finanzas:</h3>
                                 </div>
                                 <!-- /.card-header -->
-                                <div class="card-body">
-                                    @if (lstlistapagosporrubroid[0].Solicitudordenpagodetalle_Idx == -1)
-                                    {
-                                        <script>
-                                            swal("No existen solicitudes de pagos pendientes por aprobación", "Solicitud Orden de Pago", "info");
-                                        </script>
-                                    }
-                                    <table id="example2" class="table table-bordered table-hover" style="width:100%;">
-                                        <thead>
-                                            <tr class="cabecera-tabla">
-                                                <th style="text-align:center; font-weight:bold;">Sol. N°</th>
-                                                <th style="text-align:center; font-weight:bold;">Aprobar</th>
-                                                <th style="text-align:center; font-weight:bold;">Proveedor</th>
-                                                <th style="text-align:center; font-weight:bold;">Total a Pagar</th>
-                                                <th style="text-align:center; font-weight:bold;">Tipo Documento</th>
-                                                <th style="text-align:center; font-weight:bold;">Descripción</th>
-                                                <th style="text-align:center; font-weight:bold;">N° Documento</th>
-                                                <th style="text-align:center; font-weight:bold;">Forma de Pago</th>
-                                                <th style="text-align:center; font-weight:bold;">Chequera</th>
-                                                <th style="text-align:center; font-weight:bold;">Fecha Documento</th>
-                                                <th style="text-align:center; font-weight:bold;">Fecha Pago</th>
-                                                <th style="text-align:center; font-weight:bold;">Observaciones</th>
-                                                <th style="text-align:center; font-weight:bold;">Doc. Recibido</th>
-                                                <th style="text-align:center; font-weight:bold;">Rechazar</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @if (lstlistapagosporrubroid[0].Solicitudordenpagodetalle_Idx > 0)
-                                            {
-                                                foreach (var listadopagos in lstlistapagosporrubroid)
-                                                {
-                                                    <tr id="@listadopagos.Solicitudordenpagodetalle_Idx">
-                                                        <td style="text-align:center;">
-                                                            @listadopagos.Solicitudordenpago_Idx
-                                                        </td>
-                                                        <td class="alinear-centro">
-                                                            <input type="checkbox" name="chkaprobar"
-                                                                   id="chkaprobar_@listadopagos.Solicitudordenpagodetalle_Idx"
-                                                                   value="@listadopagos.Solicitudordenpagodetalle_Idx" class="form-check-input" />
-                                                        </td>
-                                                        <td class="celdas-texto-izquierda-tablas">
-                                                            @listadopagos.Proveedorx <br /> <b>Total: @listadopagos.Totalx &nbsp; @listadopagos.Curncyidx</b>
-                                                        </td>
-                                                        <td class="celdas-numeros-derecha-tablas">@listadopagos.Totalx &nbsp; @listadopagos.Curncyidx</td>
-                                                        <td class="celdas-texto-izquierda-tablas">
-                                                            @listadopagos.Documentox
-                                                        </td>
-                                                        <td class="celdas-texto-izquierda-tablas">@listadopagos.Descripcionx</td>
-                                                        <td class="alinear-centro">
-                                                            @listadopagos.Numerodocumentox
-                                                            <img src="~/Adminlte/img/buscar_16x16.png" style="cursor:pointer;"
-                                                                 data-toggle="modal" data-target="#modal-xl2"
-                                                                 onclick="ObtieneDetalleCompletoSolicitud('@listadopagos.Solicitudordenpagodetalle_Idx', '@listadopagos.Solicitudordenpago_Idx')" />
-                                                        </td>
-                                                        <td class="celdas-texto-izquierda-tablas">
-                                                            @listadopagos.formadepagox
-                                                        </td>
-                                                        <td class="alinear-centro" id="tdchequera_@listadopagos.Solicitudordenpagodetalle_Idx">
-                                                            @listadopagos.Chequerax
-                                                        </td>
-                                                        <td class="celdas-texto-izquierda-tablas">@listadopagos.FechaDocumentox</td>
-                                                        <td class="celdas-texto-izquierda-tablas">@listadopagos.FechaPagox</td>
+                                <div class="card-body" id="MostarPagos" style="width:100%; height:850px; overflow-y: auto;">
 
-                                                        <td class="alinear-centro" data-toggle="modal" data-target="#modal-xl1"
-                                                            onclick="ObtieneObservacionesSolicitud('@listadopagos.Solicitudordenpagodetalle_Idx', '@listadopagos.Solicitudordenpago_Idx')">
-                                                            @listadopagos.Observacionesx
-                                                        </td>
-                                                        <td class="alinear-centro">
-                                                            @{
-                                                                if (listadopagos.DocumentoRecibidox == true)
-                                                                {
-                                                                    <input type="checkbox" name="chkdocrecibido" id="chkdocrecibido" checked disabled class="form-check-input" />
-                                                                }
-                                                            }
-                                                            <a href="#" onclick="Descargarsoporte('@Url.Action("DescargarSoporte", "Wrk_SolicitudOrdenPagoSoporte", new { Solicitudordenpago_Id = @listadopagos.Solicitudordenpago_Idx, Solicitudordenpagodetalle_Id = @listadopagos.Solicitudordenpagodetalle_Idx }, null)')">
-                                                                &nbsp;@listadopagos.TotalDocumentosx
-                                                            </a>
-                                                        </td>
-                                                        <td style="text-align:center;">
-                                                            <input type="checkbox" name="chkrechazar"
-                                                                   id="chkrechazar_@listadopagos.Solicitudordenpagodetalle_Idx"
-                                                                   value="@listadopagos.Solicitudordenpagodetalle_Idx" class="form-check-input" />
-
-                                                            <a href="#" style="font-size:11px;"
-                                                               data-toggle="modal" data-target="#modal-xl3"
-                                                               onclick="SolicitudPagoRevisionVP('@listadopagos.Solicitudordenpagodetalle_Idx', '@listadopagos.Solicitudordenpago_Idx')">
-                                                                Motivo del Rechazo
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            }
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <th colspan="10">&nbsp;</th>
-                                                <th>
-                                                    &nbsp;
-                                                </th>
-                                                <th colspan="3">&nbsp;</th>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                    <div class="row">
-                                        <div class="col-md-12" style="text-align:center">
-                                            @if (lstlistapagosporrubroid[0].Solicitudordenpago_Idx == -1)
-                                            {
-                                                <button class="btn btn-success" type="button" disabled>
-                                                    <i class="fas fa-check-circle"></i>&nbsp;Procesar Solicitudes de Pagos
-                                                </button>
-                                            }
-                                            else
-                                            {
-                                                <button class="btn btn-success" type="button" onclick="AprobarRechazarSolicitudesVP()">
-                                                    <i class="fas fa-check-circle"></i>&nbsp;Procesar Solicitudes de Pagos
-                                                </button>
-                                            }
-                                            &nbsp;&nbsp;&nbsp;
-                                            <button class="btn btn-default" data-toggle="modal" data-target="#modal-xl4">
-                                                <i class="fas fa-search"></i>&nbsp;Buscar Por Fecha Pago
-                                            </button>
-                                        </div>
-                                    </div>
                                 </div>
                                 <!-- /.card-body -->
                             </div>
@@ -237,11 +108,6 @@
                         </div>
                         <!-- /.col -->
                     </div>
-                    @* Asigna los id de las solicitudes de pago que desean colocar la chequera *@
-                    <form>
-                        <input type="hidden" name="txtSolicitudordenpagodetalle_Idx" id="txtSolicitudordenpagodetalle_Idx" value="" />
-                        <input type="hidden" name="txtSolicitudordenpago_Idx" id="txtSolicitudordenpago_Idx" value="" />
-                    </form>
                 </div><!-- /.container-fluid -->
             </section>
             <!-- /.content -->
@@ -490,15 +356,15 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <form name="frmpagosvp" id="frmpagosvp" method="post"
-                                                          action="@Url.Action("ListaPagosPorRubroPost", "Wrkf_SolicitudOrdenPagoVP")">
+                                                    <form name="frmpagossubcontra" id="frmpagossubcontra" method="post"
+                                                          action="@Url.Action("ListaPagosPorRubroIdSubContraloriaPost", "Wrkf_SolicitudSubContralor")">
                                                         <div class="row">
                                                             <div class="col-md-6">
                                                                 <div class="form-group">
                                                                     <label for="txtfechadesde">Fecha de Pago Desde</label>
                                                                     <input type="hidden" name="gruporubro_id" id="gruporubro_id" value="@ViewBag.gruporubro_id" />
                                                                     <input type="hidden" name="rubro_id" id="rubro_id" value="@ViewBag.rubro_id" />
-                                                                    <input type="hidden" name="tipodocumento" id="tipodocumento" value="@ViewBag.tipodoc" />
+                                                                    <input type="hidden" name="prioridadpago" id="prioridadpago" value="@ViewBag.prioridadpago" />
                                                                     <input type="date" class="form-control" name="txtfechadesde"
                                                                            id="txtfechadesde" style="background-color: oldlace;" value="@ViewBag.fechadesde" />
                                                                 </div>
@@ -570,37 +436,216 @@
     <!-- AdminLTE for demo purposes -->
     <script src="~/Adminlte/js/demo.js"></script>
 
+    <script src="~/Scripts/UtilidadesVarias.js"></script>
+
     <!-- Page specific script -->
     <script>
-        $(function () {
-            $("#example1").DataTable({
-                "responsive": true, "lengthChange": true, "autoWidth": true,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-            $('#example2').DataTable({
-                "paging": true,
-                "lengthChange": true,
-                "searching": true,
-                "ordering": true,
-                "info": true,
-                "autoWidth": true,
-                "responsive": true,
-            })
-        });
 
-        ///obtiene los id de la solicitud de pago para registra el motivo del rechazo
-        function SolicitudPagoRevisionVP(pSolicitudordenpagodetalle_Id, pSolicitudordenpago_Id) {
-            $("#txtSolicitudordenpagodetalle_Idx").val(pSolicitudordenpagodetalle_Id);
-            $("#txtSolicitudordenpago_Idx").val(pSolicitudordenpago_Id);
+        /*carga los pagos pendientes por aprobar o rechazar por contraloria*/
+        function CargarPagosVP() {
+            var vGrupoRubro_Id = $("#gruporubro_id").val();
+            var vRubro_Id = $("#rubro_id").val();
+            var vFechaPagoDesde = $("#txtfechadesde").val();
+            var vFechaPagoHasta = $("#txtfechahasta").val();
+            var vPrioridadPago = $("#prioridadpago").val();
 
-            $("#txtrechazosolicitudnum").html('');
-            $("#txtrechazosolicitudnum").html('Motivo del Rechazo de la Solicitud N° ' + pSolicitudordenpago_Id);
+            var parametros = {
+                "pgruporubro_id": vGrupoRubro_Id,
+                "prubro_id": vRubro_Id,
+                "pfechapagodesde": vFechaPagoDesde,
+                "pfechapagohasta": vFechaPagoHasta,
+                "pprioridadpago": vPrioridadPago
+            };
 
-            $("#chkrechazar_" + pSolicitudordenpagodetalle_Id).prop("checked", true);
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ObtenerPagosPorAprobarVP", "Wrkf_SolicitudOrdenPagoVP")',
+                content: "application/json; charset=utf-8",
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+                    if (data[0].Codigox.length > 0) {
+                        swal(data[0].Mensajex, data[0].Titulox, data[0].Tipox);
+                    } else {
+                        var strHtml = '<div class="row">'; /*1*/
+                        for (i = 0; i < data.length; i++) {
+                            var vCodigoPagoAprobar = "'" + data[i].Codigo + "', 'A', 'txtobservaciones_" + i + "'";
+                            var vCodigoPagoAnular = "'" + data[i].Codigo + "', 'R', 'txtobservaciones_" + i + "'";
+                            var vCodigoPagoSoporte = "'" + data[i].Codigo + "'";
+                            var vEsPagoUrgente = '';
 
-            SeleccionarMotivoRechazo();
+                            if (data[i].PagoUrgente == true) {
+                                vEsPagoUrgente = 'Sí';
+                            } else {
+                                vEsPagoUrgente = 'No';
+                            }
+
+                            strHtml += '<div class="col-lg-12 col-12">'; /*2*/
+                            strHtml += '<div class="small-box" style="background-color:#FFFFFF; border-color:#000000">'; /*3*/
+                            strHtml += '<div class="inner">' /*4*/
+                            strHtml += '<div class="row">'; /*5*/
+                            strHtml += '<div class="col-lg-12 col-12">';/*6*/
+                            strHtml += '<h5 style="color:#FFFFFF; background-color:#82293E;">&nbsp;Pago N°:&nbsp;' + data[i].Codigo + '</h5>';
+                            strHtml += '</div>';/*6*/
+                            strHtml += '</div>';/*5*/
+
+                            strHtml += '<div class="row">';/*7*/
+
+                            strHtml += '<div class="col-md-3">';/*8*/
+                            strHtml += '<u><b>Grupo Rubro:</b></u>';
+                            strHtml += '</div>';/*8*/
+
+                            strHtml += '<div class="col-md-3">';/*9*/
+                            strHtml += data[i].GrupoRubroDescripcion;
+                            strHtml += '</div>';/*9*/
+
+                            strHtml += '</div>';/*7*/
+
+                            strHtml += '<div class="row">';/*7*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*8*/
+                            strHtml += '<u><b>Rubro:</b></u>';
+                            strHtml += '</div>';/*8*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*9*/
+                            strHtml += data[i].RubroDescripcion;
+                            strHtml += '</div>';/*9*/
+                            strHtml += '</div>';/*7*/
+
+                            strHtml += '<div class="row">';/*7*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*8*/
+                            strHtml += '<u><b>Proveedor:</b></u>';
+                            strHtml += '</div>';/*8*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*9*/
+                            strHtml += data[i].GAPProveedor;
+                            strHtml += '</div>';/*9*/
+                            strHtml += '</div>';/*7*/
+
+                            strHtml += '<div class="row">';/*7*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*8*/
+                            strHtml += '<u><b>IdProveedor:</b></u>';
+                            strHtml += '</div>';/*8*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*9*/
+                            strHtml += data[i].GAPIdProveedor;
+                            strHtml += '</div>';/*9*/
+                            strHtml += '</div>';/*7*/
+
+                            strHtml += '<div class="row">';/*7*/
+                            strHtml += '<div class="col-md-3 col-6">';/*8*/
+                            strHtml += '<u><b>N° Factura:</b></u>';
+                            strHtml += '</div>';/*8*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*9*/
+                            strHtml += data[i].GAPNroFactura;
+                            strHtml += '</div>';/*9*/
+                            strHtml += '</div>';/*7*/
+
+                            strHtml += '<div class="row">';/*7*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*8*/
+                            strHtml += '<u><b>Fecha Factura:</b></u>';
+                            strHtml += '</div>';/*8*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*9*/
+                            strHtml += data[i].GAPFechaFactura.substring(0, 10);
+                            strHtml += '</div>';/*9*/
+                            strHtml += '</div>';/*7*/
+
+                            strHtml += '<div class="row">';/*7*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*8*/
+                            strHtml += '<u><b>Fecha Pago:</b></u>';
+                            strHtml += '</div>';/*8*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*9*/
+                            strHtml += data[i].GAPFechaPago.substring(0, 10);
+                            strHtml += '</div>';/*9*/
+                            strHtml += '</div>';/*7*/
+
+                            strHtml += '<div class="row">';/*7*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*8*/
+                            strHtml += '<u><b>Total a Pagar:</b></u>';
+                            strHtml += '</div>';/*8*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*9*/
+                            strHtml += '<b>' + number_format(parseFloat(data[i].GAPMonto), 2, ',', '.') + '</b>';
+                            strHtml += '</div>';/*9*/
+                            strHtml += '</div>';/*7*/
+
+                            strHtml += '<div class="row">';/*7*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*8*/
+                            strHtml += '<u><b>Id Chequera:</b></u>';
+                            strHtml += '</div>';/*8*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*9*/
+                            strHtml += '<b>' + data[i].GAPIdChequera + '</b>';
+                            strHtml += '</div>';/*9*/
+                            strHtml += '</div>';/*7*/
+
+                            strHtml += '<div class="row">';/*7*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*8*/
+                            strHtml += '<u><b>Código Moneda:</b></u>';
+                            strHtml += '</div>';/*8*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*9*/
+                            strHtml += '<b>' + data[i].CodigoMoneda + '</b>';
+                            strHtml += '</div>';/*9*/
+                            strHtml += '</div>';/*7*/
+
+                            strHtml += '<div class="row">';/*7*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*8*/
+                            strHtml += '<u><b>¿Es Urgente?:</b></u>';
+                            strHtml += '</div>';/*8*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*9*/
+                            strHtml += '<b>' + vEsPagoUrgente + '</b>';
+                            strHtml += '</div>';/*9*/
+                            strHtml += '</div>';/*7*/
+
+                            strHtml += '<div class="row">';/*7*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*8*/
+                            strHtml += '<u><b>Observaciones:</b></u>';
+                            strHtml += '</div>';/*8*/
+                            strHtml += '<div class="col-lg-3 col-6">';/*9*/
+                            strHtml += '<textarea row="2" cols="100" id="txtobservaciones_' + i+ '" class="form-control"></textarea>';
+                            strHtml += '</div>';/*9*/
+                            strHtml += '</div>';/*7*/
+
+                            strHtml += '<div class="row">';/*7*/
+                            strHtml += '<div class="col-lg-3">';/*8*/
+                            strHtml += '<u><b>Acciones:</b></u>';
+                            strHtml += '</div>';/*8*/
+                            strHtml += '<div class="col-lg-6">';/*9*/
+                            strHtml += '<a href="#" style="color:green;" onclick="AprobarRechazarSolicitudVP(' + vCodigoPagoAprobar + ')" title="Aprobar Pago"><i class="fas fa-check"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+                            strHtml += '<a href="#" style="color:orange;" onclick="AprobarRechazarSolicitudVP(' + vCodigoPagoAnular + ')" title="Anular Pago"><i class="fas fa-trash"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+                            strHtml += '<a href="#" style="color:black;" onclick="VerSoporte(' + vCodigoPagoSoporte + ')" title="Ver Soportes del Pago"><i class="fas fa-file"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+                            strHtml += '</div>';/*9*/
+                            strHtml += '</div>';/*7*/
+
+                            strHtml += '</div>';/*4*/
+                            strHtml += '</div>';/*3*/
+                            strHtml += '</div>';/*2*/
+                        }
+                        strHtml += '</div>';/*1*/
+                        $("#MostarPagos").html(strHtml);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                        swal(msg, 'Error', 'error');
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                        swal(msg, 'Error', 'error');
+                    }
+                }
+            });
         }
-
 
         //obtener las observaciones de la solicitud de pago
         function ObtieneObservacionesSolicitud(pSolicitudordenpagodetalle_Id, pSolicitudordenpago_Id) {
@@ -722,60 +767,45 @@
             });
         }
 
-        //Aprobar o Rechazar todas las solicitudes de pago por parte de VP Finanza que esten seleccionadas
-        function AprobarRechazarSolicitudesVP() {
-            var listadoaprobacion = "";
-            var listadorechazo = "";
-            var contadoraprobadas = 0;
-            var contadorrechazadas = 0;
-            var chkaprobado = document.getElementsByName("chkaprobar");
-            var chkrechazado = document.getElementsByName("chkrechazar");
+        //Aprobar o Rechazar las solicitudes de pago por contraloria
+        function AprobarRechazarSolicitudVP(pcodigopago, paccion, pcampoobservacion) {
 
-            //verificar que no exista el checkbox de aprobacion y rechazo activo para lamisma solicitud
-            for (x = 0; x < chkaprobado.length; x++) {
-                if ((chkaprobado[x].checked) && (chkrechazado[x].checked)) {
-                    swal("Una solicitud no puede ser aprobada y rechazada al mismo tiempo seleccione la casilla de aprobación o rechazo", "Aprobación o Rechazo Por VP de Finanza", "error");
-                    chkaprobado[x].checked = false;
-                    chkrechazado[x].checked = false;
-                    return false;
+            var vTitulo = '';
+            var vMensaje = '';
+            var vIcono = '';
+
+            if (pcodigopago == '') {
+                swal('El pago seleccionado debe ser valido', 'Aprobar o Anular Pagos Contraloria', 'error');
+            } else {
+
+                if (paccion == 'A') {
+                    vTitulo = 'Aprobar Pagos por VP Finanzas';
+                    vMensaje = 'El pago N° ' + pcodigopago + 'sera aprobado y enviado al para la aprobación del VP de Finanzas';
+                    vIcono = 'success';
+                } else if (paccion == 'R') {
+                    vTitulo = 'Anulación Pagos por VP Finanzas';
+                    vMensaje = 'El pago N° ' + pcodigopago + 'sera anulado en las aplicaciones workflow y GAP';
+                    vIcono = 'error';
+                } else {
+                    return;
                 }
-            }
-
-            //verifica las solicitudes que fueron aprobadas para enviar a contraloria
-            for (x = 0; x < chkaprobado.length; x++) {
-                if (chkaprobado[x].checked) {
-                    listadoaprobacion += chkaprobado[x].value + ";";
-                    //contar el total de solicitudes aprobadas
-                    contadoraprobadas = parseInt(contadoraprobadas) + 1;
-                }
-            }
-
-            //verifica las solicitudes que fueron marcadas para ser rechazadas por subcontraloria
-            for (x = 0; x < chkrechazado.length; x++) {
-                if (chkrechazado[x].checked) {
-                    listadorechazo += chkrechazado[x].value + ";";
-                    contadorrechazadas = parseInt(contadorrechazadas) + 1;
-                }
-            }
-
-            //verificar que existan solicitudes para procesar
-            if ((contadoraprobadas > 0) || (contadorrechazadas > 0)) {
-
-                var totalsolicitudes = parseInt(contadoraprobadas) + parseInt(contadorrechazadas);
-                var mensaje = "La cantidad de solicitudes que desea procesar es: ";
-                mensaje = mensaje + totalsolicitudes + " de las cuales fueron aprobada (s) " + contadoraprobadas + "  y Rechazada (s) " + contadorrechazadas;
-                mensaje = mensaje + " ¿Desea continuar realizando el proceso de la (s) solicitud (es)?";
 
                 swal({
-                    title: "Aprobación Y Rechazo de Solicitudes Por VP de Finanza",
-                    text: mensaje,
-                    icon: "warning",
+                    title: vTitulo,
+                    text: vMensaje,
+                    icon: vIcono,
                     buttons: true,
                     successMode: true,
                 })
                 .then((willDelete) => {
                     if (willDelete) {
-                        var parametros = { "listapagosaprobados": listadoaprobacion, "listapagosrechazados": listadorechazo };
+
+                        var parametros = {
+                            "pcodigo": pcodigopago,
+                            "pobservaciones": $("#" + pcampoobservacion).val(),
+                            "paccion": paccion
+                        };
+
                         $.ajax({
                             type: 'POST',
                             url: '@Url.Action("AprobarRechazarSolicitudVP", "Wrkf_SolicitudOrdenPagoVP")',
@@ -786,8 +816,8 @@
                                 if (data.Codigox.length > 0) {
                                     swal(data.Codigox + " " + data.Mensajex, data.Titulox, data.Tipox);
                                 } else {
-                                    swal("La solicitud de pago fueron procesadas con éxito", "Información", "info");
-                                    document.getElementById('frmpagosvp').submit();
+                                    swal("La solicitud de pago fue procesada con éxito", "Información", "info");
+                                    CargarPagosVP();
                                 }
                             },
                             error: function (jqXHR, exception) {
@@ -819,111 +849,6 @@
                     }
                 })
             }
-            else {
-                swal("Debe seleccionar las solicitudes de pago que desea Aprobar o Rechazar", "Aprobación o Rechazo Por SubContraloria", "error");
-            }
-        }
-
-        //Obtiene el motivo del rechazo del pago.
-        function SeleccionarMotivoRechazo() {
-            var parametros = {
-                "Solicitudordenpagodetalle_Id": $("#txtSolicitudordenpagodetalle_Idx").val(),
-                "Solicitudordenpago_Id": $("#txtSolicitudordenpago_Idx").val(),
-                "motivorechazo": $("#txtmotivorechazo").val()
-            };
-
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("SeleccionarMotivoRechazo", "Wrkf_SolicitudOrdenPagoVP")',
-                content: "application/json; charset=utf-8",
-                dataType: 'json',
-                data: parametros,
-                success: function (data) {
-                    if (data.Codigox.length > 0) {
-                        swal(data.Codigox + " " + data.Mensajex, data.Titulox, data.Tipox);
-                    } else {
-                        $("#txtmotivorechazo").val(data.Observacionesx);
-                    }
-                },
-                error: function (jqXHR, exception) {
-                    var msg = '';
-                    if (jqXHR.status === 0) {
-                        msg = 'Not connect.\n Verify Network.';
-                        swal(msg, 'Error', 'error');
-                    } else if (jqXHR.status == 404) {
-                        msg = 'Requested page not found. [404]';
-                        swal(msg, 'Error', 'error');
-                    } else if (jqXHR.status == 500) {
-                        msg = 'Internal Server Error [500].';
-                        swal(msg, 'Error', 'error');
-                    } else if (exception === 'parsererror') {
-                        msg = 'Requested JSON parse failed.';
-                        swal(msg, 'Error', 'error');
-                    } else if (exception === 'timeout') {
-                        msg = 'Time out error.';
-                        swal(msg, 'Error', 'error');
-                    } else if (exception === 'abort') {
-                        msg = 'Ajax request aborted.';
-                        swal(msg, 'Error', 'error');
-                    } else {
-                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
-                        swal(msg, 'Error', 'error');
-                    }
-                }
-            });
-        }
-
-        //Registra el motivo por el cualfue rechazado el pago
-        function MotivoRechazo() {
-
-            var parametros = {
-                "Solicitudordenpagodetalle_Id": $("#txtSolicitudordenpagodetalle_Idx").val(),
-                "Solicitudordenpago_Id": $("#txtSolicitudordenpago_Idx").val(),
-                "motivorechazo": $("#txtmotivorechazo").val()
-            };
-
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("RegistrarMotivoRechazo", "Wrkf_SolicitudOrdenPagoVP")',
-                content: "application/json; charset=utf-8",
-                dataType: 'json',
-                data: parametros,
-                success: function (data) {
-                    if (data.Codigox.length > 0) {
-                        swal(data.Codigox + " " + data.Mensajex, data.Titulox, data.Tipox);
-                    } else {
-                        swal("El motivo del rechazo de la solicitud del pago fue registrado", "Información", "info");
-                        $("#txtSolicitudordenpagodetalle_Idx").val("");
-                        $("#txtSolicitudordenpago_Idx").val("");
-                        $("#txtmotivorechazo").val("");
-                    }
-                },
-                error: function (jqXHR, exception) {
-                    var msg = '';
-                    if (jqXHR.status === 0) {
-                        msg = 'Not connect.\n Verify Network.';
-                        swal(msg, 'Error', 'error');
-                    } else if (jqXHR.status == 404) {
-                        msg = 'Requested page not found. [404]';
-                        swal(msg, 'Error', 'error');
-                    } else if (jqXHR.status == 500) {
-                        msg = 'Internal Server Error [500].';
-                        swal(msg, 'Error', 'error');
-                    } else if (exception === 'parsererror') {
-                        msg = 'Requested JSON parse failed.';
-                        swal(msg, 'Error', 'error');
-                    } else if (exception === 'timeout') {
-                        msg = 'Time out error.';
-                        swal(msg, 'Error', 'error');
-                    } else if (exception === 'abort') {
-                        msg = 'Ajax request aborted.';
-                        swal(msg, 'Error', 'error');
-                    } else {
-                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
-                        swal(msg, 'Error', 'error');
-                    }
-                }
-            });
         }
 
         //descargar soporte de la solicitud
@@ -931,7 +856,64 @@
             window.open(url, "_blank", "directories=no,location=no,menubar=no,status=no,titlebar=no,toolbar=no,scrollbars=yes,resizable=no,top=500,left=500,width=500,height=500");
         }
 
-        //imprime un reporte de solicitudes pendientes por área
+        //Asignar Pagos Urgentes
+        function AsignarPagoUrgente(psolicitudordenpago_Id, psolicitudordenpagodetalle_Id) {
+
+            var pagourgente = false;
+            var chkurgente = document.getElementsByName("chkurgente");
+
+            for (x = 0; x < chkurgente.length; x++) {
+                if (chkurgente[x].checked) {
+                    pagourgente = true;
+                }
+            }
+
+            var parametros = {
+                "Solicitudordenpagodetalle_Id": psolicitudordenpagodetalle_Id,
+                "Solicitudordenpago_Id": psolicitudordenpago_Id,
+                "pagourgente": pagourgente
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("AsignarPagoUrgente", "Wrkf_SolicitudSubContralor")',
+                content: "application/json; charset=utf-8",
+                dataType: 'json',
+                data: parametros,
+                success: function (data) {
+                    if (data.Codigox.length > 0) {
+                        swal(data.Codigox + " " + data.Mensajex, data.Titulox, data.Tipox);
+                    }
+                },
+                error: function (jqXHR, exception) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                        swal(msg, 'Error', 'error');
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                        swal(msg, 'Error', 'error');
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                        swal(msg, 'Error', 'error');
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                        swal(msg, 'Error', 'error');
+                    }
+                }
+            });
+        }
+
+        //imprime un reporte de la solicitud enviada a CxP
         function ImprimirPagosPendientesArea() {
 
             var screenWidth = screen.width;
@@ -940,6 +922,17 @@
             var url = '@Url.Action("GenerarReportePagosPendientes", "Wrkf_Reporte")';
 
             window.open(url, '_blank', 'toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=' + screenWidth + ',height=' + screenHeight);
+        }
+
+        /*Muestra los soportes del pago*/
+        function VerSoporte(pCodigo) {
+            if (pCodigo == '') {
+                swal("Seleccione el pago para listar los soportes", "Advertencia", "warning");
+            } else {
+                var vUrl = '@Url.Action("DescargarSoporte", "Wrk_SolicitudOrdenPagoSoporte")';
+                var urldescarga = vUrl + '?pCodigo=' + pCodigo;
+                window.open(urldescarga, "_blank", "directories=no,location=no,menubar=no,status=no,titlebar=no,toolbar=no,scrollbars=yes,resizable=no,top=500,left=500,width=500,height=500");
+            }
         }
     </script>
 </body>

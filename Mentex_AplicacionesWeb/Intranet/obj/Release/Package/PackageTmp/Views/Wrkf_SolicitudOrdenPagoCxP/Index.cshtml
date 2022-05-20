@@ -314,8 +314,19 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-md-12 text-center">
-                                                    <button type="button" class="btn btn-default" id="btnAplicarCambios" onclick="ActualizarGrupoRubro()">Revisión Realizada</button>
+                                                <div class="col-md-6 text-center">
+                                                    <button type="button" name="btnAplicarCambios" id="btnAplicarCambios"
+                                                            class="btn btn-default" style="width: 100%; font-weight: bold; font-family: sans-serif;"
+                                                            onclick="ActualizarGrupoRubro()">
+                                                        <i class="fas fa-save"></i>&nbsp;Aplicar Cambios
+                                                    </button>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <button type="button" name="btnVerSoportes" id="btnVerSoportes"
+                                                            class="btn btn-default" onclick="Descargarsoporte('@Url.Action("DescargarSoporte", "Wrk_SolicitudOrdenPagoSoporte")')"
+                                                            style="width: 100%; font-weight: bold; font-family: sans-serif;">
+                                                        <i class="fas fa-file-archive"></i>&nbsp;Soportes del Pago
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -334,7 +345,6 @@
             </div>
             <!-- /.modal-dialog -->
         </div>
-
 
         <!--Lista de los grupos de rubros-->
         <div class="modal fade" id="modal-grupo-rubro">
@@ -1054,6 +1064,17 @@
                     }
                 }
             });
+        }
+
+        //descargar soporte de la solicitud
+        function Descargarsoporte(url) {
+
+            if ($("#Codigo").val() == '') {
+                swal("Seleccione el pago para listar los soportes", "Advertencia", "warning");
+            } else {
+                var urldescarga = url + '?pCodigo=' + $("#Codigo").val();
+                window.open(urldescarga, "_blank", "directories=no,location=no,menubar=no,status=no,titlebar=no,toolbar=no,scrollbars=yes,resizable=no,top=500,left=500,width=500,height=500");
+            }
         }
     </script>
 </body>

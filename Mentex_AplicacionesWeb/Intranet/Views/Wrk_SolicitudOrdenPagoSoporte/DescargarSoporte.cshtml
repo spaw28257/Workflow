@@ -31,25 +31,32 @@
 
         <div class="card-body">
             <ul class="todo-list" data-widget="todo-list">
-                @for (int i = 0; i < listaArchivos.Length; i++)
+                @if (ViewBag.TotalArchivos > 0)
                 {
-                    <li>
-                        <!-- drag handle -->
-                        <span class="handle">
-                            <i class="fas fa-ellipsis-v"></i>
-                            <i class="fas fa-ellipsis-v"></i>
-                        </span>
-                        <!-- todo text -->
-                        <span class="text">
-                            <a href="#">@System.IO.Path.GetFileName(listaArchivos[i])</a>
-                        </span>
-                        <!-- General tools such as edit or delete-->
-                        <div class="tools">
-                            <a href="@Url.Action("RevisarSoporte", "Wrk_SolicitudOrdenPagoSoporte", new { ruta = vRuta, archivo = @System.IO.Path.GetFileName(listaArchivos[i]) })">
-                                <i class="fas fa-download"></i>
-                            </a>
-                        </div>
-                    </li>
+                    for (int i = 0; i < listaArchivos.Length; i++)
+                    {
+                        <li>
+                            <!-- drag handle -->
+                            <span class="handle">
+                                <i class="fas fa-ellipsis-v"></i>
+                                <i class="fas fa-ellipsis-v"></i>
+                            </span>
+                            <!-- todo text -->
+                            <span class="text">
+                                <a href="#">@System.IO.Path.GetFileName(listaArchivos[i])</a>
+                            </span>
+                            <!-- General tools such as edit or delete-->
+                            <div class="tools">
+                                <a href="@Url.Action("RevisarSoporte", "Wrk_SolicitudOrdenPagoSoporte", new { ruta = vRuta, archivo = @System.IO.Path.GetFileName(listaArchivos[i]) })">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            </div>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li><div class="alert alert-default-info">El pago no tiene soportes asociados para mostrar</div></li>
                 }
             </ul>
         </div>
